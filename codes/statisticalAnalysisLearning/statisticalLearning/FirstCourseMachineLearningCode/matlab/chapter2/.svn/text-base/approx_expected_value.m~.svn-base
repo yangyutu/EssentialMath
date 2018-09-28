@@ -1,0 +1,16 @@
+%% approx_expected_value.m
+% From A First Course in Machine Learning, Chapter 2.
+% Simon Rogers, 31/10/11 [simon.rogers@glasgow.ac.uk]
+% Approximating expected values via sampling
+clear all;close all;
+%% We are trying to compute the expected value of
+% $y^2$
+%%
+% Where
+% $p(y)=U(0,1)$
+%% 
+% Which is given by:
+% $\int y^2 p(y) dy$
+%%
+% The analytic result is:
+% $

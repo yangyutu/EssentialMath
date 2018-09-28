@@ -1,0 +1,220 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>olympbayes</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2011-11-02"><meta name="DC.source" content="olympbayes.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">olynmpbayes.m</a></li><li><a href="#2">Load Olympic data</a></li><li><a href="#3">Define the prior</a></li><li><a href="#4">Draw some functions from the prior</a></li><li><a href="#5">Add the data 3 points at a time</a></li></ul></div><h2>olynmpbayes.m<a name="1"></a></h2><p>From A First Course in Machine Learning, Chapter 2. Simon Rogers, 01/11/11 [simon.rogers@glasgow.ac.uk] Bayesian treatment of Olympic data</p><pre class="codeinput">clear <span class="string">all</span>;close <span class="string">all</span>;
+</pre><h2>Load Olympic data<a name="2"></a></h2><pre class="codeinput">load <span class="string">../data/olympics</span>
+
+x = male100(:,1);
+t = male100(:,2);
+
+<span class="comment">% Rescale x for numerical stability</span>
+x = x - x(1);
+x = x./4;
+</pre><h2>Define the prior<a name="3"></a></h2><p>$p(\mathbf{w}) = {\cal N}(\mu_0,\Sigma_0)</p><pre class="codeinput">mu0 = [0;0];
+si0 = [100 0;0 5];
+ss = 2; <span class="comment">% Vary this to see the effect on the posterior samples</span>
+</pre><h2>Draw some functions from the prior<a name="4"></a></h2><pre class="codeinput">path(path,<span class="string">'../utilities'</span>);
+w = gausssamp(mu0,si0,10);
+X = [x.^0 x.^1];
+<span class="comment">% Plot the data and the function</span>
+figure(1);hold <span class="string">off</span>
+plot(x,t,<span class="string">'bo'</span>,<span class="string">'markersize'</span>,10);
+hold <span class="string">on</span>
+xl = xlim;
+yl = ylim;
+<span class="keyword">for</span> i = 1:10
+    plot(x,X*w(i,:)',<span class="string">'r'</span>);
+<span class="keyword">end</span>
+xlim(xl);
+ylim(yl);
+</pre><img vspace="5" hspace="5" src="olympbayes_01.png" alt=""> <h2>Add the data 3 points at a time<a name="5"></a></h2><pre class="codeinput">dord = [3:3:length(x)];
+<span class="keyword">for</span> i = 1:length(dord)
+</pre><pre class="codeinput">    Xsub = X(1:dord(i),:);
+    tsub = t(1:dord(i));
+    siw = inv((1/ss)*Xsub'*Xsub + inv(si0));
+    muw = siw*((1/ss)*Xsub'*tsub + inv(si0)*mu0);
+    figure(1);hold <span class="string">off</span>
+    plot(x,t,<span class="string">'bo'</span>,<span class="string">'markersize'</span>,10);
+    hold <span class="string">on</span>
+    xl = xlim;
+    yl = ylim;
+    plot(x,X*muw,<span class="string">'k'</span>,<span class="string">'linewidth'</span>,2);
+    wsamp = gausssamp(muw,siw,10);
+    <span class="keyword">for</span> j = 1:10
+        plot(x,X*wsamp(j,:)',<span class="string">'r'</span>);
+    <span class="keyword">end</span>
+    xlim(xl);
+    ylim(yl);
+    legend(<span class="string">'Data'</span>,<span class="string">'Posterior mean'</span>,<span class="string">'Samples'</span>)
+    xlabel(<span class="string">'Olympic number'</span>);
+    ylabel(<span class="string">'Winning time'</span>);
+
+    <span class="comment">% Contour plot the prior and posterior</span>
+
+    [Xv,Yv] = meshgrid(9:0.02:13,-0.5:0.02:0.5);
+
+    const = (1/sqrt(2*pi))^2;
+    const_prior = const./sqrt(det(si0));
+    const = const./sqrt(det(siw));
+
+    temp = [Xv(:)-muw(1) Yv(:)-muw(2)];
+    temp_prior = [Xv(:)-mu0(1) Yv(:)-mu0(2)];
+    pdfv = const*exp(-0.5*diag(temp*inv(siw)*temp'));
+    pdfv = reshape(pdfv,size(Xv));
+    pdfv_prior = const*exp(-0.5*diag(temp_prior*inv(si0)*temp_prior'));
+    pdfv_prior = reshape(pdfv_prior,size(Xv));
+    figure(2);hold <span class="string">off</span>
+    contour(Xv,Yv,pdfv,<span class="string">'color'</span>,<span class="string">'k'</span>);
+    figure(2);hold <span class="string">on</span>
+    contour(Xv,Yv,pdfv_prior,<span class="string">'color'</span>,[0.6 0.6 0.6]);
+    legend(<span class="string">'Posterior'</span>,<span class="string">'Prior'</span>);
+</pre><img vspace="5" hspace="5" src="olympbayes_02.png" alt=""> <img vspace="5" hspace="5" src="olympbayes_03.png" alt=""> <img vspace="5" hspace="5" src="olympbayes_04.png" alt=""> <img vspace="5" hspace="5" src="olympbayes_05.png" alt=""> <img vspace="5" hspace="5" src="olympbayes_06.png" alt=""> <img vspace="5" hspace="5" src="olympbayes_07.png" alt=""> <img vspace="5" hspace="5" src="olympbayes_08.png" alt=""> <img vspace="5" hspace="5" src="olympbayes_09.png" alt=""> <img vspace="5" hspace="5" src="olympbayes_10.png" alt=""> <img vspace="5" hspace="5" src="olympbayes_11.png" alt=""> <img vspace="5" hspace="5" src="olympbayes_12.png" alt=""> <img vspace="5" hspace="5" src="olympbayes_13.png" alt=""> <img vspace="5" hspace="5" src="olympbayes_14.png" alt=""> <img vspace="5" hspace="5" src="olympbayes_15.png" alt=""> <img vspace="5" hspace="5" src="olympbayes_16.png" alt=""> <img vspace="5" hspace="5" src="olympbayes_17.png" alt=""> <img vspace="5" hspace="5" src="olympbayes_18.png" alt=""> <img vspace="5" hspace="5" src="olympbayes_19.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% olynmpbayes.m
+% From A First Course in Machine Learning, Chapter 2.
+% Simon Rogers, 01/11/11 [simon.rogers@glasgow.ac.uk]
+% Bayesian treatment of Olympic data
+clear all;close all;
+
+%% Load Olympic data
+load ../data/olympics
+
+x = male100(:,1);
+t = male100(:,2);
+
+% Rescale x for numerical stability
+x = x - x(1);
+x = x./4;
+
+%% Define the prior
+% $p(\mathbf{w}) = {\cal N}(\mu_0,\Sigma_0)
+mu0 = [0;0];
+si0 = [100 0;0 5];
+ss = 2; % Vary this to see the effect on the posterior samples
+
+%% Draw some functions from the prior
+path(path,'../utilities');
+w = gausssamp(mu0,si0,10);
+X = [x.^0 x.^1];
+% Plot the data and the function
+figure(1);hold off
+plot(x,t,'bo','markersize',10);
+hold on
+xl = xlim;
+yl = ylim;
+for i = 1:10
+    plot(x,X*w(i,:)','r');
+end
+xlim(xl);
+ylim(yl);
+
+%% Add the data 3 points at a time
+dord = [3:3:length(x)];
+for i = 1:length(dord)
+    %%
+    Xsub = X(1:dord(i),:);
+    tsub = t(1:dord(i));
+    siw = inv((1/ss)*Xsub'*Xsub + inv(si0));
+    muw = siw*((1/ss)*Xsub'*tsub + inv(si0)*mu0);
+    figure(1);hold off
+    plot(x,t,'bo','markersize',10);
+    hold on
+    xl = xlim;
+    yl = ylim;
+    plot(x,X*muw,'k','linewidth',2);
+    wsamp = gausssamp(muw,siw,10);
+    for j = 1:10
+        plot(x,X*wsamp(j,:)','r');
+    end
+    xlim(xl);
+    ylim(yl);
+    legend('Data','Posterior mean','Samples')
+    xlabel('Olympic number');
+    ylabel('Winning time');
+    
+    % Contour plot the prior and posterior
+    
+    [Xv,Yv] = meshgrid(9:0.02:13,-0.5:0.02:0.5);
+    
+    const = (1/sqrt(2*pi))^2;
+    const_prior = const./sqrt(det(si0));
+    const = const./sqrt(det(siw));
+    
+    temp = [Xv(:)-muw(1) Yv(:)-muw(2)];
+    temp_prior = [Xv(:)-mu0(1) Yv(:)-mu0(2)];
+    pdfv = const*exp(-0.5*diag(temp*inv(siw)*temp'));
+    pdfv = reshape(pdfv,size(Xv));
+    pdfv_prior = const*exp(-0.5*diag(temp_prior*inv(si0)*temp_prior'));
+    pdfv_prior = reshape(pdfv_prior,size(Xv));
+    figure(2);hold off
+    contour(Xv,Yv,pdfv,'color','k');
+    figure(2);hold on
+    contour(Xv,Yv,pdfv_prior,'color',[0.6 0.6 0.6]);
+    legend('Posterior','Prior');
+    
+end
+##### SOURCE END #####
+--></body></html>

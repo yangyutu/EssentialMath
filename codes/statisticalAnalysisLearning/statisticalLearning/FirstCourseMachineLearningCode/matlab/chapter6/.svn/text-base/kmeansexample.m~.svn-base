@@ -1,0 +1,54 @@
+%% kmeansexample.m
+% From A First Course in Machine Learning, Chapter 6.
+% Simon Rogers, 01/11/11 [simon.rogers@glasgow.ac.uk]
+% Example of K-means clustering
+clear all;close all;
+
+%% Generate some data
+x = [randn(30,2);randn(30,2)+ repmat([2 -4],30,1);randn(30,2)+3];
+
+%% Plot the data
+figure(1);hold off
+plot(x(:,1),x(:,2),'ko');
+
+%% Randomly initialise the means
+K = 3; % The number of clusters
+cluster_means = rand(K,2)*10-5;
+
+%% Iteratively update the means and assignments
+converged = 0;
+N = size(x,1);
+cluster_assignments = zeros(N,K);
+di = zeros(N,K);
+cols = {'r','g','b'};
+while ~converged
+    % Update assignments
+    for k = 1:K
+        di(:,k) = sum((x - repmat(cluster_means(k,:),N,1)).^2,2);
+    end
+    old_assignments = cluster_assignments;
+    cluster_assignments = (di == repmat(min(di,[],2),1,K));
+    if sum(sum(old_assignments~=cluster_assignments))==0
+        converged = 1;
+    end
+    % Plot the assigned data
+    figure(1); hold off
+    for k = 1:K
+        plot(x(cluster_assignments(:,k),1),x(cluster_assignments(:,k),2),...
+            'ko','markerfacecolor',cols{k});
+        hold on
+    end
+    % Update means
+    for k = 1:K   
+        if sum(cluster_assignments(:,k))==0
+            % This cluster is empty, randomise it
+            cluster_means(k,:) = rand(1,2)*10-5;
+        else
+            cluster_means(k,:) = mean(x(cluster_assignments(:,k),:),1);
+        end
+    end
+    % Plot the means
+    figure(1)
+    for k = 1:K
+        plot(cluster_means(k,1),cluster_means(k,2),'ks','markersize',1
+end

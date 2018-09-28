@@ -1,0 +1,17 @@
+clear all
+close all
+
+
+
+
+T = [0, 0, 1, 1, 2, 2, 3];
+X1 = [0, 1, 1, 2, 2, 1, 1];
+h = figure(1)
+plot(T,X,'linewidth',2,'color','red');
+ylim([0.0 4]);
+xlim([0.0 7]);
+xlabel('time')
+ylabel('position')
+set(gca,'linewidth',2,'fontsize',15,'fontweight','bold','plotboxaspectratiomode','auto','xminortick','on','yminortick','on','TickLength',[0.04;0.02]);
+pbaspect([1 1 1])
+saveTightFigure(h,'randomWalkPathOne.pdf')

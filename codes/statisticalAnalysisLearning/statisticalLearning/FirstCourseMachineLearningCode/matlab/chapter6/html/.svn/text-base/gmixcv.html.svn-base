@@ -1,0 +1,392 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>gmixcv</title><meta name="generator" content="MATLAB 7.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2011-11-14"><meta name="DC.source" content="gmixcv.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">gmixcv.m</a></li><li><a href="#2">Load the data</a></li><li><a href="#3">Plot the data</a></li><li><a href="#4">Do a 10-fold CV</a></li><li><a href="#5">Loop over K</a></li><li><a href="#6">Plot the evolution in log likelihood</a></li></ul></div><h2>gmixcv.m<a name="1"></a></h2><p>From A First Course in Machine Learning, Chapter 6. Simon Rogers, 01/11/11 [simon.rogers@glasgow.ac.uk] Fitting a Gaussian mixture</p><pre class="codeinput">clear <span class="string">all</span>;close <span class="string">all</span>;
+path(path,<span class="string">'../utilities'</span>);
+</pre><h2>Load the data<a name="2"></a></h2><pre class="codeinput">load <span class="string">../data/kmeansdata</span>
+</pre><h2>Plot the data<a name="3"></a></h2><pre class="codeinput">figure(1);hold <span class="string">off</span>
+plot(X(:,1),X(:,2),<span class="string">'ko'</span>);
+</pre><img vspace="5" hspace="5" src="gmixcv_01.png" alt=""> <h2>Do a 10-fold CV<a name="4"></a></h2><pre class="codeinput">NFold = 10;
+N = size(X,1);
+sizes = repmat(floor(N/NFold),1,NFold);
+sizes(end) = sizes(end) + N - sum(sizes);
+csizes = [0 cumsum(sizes)];
+order = randperm(N); <span class="comment">% Randomise the data order</span>
+MaxIts = 100;
+</pre><h2>Loop over K<a name="5"></a></h2><pre class="codeinput">Kvals = 1:10;
+<span class="keyword">for</span> kv = 1:length(Kvals)
+    K = Kvals(kv);
+    <span class="keyword">for</span> fold = 1:NFold
+        fprintf(<span class="string">'\nK: %g, fold: %g'</span>,K,fold);
+        foldindex = order(csizes(fold)+1:csizes(fold+1));
+        trainX = X;
+        trainX(foldindex,:) = [];
+        testX = X(foldindex,:);
+
+        <span class="comment">% Train the mixture</span>
+        means = randn(K,2);
+        <span class="keyword">for</span> k = 1:K
+            covs(:,:,k) = rand*eye(2);
+        <span class="keyword">end</span>
+        priors = repmat(1/K,1,K);
+        B = [];
+        B(1) = -inf;
+        converged = 0;
+        it = 0;
+        tol = 1e-2;
+        Ntrain = size(trainX,1);
+        D = size(X,2);
+        <span class="keyword">while</span> 1
+            it = it + 1;
+            <span class="comment">% Update q</span>
+            temp = zeros(Ntrain,K);
+            <span class="keyword">for</span> k = 1:K
+                const = -(D/2)*log(2*pi) - 0.5*log(det(covs(:,:,k)));
+                Xm = trainX - repmat(means(k,:),Ntrain,1);
+                temp(:,k) = const - 0.5 * diag(Xm*inv(covs(:,:,k))*Xm');
+            <span class="keyword">end</span>
+
+            <span class="comment">% Compute the Bound on the likelihood</span>
+            <span class="keyword">if</span> it&gt;1
+                B(it) = sum(sum(q.*log(repmat(priors,Ntrain,1)))) + <span class="keyword">...</span>
+                    sum(sum(q.*temp)) - <span class="keyword">...</span>
+                    sum(sum(q.*log(q)));
+                <span class="keyword">if</span> abs(B(it)-B(it-1))&lt;tol
+                    converged = 1;
+
+                <span class="keyword">end</span>
+            <span class="keyword">end</span>
+
+            <span class="keyword">if</span> converged == 1 || it&gt;MaxIts
+                <span class="keyword">break</span>
+            <span class="keyword">end</span>
+
+            temp = temp + repmat(priors,Ntrain,1);
+
+            q = exp(temp - repmat(max(temp,[],2),1,K));
+            <span class="comment">% Minor hack for numerical issues - stops the code crashing when</span>
+            <span class="comment">% clusters are empty</span>
+            q(q&lt;1e-3) = 1e-3;
+            q(q&gt;1-1e-3) = 1-1e-3;
+            q = q./repmat(sum(q,2),1,K);
+            <span class="comment">% Update priors</span>
+            priors = mean(q,1);
+            <span class="comment">% Update means</span>
+            <span class="keyword">for</span> k = 1:K
+                means(k,:) = sum(trainX.*repmat(q(:,k),1,D),1)./sum(q(:,k));
+            <span class="keyword">end</span>
+            <span class="comment">% update covariances</span>
+            <span class="keyword">for</span> k = 1:K
+                Xm = trainX - repmat(means(k,:),Ntrain,1);
+                covs(:,:,k) = (Xm.*repmat(q(:,k),1,D))'*Xm;
+                covs(:,:,k) = covs(:,:,k)./sum(q(:,k));
+            <span class="keyword">end</span>
+
+
+        <span class="keyword">end</span>
+
+
+
+        <span class="comment">% Compute the held-out likelihood</span>
+        Ntest = size(testX,1);
+        temp = zeros(Ntest,K);
+        <span class="keyword">for</span> k = 1:K
+            const = -(D/2)*log(2*pi) - 0.5*log(det(covs(:,:,k)));
+                Xm = testX - repmat(means(k,:),Ntest,1);
+                temp(:,k) = const - 0.5 * diag(Xm*inv(covs(:,:,k))*Xm');
+
+        <span class="keyword">end</span>
+        temp = exp(temp).*repmat(priors,Ntest,1);
+        outlike(kv,csizes(fold)+1:csizes(fold+1)) = log(sum(temp,2))';
+
+
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">
+K: 1, fold: 1
+K: 1, fold: 2
+K: 1, fold: 3
+K: 1, fold: 4
+K: 1, fold: 5
+K: 1, fold: 6
+K: 1, fold: 7
+K: 1, fold: 8
+K: 1, fold: 9
+K: 1, fold: 10
+K: 2, fold: 1
+K: 2, fold: 2
+K: 2, fold: 3
+K: 2, fold: 4
+K: 2, fold: 5
+K: 2, fold: 6
+K: 2, fold: 7
+K: 2, fold: 8
+K: 2, fold: 9
+K: 2, fold: 10
+K: 3, fold: 1
+K: 3, fold: 2
+K: 3, fold: 3
+K: 3, fold: 4
+K: 3, fold: 5
+K: 3, fold: 6
+K: 3, fold: 7
+K: 3, fold: 8
+K: 3, fold: 9
+K: 3, fold: 10
+K: 4, fold: 1
+K: 4, fold: 2
+K: 4, fold: 3
+K: 4, fold: 4
+K: 4, fold: 5
+K: 4, fold: 6
+K: 4, fold: 7
+K: 4, fold: 8
+K: 4, fold: 9
+K: 4, fold: 10
+K: 5, fold: 1
+K: 5, fold: 2
+K: 5, fold: 3
+K: 5, fold: 4
+K: 5, fold: 5
+K: 5, fold: 6
+K: 5, fold: 7
+K: 5, fold: 8
+K: 5, fold: 9
+K: 5, fold: 10
+K: 6, fold: 1
+K: 6, fold: 2
+K: 6, fold: 3
+K: 6, fold: 4
+K: 6, fold: 5
+K: 6, fold: 6
+K: 6, fold: 7
+K: 6, fold: 8
+K: 6, fold: 9
+K: 6, fold: 10
+K: 7, fold: 1
+K: 7, fold: 2
+K: 7, fold: 3
+K: 7, fold: 4
+K: 7, fold: 5
+K: 7, fold: 6
+K: 7, fold: 7
+K: 7, fold: 8
+K: 7, fold: 9
+K: 7, fold: 10
+K: 8, fold: 1
+K: 8, fold: 2
+K: 8, fold: 3
+K: 8, fold: 4
+K: 8, fold: 5
+K: 8, fold: 6
+K: 8, fold: 7
+K: 8, fold: 8
+K: 8, fold: 9
+K: 8, fold: 10
+K: 9, fold: 1
+K: 9, fold: 2
+K: 9, fold: 3
+K: 9, fold: 4
+K: 9, fold: 5
+K: 9, fold: 6
+K: 9, fold: 7
+K: 9, fold: 8
+K: 9, fold: 9
+K: 9, fold: 10
+K: 10, fold: 1
+K: 10, fold: 2
+K: 10, fold: 3
+K: 10, fold: 4
+K: 10, fold: 5
+K: 10, fold: 6
+K: 10, fold: 7
+K: 10, fold: 8
+K: 10, fold: 9
+K: 10, fold: 10</pre><h2>Plot the evolution in log likelihood<a name="6"></a></h2><pre class="codeinput">errorbar(Kvals,mean(outlike,2),std(outlike,1,2)./sqrt(N));
+xlabel(<span class="string">'K'</span>);
+ylabel(<span class="string">'Average held-out likelidood (+- standard error)'</span>);
+</pre><img vspace="5" hspace="5" src="gmixcv_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.13<br></p></div><!--
+##### SOURCE BEGIN #####
+%% gmixcv.m
+% From A First Course in Machine Learning, Chapter 6.
+% Simon Rogers, 01/11/11 [simon.rogers@glasgow.ac.uk]
+% Fitting a Gaussian mixture
+clear all;close all;
+path(path,'../utilities');
+
+%% Load the data
+load ../data/kmeansdata
+
+
+%% Plot the data
+figure(1);hold off
+plot(X(:,1),X(:,2),'ko');
+
+
+%% Do a 10-fold CV
+NFold = 10;
+N = size(X,1);
+sizes = repmat(floor(N/NFold),1,NFold);
+sizes(end) = sizes(end) + N - sum(sizes);
+csizes = [0 cumsum(sizes)];
+order = randperm(N); % Randomise the data order
+MaxIts = 100;
+%% Loop over K
+Kvals = 1:10;
+for kv = 1:length(Kvals)
+    K = Kvals(kv);
+    for fold = 1:NFold
+        fprintf('\nK: %g, fold: %g',K,fold);
+        foldindex = order(csizes(fold)+1:csizes(fold+1));
+        trainX = X;
+        trainX(foldindex,:) = [];
+        testX = X(foldindex,:);
+        
+        % Train the mixture
+        means = randn(K,2);
+        for k = 1:K
+            covs(:,:,k) = rand*eye(2);
+        end
+        priors = repmat(1/K,1,K);
+        B = [];
+        B(1) = -inf;
+        converged = 0;
+        it = 0;
+        tol = 1e-2;
+        Ntrain = size(trainX,1);
+        D = size(X,2);
+        while 1
+            it = it + 1;
+            % Update q
+            temp = zeros(Ntrain,K);
+            for k = 1:K
+                const = -(D/2)*log(2*pi) - 0.5*log(det(covs(:,:,k)));
+                Xm = trainX - repmat(means(k,:),Ntrain,1);
+                temp(:,k) = const - 0.5 * diag(Xm*inv(covs(:,:,k))*Xm');
+            end
+
+            % Compute the Bound on the likelihood
+            if it>1
+                B(it) = sum(sum(q.*log(repmat(priors,Ntrain,1)))) + ...
+                    sum(sum(q.*temp)) - ...
+                    sum(sum(q.*log(q)));
+                if abs(B(it)-B(it-1))<tol
+                    converged = 1;
+
+                end
+            end
+
+            if converged == 1 || it>MaxIts
+                break
+            end
+
+            temp = temp + repmat(priors,Ntrain,1);
+
+            q = exp(temp - repmat(max(temp,[],2),1,K));
+            % Minor hack for numerical issues - stops the code crashing when
+            % clusters are empty
+            q(q<1e-3) = 1e-3;
+            q(q>1-1e-3) = 1-1e-3;
+            q = q./repmat(sum(q,2),1,K);
+            % Update priors
+            priors = mean(q,1);
+            % Update means
+            for k = 1:K
+                means(k,:) = sum(trainX.*repmat(q(:,k),1,D),1)./sum(q(:,k));
+            end
+            % update covariances
+            for k = 1:K
+                Xm = trainX - repmat(means(k,:),Ntrain,1);
+                covs(:,:,k) = (Xm.*repmat(q(:,k),1,D))'*Xm;
+                covs(:,:,k) = covs(:,:,k)./sum(q(:,k));
+            end
+
+
+        end
+        
+        
+        
+        % Compute the held-out likelihood
+        Ntest = size(testX,1);
+        temp = zeros(Ntest,K);
+        for k = 1:K
+            const = -(D/2)*log(2*pi) - 0.5*log(det(covs(:,:,k)));
+                Xm = testX - repmat(means(k,:),Ntest,1);
+                temp(:,k) = const - 0.5 * diag(Xm*inv(covs(:,:,k))*Xm');
+                
+        end
+        temp = exp(temp).*repmat(priors,Ntest,1);
+        outlike(kv,csizes(fold)+1:csizes(fold+1)) = log(sum(temp,2))';
+        
+        
+    end
+end
+
+%% Plot the evolution in log likelihood
+errorbar(Kvals,mean(outlike,2),std(outlike,1,2)./sqrt(N));
+xlabel('K');
+ylabel('Average held-out likelidood (+- standard error)');
+##### SOURCE END #####
+--></body></html>

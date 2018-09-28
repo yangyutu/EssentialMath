@@ -1,0 +1,1303 @@
+
+\begin{refsection}
+\startcontents[chapters]
+\chapter{Markov Chains}\label{ch:markov-chains}
+	
+\printcontents[chapters]{}{1}{}
+\section{Discrete-time Markov chain }
+\begin{definition}[Markov chain]\index{Markov chain}
+Consider a discrete stochastic process $\{X_n\}$ with a countable state space $E$; that is for $\omega \in \Omega, X_n(\omega) \in E$.
+The discrete stochastic process $\{X_n\}$ is called a Markov chian if
+$$P(X_{n+1}=j|X_0,X_1,...X_n) = P(X_{n+1}=j|X_n)$$
+\end{definition}
+\begin{remark}
+A Markov chain is a sequence of random variables such that for any $n$, $X_{n+1}$ is conditionally independent of $X_0,X_1,...X_{n-1}$ given $X_n$. Note that this is simply conditionally independence, because $X_{n+1}$ is generally not independent of any $X_{i},i\leq n$.
+\end{remark}
+
+
+\begin{definition}[Markov chain, stochastic matrix]
+A stationary finite-state Markov chain can also be denoted as a pair $(S,P)$, where $S$ is the finite state space, $P$ is the transition probability matrix with $P_{i,j} = P(X_{n+1}=j|X_n=i), X_i\in S$. $P$ is also known as the \textbf{stochastic matrix}, with row sum equals 1.
+\end{definition}
+
+
+\begin{remark}[The stochastic matrix can be quite 'irregular']
+The stochastic matrix $P$ associated with a Markov chain can have: 
+	\begin{itemize}
+	\item Eigenvalues  can be positive and negative, zero and even complex.
+	\item The matrix might not be diagonalized.
+	\item 	Absolute values of the eigenvalues must be bounded by 1. 
+\end{itemize}. See \autoref{ch:markov-chains:sec:spectral-properties} for more details.
+\end{remark}
+
+
+
+\section{Evolution of discrete chain}
+\subsection{Chapman-Kolmogov Equation}\index{Chapman-Kolmogov Equation}
+\begin{lemma}[Chapman-Kolmogov Equation]\label{ch:markov-chains:th:Chapman-KolmogovEquation}
+Let $P$ be the transition matrix of a Markov chain with state space $S$.
+$$P(X_n = j| X_0=i) = \sum_k P(X_n=j|X_m=k)P(X_m=k|X_0=i)$$
+where $1\leq m \leq n-1$.	
+\end{lemma}
+\begin{proof}
+Use the law of total probability(\autoref{ch:theory-of-probability:th:lawoftotalprobability}).
+\end{proof}
+
+\begin{corollary}
+	
+\end{corollary}
+
+
+
+\subsection{Kolmogorov forward \& backward  Equation}
+
+\begin{lemma}[Kolmogorov forward equation]\index{Kolmogorov forward equation}
+Let $x(n)$ be the probability row vector at step $n$, we have 
+$$x(n+1)=x(n)P \Leftrightarrow x(n)=x(0)P^n$$
+\end{lemma}
+\begin{proof}
+Straight forward.
+\end{proof}
+
+
+\begin{lemma}[Kolmogorov backward equation]\index{Kolmogorov backward equation}\label{ch:markov-chains:th:KolmogorovbackwardequationDiscreteTimeMarkovChain}
+Define $v(k,t) = E[f(X_T)|X(t) = k]$. Then
+$$v(k,t-1) =\sum_m P_{km}v(m,t).$$
+More compactly,
+$$v(\cdot,t-1) = Pv(\cdot,t).$$	
+\end{lemma}
+\begin{proof}
+\begin{align*}
+v(k,t) &= E[f(X_T)|X(t) = k] \\
+v(k,t-1) &=E[f(X_T)|X(t-1) = k] \\
+&= \sum_{m}E[f(X_T)|X(t) = m] P(X(t)=m|X(t-1)=k) 
+\end{align*}
+\end{proof}
+
+\begin{remark}
+For analog in Fokker-Planck equation, see \autoref{ch:fokker-planck-equation:th:FokkerPlanckBackwardEquationOnExpectationQuantityUsingAdjointOperator}. 	
+\end{remark}
+
+
+
+
+
+\section{Matrix structure and absorption}
+\subsection{General results}
+\begin{definition}[canonical form of Markov chain]\cite[239]{luenberger1979introduction} By ordering closed class states and followed by transient class states, we can write the transition matrix in the partitioned form as
+	$$P = \begin{pmatrix}
+	P_1 & 0 \\ R & Q
+	\end{pmatrix}$$
+	where $P_1 \in \R^{r\times r}$ is the stochastic matrix between $r$ states within closed class, $R \in \R^{(n-r)\times r}$ is the stochastic matrix for $n-r$ transient states to $r$ states in closed class, $Q \in \R^{(n-r)\times r}$ is the stochastic matrix between $n-r$ states within closed class.
+\end{definition}
+
+\begin{remark}\hfill
+	\begin{itemize}
+		\item The (left) eigenvectors corresponding to the eigenvalue 1 must have the form $p^T=[p_1^T, 0]$, where $p_1^T$ is $r$ dimensional probability vector, representing that \textbf{only states in closed class can occur with positive probability in equilibrium}. 
+		\item The number of eigenvectors corresponding to the eigenvalue 1 equal the number of closed classes. The closed classes act like separate Markov chain and have equilibirium distributions. \textbf{Transient classes cannot sustain an equilibrium.}
+	\end{itemize}
+\end{remark}
+
+\begin{lemma}[existence of fundamental matrix]\index{fundamental matrix}
+	\cite[240]{luenberger1979introduction} The matrix $M = I + Q +Q^2 + Q^3 + ... $ exists and is positive, and $M = (I-Q)^{-1}$. $M \in \R^{r\times r}$ is known as the fundamental matrix. 
+\end{lemma}
+\begin{proof}
+	Because $Q$ is the transition probability for \textbf{transient states}, which means $Q^m\to 0,m\to \infty$. Also, because $I-Q$ is a non-negative matrix with some row sum less than 1 and irreducible, we can use \autoref{ch:linearalgebra:th:GerschgorinTausskytheorem} to show that the eigenvalues of $I-Q$ are bounded away from 0.
+\end{proof}
+
+
+
+\begin{theorem}[mean absorption time]\cite[240]{luenberger1979introduction}\label{ch:markov-chains:th:generalabsorptionmeantime}
+	The element $m_{ij}$ in $M$ is equal to the mean number of times the system state is in transient state $S_j$ if it is initiated in transient state $S_i$.
+\end{theorem}
+\begin{proof}
+	From the definition, we know that $$M_{ij} = I_{ij}+Q_{ij} + Q_{ij}^2 + ... + Q_{ij}^k + ...$$
+	where we interpret $Q_{ij}^k$ as the probability at time $k$ to time $k+1$, the system is at $j$ state. Therefore, the summation will equal to the total time it spends at $j$ state.
+\end{proof}
+
+\begin{remark}[relationship to the power of $P$]
+	\begin{itemize}
+		\item Note that $P^n$ is still a lower triangle block matrix.
+		\item In $P^n$ the lower right block is given by $Q^n$
+	\end{itemize}
+\end{remark}
+
+\begin{corollary}\cite[240]{luenberger1979introduction}
+	The summation of the $i$th row of $M$ is equal to the mean number of steps before entering a closed class when the process is initiated in transient state $S_i$.
+\end{corollary}
+
+
+
+
+\begin{theorem}[absorption probability]\label{ch:markov-chains:th:generalabsorptionprobability}\cite[241]{luenberger1979introduction}
+	Let $B=MR,B\in \R^{(n-r)\times r}$, the $b_{ij}$ is the probability that if a Markov chain starting in transient state $S_i$, it will first enter a closed class via $S_j$ in closed class.
+\end{theorem}
+Proof: $B = R + QB$
+A state $S_i$ in transient class has two possibiliy to enter closed class via $S_j$: (1) it directly enter via $R_{ij}$; (2) it indirectly enter, where $(QB)_{ij}$ is the the system starts at $S_i$ via some intermediate system state $S_k$, and then reach state $j$.
+
+Alternative proof: $B = IR + QR + Q^2R + Q^3R + ...$ gives the probability of entering using 1 step, 2 steps, 3 steps, 4 steps....
+
+\subsection{Absorbing Markov chains}
+\begin{definition}
+	A Markov chain is absorbing if it have at least one absorbing state and if from every state it is possible to go to an absorbing state. An absorbing state $i$ is characterized by $p_{ii} = 1, p_{ij}=0,j\neq i$. 
+\end{definition}
+
+\begin{lemma}[matrix structure]
+	By ordering absorbing states and followed by transient states, we can write the transition matrix in the partitioned form as
+	$$P = \begin{pmatrix}
+	I_r & 0 \\ R & Q
+	\end{pmatrix}$$
+	where $I_r \in \R^{r\times r}$ is the stochastic matrix between $r$ absorbing states, $R \in \R^{(n-r)\times r}$ is the stochastic matrix for $n-r$ transient states to $r$ states in closed class, $Q \in \R^{(n-r)\times r}$ is the stochastic matrix between $n-r$ transient states and absorbing states.
+\end{lemma}
+
+
+
+\begin{lemma}\cite[96]{privault2013understanding}
+	Consider the $M$ state Markov chain. The probability  to reach a specific adsorbing state $i$ is given by $a_1,...,a_M$ such that
+	\begin{itemize}
+		\item $a_i = 1$ for $i$ being an absorbing state.
+		\item $a_i = \sum_{j=1}^m a_jp_{ij}$ for $i$ being a transient state. 
+		\item If we partition the $a$ vector as $a = [a_{ab} ~a_{tran}]$, then we have
+		$$\begin{bmatrix}
+		a_{ab}\\
+		a_{tran}
+		\end{bmatrix} =\begin{bmatrix}
+		I_r & 0 \\ R & Q
+		\end{bmatrix} \begin{bmatrix}
+		a_{ab}\\
+		a_{tran}
+		\end{bmatrix}$$
+		and
+		$$a_{tran} = (I-Q)^{-1}Ra_{ab} = ([(I-Q)^{-1}R]_i)^T$$
+	\end{itemize}
+\end{lemma}
+\begin{proof}
+	(1)(2) 
+	We can use Chapman-Kolmogov Equation(\autoref{ch:markov-chains:th:Chapman-KolmogovEquation}) such that
+	$$P(X_n = i|X_0 = j) = \sum_{k=1}^m P(X_n = i|X_1 = j)P(X_1 = j|X_0 = i).$$
+	Let $A$ be the event of starting from $j$ and arriving $i, i\neq j$, then
+	$$P(A|X_0=j) = \sum_{n=1}^\infty P(X_n = i|X_0 = j) = \sum_{n=1}^\infty P(X_n = i|X_1 = j)$$
+	since $P(X_1=i|X_1=j)=\delta_{ij}$. 
+	Then we have
+	$$P(A|X_0 = j) =a_j= \sum_j a_jp_{ij} = \sum_k P(A|X_0 = a_j)p_{ij} $$
+	(3)\textbf{This is a special case of \autoref{ch:markov-chains:th:generalabsorptionprobability}}.
+\end{proof}
+
+
+
+\begin{corollary}[expected time to adsorption]\cite[99]{privault2013understanding}
+	Consider the $M$ state Markov chain. The expected time  to reach a specific adsorbing state $s$ is given by $u_1,...,u_M$ such that
+	\begin{itemize}
+		\item $u_i = 0$ for $i$ being an absorbing state.
+		\item $u_i = 1 + \sum_{j}^m u_jp_{ij}$ for $i$ being a transient state. 
+		\item If we partition the $u$ vector as $u = [u_{ab} ~u_{tran}]$ with $u_{ab} = 0$, then we have
+		$$\begin{bmatrix}
+		u_{ab}\\
+		u_{tran}
+		\end{bmatrix} =\begin{bmatrix}
+		I_r & 0 \\ R & Q
+		\end{bmatrix} \begin{bmatrix}
+		a_{ab}\\
+		a_{tran}
+		\end{bmatrix} + \begin{bmatrix}
+		0\\
+		\bm{1}
+		\end{bmatrix}$$
+		and
+		$$u_{tran} = (I-Q)^{-1}\bm{1}$$
+		i.e. the row sum of $(I-Q)$
+	\end{itemize}
+\end{corollary}
+
+
+
+\begin{remark}
+	\textbf{This is a special case of \autoref{ch:markov-chains:th:generalabsorptionmeantime}}.
+\end{remark}
+
+
+\subsection{Return time analysis}
+\begin{definition}
+First return time $T^r_j$ to state $j\in S$ is defined as
+$$T_j^r = \inf\{n\geq 1:X_n = j\},$$
+and the mean (first) return time starting from $i$ is defined as
+$$\mu_j(i) = E[T_j^r|X_0 = i].$$
+
+	
+	
+First hitting time probability $f_{i,j}^{(n)}$ si defined as
+$$f_{i,j}^{(n)} = P(T_{j}^r = n|X_0 = i) = P(X_n=j,X_{n-1}\neq j, \dots, X_1 \neq =j|X_0 = i).$$
+\end{definition}
+
+
+\begin{lemma}[governing equation for first return time]\cite[104]{privault2013understanding}\label{ch:markov-chains:th:governingequationreturntime}
+Let $i$ be the starting state and $j$ be the finishing state. Then
+$$\mu_j(i) = 1 + \sum_{l\in S,l\neq i}P_{i,l}\mu_j(l),\forall i,j\in S.$$
+\end{lemma}
+\begin{proof}
+Using conditional expectation.
+\end{proof}
+
+
+\begin{remark}[mean first hitting time vs. mean first return time]\cite[104]{privault2013understanding}\hfill
+Let $i$ be the starting state and $j$ be the finishing state. Let $h_j(i)$ and $\mu_j(i)$  be the hitting time and return time. Then
+\begin{itemize}
+	\item If $i \neq j$, then $h_j(i) = \mu_j(i)$.
+	\item If $i = j$, then $$\mu_j(j) = 1 + \sum_{l\neq j}P_{j,l}h_j(l), \forall j\in S.$$
+\end{itemize}
+\end{remark}
+
+
+\begin{lemma}
+The return probability is related to first hitting time probability via
+$$p_{ij} = \sum_{n=1}^\infty P(X_n=j,X_{n-1}\neq j, \dots, X_1 \neq =j|X_0 = i) = \sum_{n=1}^\infty f_{i,i}^{(n)}.$$
+\end{lemma}
+
+
+
+
+
+
+\subsection{Example: consecutive coin toss game}\index{consecutive coin toss}
+
+\begin{example}[consecutive coin toss]A fair coin is tossed repeatedly until 5 consecutive heads occurs. What is the expected number of coin tosses?\\
+	Solution: Let $e$ be the expected number of tosses. 
+	We have the following situations:
+	\begin{itemize}
+		\item If we get a tail immediately, the expected number is $e+1$.
+		\item If we get a head and then a tail, the expected number is $e+2$.
+		\item If we get two heads and then a tail, the expected number is $e+3$ 
+		\item If we get 3 heads and then a tail, the expected number is $e+4$ 
+		\item If we get 4 heads and then a tail, the expected number is $e+4$
+		\item If we get 5, the expected number is $5$  
+	\end{itemize}
+	Then, we have
+	$$e = \frac{1}{2}(e+1) + \frac{1}{2^2}(e + 2) + \cdots + \frac{1}{2^5}(e+5) + \frac{1}{2^5}5,$$
+	which gives $e = 62$.
+\end{example}
+
+\begin{remark}\hfill
+	\begin{itemize}
+		\item The different scenarios cannot contain same 'substring'
+		\item This can generalize the biased coin straight forward. 
+	\end{itemize}
+\end{remark}
+
+\begin{lemma}
+	Let $p$ be the probability of flipping a head. Let $x$ be the number of flips needed to to achieve $h$ consecutive heads. Then 
+	$$E[x] = \frac{1-p^h}{p^h(1-p)}.$$
+\end{lemma}
+
+\begin{remark}
+	For excellent examples, see \cite[110]{zhou2008practical}.
+\end{remark}
+
+
+\section{Classification of states}
+\subsection{Elmentary approach}
+\begin{definition}[accessibility and communicate]
+\cite[235]{luenberger1979introduction}Given a Markov chain $(S,P)$, we say that state $i$ can \textbf{access} $j$ if there exist a positive integer $m$ such that $P^m_{ij} >0$. We say two states $i$ and $j$ \textbf{communicate} if there exist two positive integers $k_1$ and $k_2$ such that $p^{k_1}_{ij} > 0$ and $p^{k_2}_{ji} > 0$, i.e., $i$ and $j$ can access each other.
+\end{definition}
+\begin{remark}\hfill
+\begin{itemize}
+    \item In other words, states $i$ and $j$ can communicate if both can be reached from the other with positive possibility. 
+    \item The property of accessibility is not symmetric: if state $i$ can access state $j$, $j$ not necessarily can access $i$.
+\end{itemize}
+\end{remark}
+\smallskip
+
+
+\begin{lemma}[partition the state space via communication relationship]
+Communication is a equivalence relationship; The state space of a Markov chain can be divided into communicating classes. Each state within a class communicating with every other state in the class, and with no other state. 
+\end{lemma}
+\begin{proof}
+It is easy to show that communication satisfies the transitivity, reflectivity and symmetric conditions.(We only show transitivity, if $A$ can access $B$ in $k$ step, $B$ can access $C$ in $m$ step, then we must have $A$ can access $C$ in $m+k$ step using the Chapman-Kolmogov equation.)  
+\end{proof}
+
+
+\begin{remark}\hfill
+\begin{itemize}
+\item A communicating class can contains only one state.    
+\item There are \textbf{only two types of communicating classes: adsorbing class and transient class}. When system enters into an adsorbing class, it will never get out.When system enters into a transient class, it will eventually get out.  
+\end{itemize}
+\end{remark}
+
+
+
+\begin{definition}[recurrent/closed/adsorbing class of states] Let $\tilde{S}\subset S$ such that 
+\begin{itemize}
+    \item All states in $\tilde{S}$ communicate
+    \item If $i\in \tilde{S},j \notin \tilde{S}$, then $p^k_{ij} = 0 \forall k$
+\end{itemize} 
+then we say $\tilde{S}$ form a \textbf{recurrent/closed/adsorbing} class of states.
+\end{definition} 
+
+\begin{remark}[interpretation]\hfill
+\begin{itemize}
+    \item states in a closed class have zero probability to access states outside.
+    \item states outside might access state inside, and once entering into this class, it has no chance of leaving; therefore it is also called adsorbing class. 
+\end{itemize}
+\end{remark}
+
+\begin{definition}[transient class of states]
+\cite[237]{luenberger1979introduction} A communicating class $C$ is transient if some state outside of $C$ is accessible from $C$, or equivalently, there must exist at least one path from one of its members to some state outside the class.
+\end{definition}
+
+\iffalse
+\begin{definition}[transient states, alternative] A states belongs to some recurrent class is a recurrent state; otherwise it is transient states. We have
+$$\lim_{k\rightarrow \infty} p^k_{ii} = 0 ~ \text{if and only if i is transient}$$
+State $j$ is absorbing if and only if $P(j,j)=1$.
+\end{definition}
+\fi
+
+\begin{example}
+Consider a random walk defined on $\cN$ with walking property $p\neq 0.5$. Then all of its states are transient, because the recurrent probability for any state is less than 1.\cite[70]{privault2013understanding} 
+\end{example}
+
+
+\begin{lemma}\cite[237]{luenberger1979introduction}
+Every finite state Markov chain must have at least one closed communicating class.
+\end{lemma}
+\begin{proof}
+Suppose there is no closed class, then there are only transient classes. By definition, every transient class has at least one path pointing outside. Because every class is transient, which means eventually there is zero probability in it. However, total probability has to sum to 1, therefore contradiction. 
+\end{proof}
+
+
+
+\begin{lemma}\cite[237]{luenberger1979introduction}
+The system state of a finite Markov chain will eventually with probability 1 enter some closed communicating class.
+\end{lemma}
+\begin{proof}
+As the step $k \to \infty$, the probability of system state lying in transient state will be 0 (by definition). Therefore, the probability of system state can only accumulate at some closed class.
+\end{proof}
+
+
+\begin{definition}
+[irreducible] If $S$ is itself a recurrent class of state(i.e. all states in $S$ communicate), then the Markov chain is irreducible.
+\end{definition}
+
+
+\subsection{Classification using recurrence}
+\begin{definition}[period of a state in a Markov chain]\index{period in Markov chain}\index{aperiodic Markov chain}\cite[165]{gallager2013stochastic}\cite[125]{privault2013understanding}
+	The period of a state $i$, denoted by $d(i)$, is the greatest common divisor of values of $n$ such that $P^n_{ii} > 0$. If the period is 1, the state is \textbf{aperiodic}; if the period is 2 or more, the state is periodic. 
+\end{definition}
+
+\begin{remark}
+	By definition, a state with $P_{ii} > 0$ is an aperiodic state.
+\end{remark}
+
+\begin{theorem}\cite[166]{gallager2013stochastic}
+	For any Markov chain(with either finite or countable infinite states), all states in the same class have the same period.
+\end{theorem}
+
+
+
+
+
+
+
+\begin{remark}
+Note that if $\{n\geq 1: P^n_{ii} > 0\}$ contains two distinct numbers that are relatively prime to each other, then the state $i$ is aperiodic.
+\end{remark}
+
+
+\begin{remark}[why aperiodicity is necessary]
+	If a Markov has periodicity of 2, then $P^{2k+1}_{ii} = 0$ for some states, therefore, no matter how large is $k$, $P$ will still have zero entries. 
+\end{remark}
+
+
+\begin{remark}
+	The significance of this theorem is a specific estimation of iteration step $m$ is given such that every state can jump to any other states. 
+\end{remark}
+
+\begin{definition}[recurrent state, transient state]\index{recurent state}\index{transient state}\cite[121]{privault2013understanding}
+	\begin{itemize}
+		\item A state $i\in S$ is recurrent if starting from state $i$, the chain will return to $i$ within a finite (random) time, with probability 1. Formally, $P(T_i^r<\infty|X_0 = i) = 1.$
+		\item A state $i$ is transient if it is not recurrent. Formally, 
+		$P(T_i^r<\infty|X_0 = i) < 1$ or $P(T_i^r=\infty|X_0 = i) > 0.$
+	\end{itemize}
+\end{definition}
+
+
+
+\begin{definition}[positive recurrent, null recurrent]\index{positive recurrent}\index{null recurrent}\cite[125]{privault2013understanding}
+	A \textbf{recurrent} state $i\in S$ is said to be \textbf{positive recurrent} if the mean recurrent time
+	$$\mu_i = E[T_i^r|X_0=i] < \infty,$$
+	and \textbf{null recurrent} if
+	$$\mu_i = E[T_i^r|X_0=i] = \infty.$$
+\end{definition}
+
+\begin{remark}[why distinguish positive recurrent and null recurrent]
+	For a finite state Markov chain, there is not null recurrent states. However, in the infinite state Markov chains, there exist both positive recurrent and null recurrent.
+\end{remark}
+
+
+\begin{example}
+	All states of a  simple random walk defined on $\N$ are \textbf{recurrent and null recurrent}. 
+\end{example}
+
+\begin{lemma}[finite state space chain are positive recurrent]\cite[125]{privault2013understanding}\hfill
+	\begin{itemize}
+		\item If a Markov chain has a finite state space, then all of its recurrent states are positive recurrent.
+		\item An irreducible Markov chain with finite state space have all its states being positive recurrent.
+	\end{itemize}
+\end{lemma}
+\begin{proof}
+	Use the governing equation for mean return time \autoref{ch:markov-chains:th:governingequationreturntime} we know that all mean return time have to finite; otherwise, all of them will be infinite.
+\end{proof}
+
+
+\begin{definition}[ergodic class of states, ergodicity]\index{ergodic train}
+	A recurrent state $i\in S$ is said to be ergodic if it is both positive recurrent and aperiodic. 
+	For a finite-state Markov chain, an ergodic class of states is a class that is both recurrent and aperiodic. A Markov chain consisting entirely of one ergodic class is called an\textbf{ergodic chain.}
+\end{definition}
+
+\begin{definition}[unichain]\cite[169]{gallager2013stochastic}
+	A unichain is a finite-state Markov chain that contains a single recurrent class plus, perhaps, some transient states. An ergodic unichain is a unichain for which the recurrent class is ergodic(i.e. aperiodic). 
+\end{definition}
+
+
+\begin{theorem}\cite[167]{gallager2013stochastic}
+	For an ergodic $M$ state Markov chain, $P^m_{ij} > 0$ for all $i,j$ and all $m > (M-1)^2 + 1$
+\end{theorem}
+
+
+
+\begin{table}[H]
+	\centering
+	\caption{Summary of Markov chain state property\cite[140]{privault2013understanding}}
+	\label{ch:markov-chains:table:summaryofmarkovchain}
+	\begin{tabular}{|l|l|}
+		\hline
+		\textbf{Property}         & \textbf{Definition}                              \\ \hline
+		absorbing(state)          & $P_{i,i}=1$                                      \\ \hline
+		recurrent(state)          & $P(T_i^r < \infty|X_0=i)=1$                      \\ \hline
+		transient(state)          & $P(T_i^r < \infty|X_0=i)<1$                      \\ \hline
+		positive recurrent(state) & recurrent and $E[T_i^r|X_0=i]<\infty$            \\ \hline
+		null recurrent(state)     & recurrent and $E[T_i^r|X_0=i]=\infty$            \\ \hline
+		aperiodic(state or chain) & period = 1                                       \\ \hline
+		ergodic(state or chain)   & positive recurrent and aperiodic                 \\ \hline
+		irreducible(chain)        & all states communicate                           \\ \hline
+		regular                   & all coefficients of $P^n > 0$ for some $n\geq 1$ \\ \hline
+	\end{tabular}
+\end{table}
+
+
+
+\section{Limiting behavior \& distributions}
+\subsection{Limiting theorem}
+\begin{theorem}
+\cite[238]{luenberger1979introduction} Any state of a finite Markov chain is with probability 1 to eventually enter some closed communicating class.
+\end{theorem}
+\begin{proof}
+Directly from the definitions of transient class and adsorbing/closed classes.
+\end{proof}
+
+\begin{theorem}
+Let $P$ be a stochastic matrix corresponding to a Markov chain, then it has a eigenvalue of largest \emph{absolute} value 1.
+\end{theorem}
+\begin{proof}
+directly from the boundedness of Frobienius-Perron eigenvalue.
+\end{proof}
+
+
+\begin{definition}[stationary distribution, invariant distribution]\index{stationary distribution}\index{invariant distribution}
+	Consider a discrete Markov chain characterized by transition matrix $P$. A stochastic vector $\pi$ is called stationary distribution, or invariant distribution if $$\pi P = \pi$$
+\end{definition}
+\begin{remark}[existence and uniqueness of stationary distribution]
+The stationary distribution might not exists(such as periodic chains); even if it exists, it might not be unique(for example, a chain that is not irreducible might have multiple stationary distribution.)
+\end{remark}
+
+\begin{theorem}[Basic limit theorem for Markov chain(aperiodic, irreducible and positive recurrent)]
+\cite[230]{luenberger1979introduction}\label{ch:markov-chains:th:basiclimittheoremmarkovchain}\cite[133]{privault2013understanding}Let $P$ be the transition matrix of an irreducible and aperiodic Markov chain with all states being positive recurrent. Then:
+\begin{enumerate}
+\item There is an unique probability vector(which is the stationary distribution) $\pi > 0$ such that
+$$\pi^T P = \pi^T$$
+\item $p^T = \lim_{m \to \infty} e_i^T P^m$
+\item $\lim_{m \to \infty} P^m = \bar{P}$, where $\bar{P}$ is a matrix with each row equals $p^T$.
+\item $\pi_i = \frac{1}{\mu_i(i)}$, where $\mu_i(i)$ is the mean return time to state $i$ from state $i$.
+\end{enumerate}
+\end{theorem}
+\begin{proof}
+(1) directly from Frobenius-Perron theorem that there exists an eigenvalue of 1(\autoref{ch:linearalgebra:th:Frobeniusperroneigenvalue}); (2) since $\lambda_0$ is the dominant eigenvalue, any initial distribution is converge to it; (3) This is a restatement of (2): let $P^m = P^{m-1} P$ and view $P^{m-1}$ as a collection of row probability vectors. (4)(informal) large mean return time means the chain visit the state less frequently. 
+\end{proof}
+
+\begin{remark}[interpretation and extensions]\cite[170]{gallager2013stochastic}
+\begin{itemize}
+	\item If there are $c$ recurrent classes, then we will have $c$ linearly independent equilibrium probability vector, each non-zero only over the elements of the corresponding recurrent class.
+	\item If the Markov chain has one or more periodic recurrent classes, then $P^n$ does not converge.
+\end{itemize}
+\end{remark}
+
+\begin{theorem}[Limit theorem for Markov chain(aperiodic, irreducible and recurrent)]
+	\cite[130]{privault2013understanding}Let $P$ be the transition matrix of an irreducible and aperiodic Markov chain with all states being positive recurrent. Then:
+	\begin{enumerate}
+		\item $\lim_{n \to \infty} P(X_n=i|X_0=j) = 1/\mu_i(i)$, where $\mu_i(i)$ is the mean recurrent time starting from state $i$ to $i$.
+	\end{enumerate}
+\end{theorem}
+
+
+\begin{remark}[consequence of null recurrent states]
+When the chain is just recurrent but not positive recurrent, there might exist null recurrent states such that the chain does not have stationary distribution.
+\end{remark}
+
+\begin{remark}[implications for existence of null recurrent state]
+For a aperiodic and irreducible Markov chain that has infinite state space, it must contain null recurrent state such that their mean recurrent time is zero. Otherwise, the sum of the limiting jump probability will exceed 1. 
+	
+\end{remark}
+
+
+\begin{example}
+Consider a random walk defined on $\N$. This Markov chain is aperiodic, irreducible and recurrent. Its limiting distribution is 0, and it does not have stationary distribution.
+\end{example}
+
+
+
+\subsection{Detailed balance}
+\begin{definition}[detailed balance]\index{detailed balance}\cite[230]{robert2013monte}
+A discrete Markov chain $X$ with transition matrix $P$ is said to satisfy the detailed balance condition with respect to $\pi$ if there exists a row vector $\pi$ (not necessarily sum to 1) such that
+$$\pi_i P_{ij} = \pi_j P_{ji}$$ 	
+\end{definition}
+
+
+
+
+
+\begin{theorem}[detailed balance implies existence of unique  stationary distribution]\label{ch:markov-chains:th:detailedbalance}\cite[230]{robert2013monte}
+If an irreducible, positive recurrent, and aperiodic Markov chain $X$ with transition matrix $P$  satisfies the detailed balance condition with respect to a stochastic vector $\pi$, then $\pi$ is the stationary distribution; that is
+$$\pi P = \pi$$
+\end{theorem}
+\begin{proof}
+From detailed balance, we have
+$$\pi_i P_{ij} = \pi_j P_{ji}$$
+Sum up each side, we have
+\begin{align*}
+\sum_i \pi_i P_{ij} &= \sum_i\pi_j P_{ji}\\
+\Rightarrow (\pi P)_j &= \pi_j
+\end{align*}
+Uniqueness is guaranteed by the fact that stationary distribution is unique.
+\end{proof}
+
+\begin{remark}[detailed balance is sufficient but not necessary]
+It is not necessary, for example, for the cyclic chain $X_1\to X_2\to X_3\to X_1$, which has stationary distribution of $(1/3,1/3,1/3)$, but it does not satisfy detailed balance condition.
+\end{remark}
+
+
+\begin{remark}[How to check detailed balance]\hfill
+\begin{itemize}
+	\item For an irreducible, positive recurrent, and aperiodic chain, we know that there exists an unique stationary distribution $\pi$. Then we can verify whether $\pi$ satisfy $\pi_i P_{ij} = \pi_j P_{ji}$.
+	\item Usually it is difficult to check if there exists a detailed balanced distribution from observation of matrix structure.
+\end{itemize}
+ 
+\end{remark}
+
+
+
+\section{Reversibility}
+\subsection{Concepts}
+\begin{definition}[reversible process]\index{reverisble process}\cite[5]{kelly2011reversibility}
+	A stochastic process $X(t), t\in \R$ is reversible if $(X(t_1),X(t_2),...,X(t_n)$ has the same distribution as
+	$(X(\tau-t_1),X(\tau-t_2),...,X(\tau - t_n))$ for all $t_1,t_2,...,t_n,\tau \in \R$.	
+\end{definition}
+
+
+\begin{lemma}[necessary condition for reversible processes]\cite[5]{kelly2011reversibility}\label{ch:markov-chains:th:reversibleprocessisstationary}
+	A reversible process is strictly stationary.
+\end{lemma}
+\begin{proof}
+	Since $X(t)$ is reversible, then both $X(t_1,...,X(t_n))$ and $(X(t_1 + \tau), ...,X(t_n + \tau))$ have the same distribution as
+	$(X(-t_1),...,X(-t_n))$. 
+\end{proof}
+
+\begin{lemma}[sufficient and necessary condition for reversible chain]\cite[6]{kelly2011reversibility}\label{ch:markov-chains:th:detailedbalanceequivalenttoreversibility}
+	A stationary Markov chain is reversible if and only if there exists a stationary measure $\pi$ such that
+	$$\pi_i P_{ij} = \pi_j P_{ji}.$$
+\end{lemma}
+\begin{proof}
+(1) First suppose the process is reversible, then we have joint probability equality from the definition of reversible process
+$$P(X(t) = j,X(t+1) = k) = P(X(t)=k,X(t+1)=j).$$
+Since the process is stationary(\autoref{ch:markov-chains:th:reversibleprocessisstationary}), we have $P(X(t) = j)$ does not depend on $t$. Let $\pi_j = P(X(t)=j)$, then
+$$\pi_j P_{jk} = \pi_k P_{kj},$$
+which is detailed balance.
+(2) conversely. Suppose we have detailed balance, then
+$$P(X(t)=j_0,X(t+1)=j_1,...,X(t+m)=j_m) = \pi_{j_0}P_{j_0,j_1}P_{j_1,j_2}\cdots P_{j_{m-1},j_m}$$
+and
+$$P(X(t)=j_m,X(t+1)=j_{m-1},...,X(t+m)=j_0) = \pi_{j_m}P_{j_{m},j_{m-1}}P_{j_{m-1},j_{m-2}}\cdots P_{j_{1},j_0}$$
+are equal. Therefore, they are reversible chain.
+\end{proof}
+
+\begin{remark}[interpretation]
+Given a Markov chain satisfying detailed balance such that there exist a stationary distribution. If we start the chain from this stationary distribution, then we get a reversible chain/process, which is strictly stationary.
+\end{remark}
+
+
+\subsection{Entropy \& irreversibility}
+\begin{definition}[entropy productionc]
+Given a Markov chain with stationary distribution $\pi$, we define
+$$S(i,j) = \ln\frac{\pi_i P_{ij}}{\pi_j P_{ji}}$$
+as the entropy production for system transit from $i$ to $j$. 
+
+\end{definition}
+
+\begin{remark}[interpretation]\hfill
+\begin{itemize}
+	\item If $S(i,j) =0, \forall i$, then detailed balance is satisfied and the chain is reversible.
+	\item The larger $S(i,j)$, the more irreversible from $i$ to $j$.
+\end{itemize}
+\end{remark}
+
+
+
+\section{Spectral properties}\label{ch:markov-chains:sec:spectral-properties}
+\begin{lemma}[eigenvalues of stochastic matrix]
+	The stochastic matrix $P$ of a Markov chain always has eigenvalue 1. And all other eigenvalues $\abs{\lambda} \leq 1$		
+\end{lemma}
+\begin{proof}
+	Directly from \autoref{ch:linearalgebra:th:Frobeniusperroneigenvalue} and \autoref{ch:linearalgebra:th:boundednessFrobeniusperroneigenvalue}. Another proof: since row sum is 1, then we always have right eigenvalue of 1 with eigenvector $\bm{1}$. Since left and right eigenvalues are the same. We always have eigenvalue of 1. Let $\eta$ be a left eigenvector with eigenvalue $\lambda$. Then
+	$$\lambda \eta_i = \sum_j \eta_j p_{ij}.$$
+	So
+	$$\abs{\lambda}\sum_i \abs{eta_i} \leq \sum_i\abs{\sum_j \eta_j p_{ij}} \leq \sum_{ij}\abs{\eta_j}p_{ij} = \sum_j \abs{\eta_j}.$$
+	therefore, $$\abs{\lambda} \leq 1.$$
+\end{proof}
+
+\begin{example}[eigenvalue can be 0]
+The stochastic matrix $$A = \begin{pmatrix}
+0 & 1\\
+0 & 1
+\end{pmatrix}$$
+have eigenvalue 1 and 0, with associated eigenvector $[0, 1]$ and $[\sqrt{2}/2, -\sqrt{2}/2]$. \textbf{Note that the eigenvector can contain positive and negative entries at the same time}. Usually, these types of eigenvector does not have meaningful interpretation in terms of probability flow, but only have mathematical interpretation.
+\end{example}
+
+
+\begin{example}[eigenvalue can be negative]
+	The stochastic matrix $$A = \begin{pmatrix}
+	0 & 1\\
+	1 & 0
+	\end{pmatrix}$$
+	have eigenvalue 1 and -1, with associated eigenvector $[\sqrt{2}/2, \sqrt{2}/2]$ and $[\sqrt{2}/2, -\sqrt{2}/2]$. \textbf{Note that the eigenvalues can contain negative values and it is difficult to interpret its meaning in terms of probability flow}.
+\end{example}
+
+\begin{example}[eigenvalues can have multiple 1]
+	The stochastic matrix $$A = \begin{pmatrix}
+	1 & 0\\
+	0 & 1
+	\end{pmatrix}$$
+	have eigenvalue 1 and 1.
+\end{example}
+
+\begin{example}[eigenvalue might be complex number]
+	The stochastic matrix $$A = \begin{pmatrix}
+	0 & 0 & 1\\
+	1 & 0 & 0\\
+	0 & 1 & 0
+	\end{pmatrix}$$
+	have eigenvalue 1 and $-\frac{1}{2}\pm i \sqrt{3}/2$.
+\end{example}
+
+\begin{example}[stochastic matrix might not be diagonalized]
+	The stochastic matrix $$A = \begin{pmatrix}
+	5/12 & 5/12 & 1/6\\
+	1/4 & 1/4 & 1/2\\
+	1/3 & 1/3 & 1/3
+	\end{pmatrix}$$
+	cannot be diagonalized.
+\end{example}
+
+\begin{remark}[possible value range of eigenvalues]\hfill
+	\begin{itemize}
+		\item Eigenvalues of a Markov chain can be positive and negative, zero and even complex.
+		\item The matrix might not be diagonalized.
+		\item 	Absolute values of the eigenvalues must be bounded by 1. 
+	\end{itemize}
+\end{remark}
+
+\begin{remark}[interpretation in terms of probability mass flow]
+\begin{itemize}
+	\item For an eigenvector associated with eigenvalue 1, components of the eigenvector must all be positive or all be negative. 
+	\item For an eigenvector associated with real number not equal 1, component must contain both negative and positive. If all be positive or all be negative, then the probability mass is not conserved.
+\end{itemize}
+\end{remark}
+
+\begin{theorem}[spectral decomposition of Markov chain satisfying detailed balance]\label{ch:markov-chains:th:detailedbalancechainspectrum}
+Let $P$ be the stochastic matrix associated with a Markov chain. Further assumes that $P$ satisfies detailed balance. Then 
+\begin{itemize}
+	\item $P$ can be symmetrized via
+	$V = \Pi P \Pi^{-1}$
+	where $\Pi$ is the diagonal matrix with entries $\sqrt{\pi_1},...,\sqrt{\pi_n}$($\pi = (\pi_1,...,\pi_n)$ is the equilibrium probability vector).
+	\item Let $\lambda_1,...,\lambda_n$ and $w_1,...,w_n$ be the \textbf{real eigenvalues} and unit eigenvectors of $V$. Then $P$ has the \textbf{same real eigenvalues}. The left eigenvectors of $P$ are given as
+	$$\psi_j = \Pi w_j$$
+	The right eigenvectors of $P$ are given as 
+	$$\phi_j = \Pi^{-1} w_j$$
+	\item $P$ has the following spectral decomposition:
+	$$P = \sum_{k=1}^n \lambda_k \phi_k\psi_k^T = \sum_{k=1}^n \lambda_k \Pi^2\phi_k\phi_k^T$$
+	\item Except for the first eigenvalue having value 1, then all other eigenvalues with their absolute value strictly less than 1.
+\end{itemize}
+\end{theorem}
+\begin{proof}
+(1)(2)(3)
+Since $V$ is symmetric, it will have real eigenvalues. Moreover, 
+we have $V = \Pi P \Pi^{-1}, V = W\Lambda W^{-1}$, then
+it can be showed that
+$$(\Pi W)^T P = W^T\Pi \Pi^{-1} W \lambda W^TPi = \Lambda (\Pi W)^T$$
+that is, $\Pi W$ are the left eigenvector matrix. Similarly, we can prove the rest.
+(4) Because \autoref{ch:markov-chains:th:detailedbalance}.
+\end{proof}
+
+\begin{remark}[How to check detailed balance]\hfill
+	\begin{itemize}
+		\item For an irreducible, positive recurrent, and aperiodic chain, we know that there exists an unique stationary distribution $\pi$. Then we can verify whether $\pi$ satisfy $\pi_i P_{ij} = \pi_j P_{ji}$.
+		\item Usually it is difficult to check if there exists a detailed balanced distribution from observation of matrix structure.
+	\end{itemize}	
+\end{remark}
+
+
+\begin{mdframed}
+\textbf{Caution!}:
+\begin{itemize}
+	\item Usually, most of stochastic matrices(including irreducible matrices) cannot be diagonalized.
+	\item Detailed balance is one sufficient condition that enables the matrix to be diagonalized.
+\end{itemize}
+\end{mdframed}
+
+\begin{corollary}[kinetics on a detailed balance Markov chain]
+On a detailed balance Markov chain of $M$ states,denoted by stochastic matrix $P$, we can decompose a given probability vector $v$ as
+$$v = \sum_{i=1}^{M} a_i^{(0)} w_i$$
+where $w_i$ are the left eigenvalues of $P$. The coefficients $a_i$ evolves as
+$$a_i^{(n+1)} = \lambda_i a_i^{(n)},i=1,2,...,M$$
+where $\lambda_i$ are the eigenvalues of $P$.
+
+\end{corollary}
+
+\begin{remark}[interpretation]
+The first $k$ slowest non-trivial kinetics is characterized by the first $k$ largest non-trivial eigenvalues.That is, the smaller the eigenvalue, the faster the kinetics.	
+\end{remark}
+
+
+\section{Random walk on Graph}
+\begin{definition}
+Random walk on an undirected graph $G(V,E)$ is given by the transition matrix $$P_{ij} = \begin{cases}
+1/deg(i), if ~ (i,j)\in E\\
+0, otherwise
+\end{cases}$$
+\end{definition}
+
+\begin{lemma}
+For random walk on an undirected graph, its transition matrix $P$ will satisfy 
+\begin{itemize}
+	\item $P$ is irreducible if and only if $G$ is connected.
+	\item $P$ is aperiodic if and only if $G$ is non-bipartite.
+	\item $P$ is reversible with respect to $\pi(i) = deg(i)/2\abs{E}$.
+\end{itemize}
+\end{lemma}
+\begin{proof}
+It can be showed that $\pi(i) = deg(i)/2\abs{E}$ is stationary and satisfies detailed balance. Therefore, it is reversible from theorem(\autoref{ch:markov-chains:th:detailedbalanceequivalenttoreversibility}).
+\end{proof}
+
+\begin{example}[Pagerank algorithm as random walk on directed graph]\index{Pagerank}
+Consider a \textbf{directed graph}. Further assume the graph is connected. Let the transition matrix $$P_{ij} = \begin{cases}
+1/deg(i), if ~ (i,j)\in E\\
+0, otherwise
+\end{cases}.$$
+Because this is an irreducible, finite state, and aperiodic Markov chain, there exists an unique stationary distribution. The value of the stationary distribution will simply be the rank(importance) of the web/node. 
+\end{example}
+
+\begin{example}[Modified Pagerank algorithm for disconnected nodes]\index{Pagerank}
+	Consider a \textbf{directed graph}.  Let the transition matrix $$P_{ij} = \begin{cases}
+	1/deg(i), if ~ (i,j)\in E\\
+	0, otherwise
+	\end{cases}.$$
+	Let $M = (1-\lambda)P + \lambda J$
+	where $J_{ij} = \frac{1}{n}$.
+	Then $M$ will be an irreducible, finite state, and aperiodic Markov chain, there exists an unique stationary distribution. The value of the stationary distribution will simply be the rank(importance) of the web/node. 
+\end{example}
+
+
+
+\section{Notes on bibliography}
+For detailed description of non-negative matrix theory,see \cite{meyer2000matrix}\cite{cinlar2013introduction}.
+
+For elementary treatment on Markov chains, see \cite{privault2013understanding}\cite{Holmes-Cerfon2015applied}\cite{luenberger1979introduction}. In particular, for hitting time analysis in Markov chain, see \cite{privault2013understanding}.
+
+For in-depth treatment on Markov chains, see \cite{gallager2013stochastic}\cite{sericola2013markov}\cite{He2007stochastic}.
+
+For treatment of Markov chains from the perspective of non-negative matrix theory, see \cite{seneta2006non}.
+
+For Markov process, see\cite{pavliotis2014stochastic}.
+
+For random walks on graph, see \cite{lovasz1993random}.
+
+\printbibliography
+\end{refsection}
+\begin{refsection}
+\startcontents[chapters]	
+\chapter{Continuous-time Markov chain}\label{ch:continuous-time-markov-chain}
+%\minitoc
+\printcontents[chapters]{}{1}{}
+\section{Continuous-time Markov chain}
+\begin{definition}[continuous-time Markov chain]\index{continuous-time Markov chain}
+Let $X(t)$ be a stochastic process with continuous time and a finite or countable state space $S$, which can be represented as a subset of integers. $X(t)$ is called a continuous-time Markov chain if $$P(X_{t_n}|X_{t_{n-1}},...,X_{t_{1}}) = P(X_{t_n}|X_{t_{n-1}})$$
+for any sequence $t_1 < t_2 < ...< t_n$ of times.
+\end{definition}
+
+\begin{definition}[transition probability family]
+The transition probability for a homogeneous continuous-time Markov chain is a family of stochastic process parameterized by time lag $t$, $P(t) \in \R^{\abs{S}\times \abs{S}}$
+\end{definition}
+
+\begin{remark}
+For a homogeneous continuous-time Markov chain the transition probability is parameterized by $s,t, P(s,t) \in \R^{\abs{S}\times \abs{S}}$
+\end{remark}
+
+\begin{theorem}[semigroup of transition probability family]
+The transition probability famility $P_t= P(t)$ is a stochastic semigroup: that is it satisfies the following
+\begin{itemize}
+    \item $P_0 = I$
+    \item $P_t$ is a stochastic matrix
+    \item $P_{s+t}=P_sP_t$
+    \item $P_s$ and $P_t$ commute, i.e., $P_sP_t = P_tP_s$
+\end{itemize}
+\end{theorem}
+
+\begin{lemma}[non-singularity of transition matrix ]
+	The transition matrix $P(t)$ of a continuous-time Markov chain is nonsingular; moreover $det(P(t)) > 0$.
+\end{lemma}
+\begin{proof}
+(1)First method: $P(t) = \exp(Qt) \implies P(t)\exp(-Qt) = I$, therefore $det(P(t))\neq 0$. We know that $P(t) = (P(t/2))^2. Det(P(t)) = Det(P(t/2))^2 > 0$.
+\end{proof}
+
+
+
+
+\begin{definition}[generator]\cite[180]{privault2013understanding}
+The generator of the Markov chain is 
+$$Q = \lim_{h\to 0+} \frac{P(h)-I}{h}$$
+\end{definition}
+
+\begin{lemma}[property of generator]
+The row of the generator $Q$ always sum up to 0. As a consequence, $Q$ has an eigenvalue 0 with eigenvector 1.
+\end{lemma}
+\begin{proof}
+(finite case) use the exchange of limits and summation because of linearity of limits.
+\end{proof}
+
+
+
+
+
+\subsection{Governing equations for transition matrix}
+
+
+
+\begin{lemma}
+Let $P_t$ be the transition probability matrix, let $Q$ be the generator, then
+\begin{itemize}
+	\item governing equation $P'(t) = QP(t) = P(t)Q$
+	\item $P$ commute with $Q$.
+	\item $P(t) = e^{Qt}P(0) = e^{Qt}$.
+\end{itemize}
+\end{lemma}
+\begin{proof}
+\begin{align*}
+P'(t) = \lim_{h\to0+} \frac{P(t+h)-P(t)}{h}&=\lim_{h\to0+} \frac{P(h)-P(0)}{h}P(t)\\
+&=\lim_{h\to0+} P(t)\frac{P(h)-P(0)}{h} = QP(t)=P(t)Q   
+\end{align*}
+
+$$\dot{P}(t) = P(t)Q \Rightarrow P(t) = \exp(Qt)P(0) = \exp(Qt).$$
+\end{proof}
+
+
+\begin{corollary}[discrete-time approximation]
+Given a generator $Q$ of a Markov chain, then the short-time interval $h$ approximation for the transition matrix,
+	$$P(h) \approx I + \sum_{n=0}^k \frac{h^n}{n!}Q^n,$$
+	where $h$ is the time step.
+\end{corollary}
+\begin{proof}
+	Use $P(t) = \exp(Qt)$ and Taylor expansion.
+\end{proof}
+\subsection{Kolmogorov Equations}
+\begin{lemma}[forward Kolmogorov equation, master equation]\index{forward Kolmogorov equation}\index{master equation}
+Let $\mu(t)$ be the probability row vector, then
+$$\frac{d\mu}{dt} = \mu Q $$
+with solution
+$$\mu(t) = \mu(0)\exp(Qt)$$
+\end{lemma}
+\begin{proof}
+	$$\frac{d\mu}{dt} = \lim_{h\to 0^+} \frac{\mu(t+h) - \mu(t)}{h} = \lim_{h\to 0^+} \mu(t)\frac{P(h) - I}{h} = \mu(t)Q.$$
+\end{proof}
+
+\begin{remark}
+This forward Kolmogorov equation also known as master equation.
+\end{remark}
+
+
+\begin{lemma}[backward Kolmogorov equation]\index{backward Kolmogorov equation}\cite[39]{pavliotis2014stochastic}
+	Consider the function $u(x,t) = (P_tf)(x) = E[f(X_t)|X_0=x]$.Then the time derivative gives
+	$$\frac{\Pa u}{\Pa t} = \frac{d}{dt}(P_tf) = \frac{d}{dt}(e^{t\cL}f) = \cL u.$$
+	with the in condition $u(x,0) = f(x)$.
+	Let $u(t)$ be the probability row vector, then
+	$$\frac{du}{dt} = Qu \Rightarrow u(t) = \mu(t)Q$$
+	with solution
+	$$\mu(t) = \mu(0)\exp(Qt)$$
+\end{lemma}
+\begin{proof}
+	$$\frac{d\mu}{dt} = \lim_{h\to 0^+} \frac{\mu(t+h) - \mu(t)}{h} = \lim_{h\to 0^+} \mu(t)\frac{P(h) - I}{h} = \mu(t)Q.$$
+\end{proof}
+
+
+\begin{lemma}[mean first passage time]Let $S$ be the state space, let $A\subset S$, and let $T_A = \min\{n\geq 0:X(t)\in A\}$. Let $\tau_j = E[T_A|X_0 = j]$ be the mean first passage time. 
+	Then
+	$$\begin{cases}
+	\tau_j = 0, j\in A\\
+	1 + \sum_{k} q_{jk}\tau_k = 0, j\notin A
+	\end{cases}$$
+which can also be written as
+$$Q\tau = -1, \tau(A) = 0.$$
+	
+\end{lemma}
+
+
+
+
+\section{Birth \& death processes}
+\subsection{Canonical birth and death processes}
+\begin{definition}[birth process]\cite[180]{privault2013understanding} Let state space $S=\{0,1,2,...\}$
+A continuous-time Markov chain $X_t$ such that 
+\begin{align*}
+P(X_{t+h} - X_t = 1| X_t = i) &= \lambda_i h + o(h)\\
+P(X_{t+h} - X_t = 0| X_t = i) &= 1 - \lambda_i h + o(h)
+\end{align*}
+is a pure birth process with state-dependent birth rate $\lambda_i\geq 0$.
+
+\end{definition}
+
+\begin{lemma}
+	The pure birth process has a generator matrix $Q$ is given as
+	$$Q = \begin{pmatrix}
+	-\lambda_0 & \lambda_0 & 0 & 0 & \dots\\ 
+	0 & -\lambda_1 & \lambda_1 & 0 & \dots\\ 
+	0 & 0 & -\lambda_2 & \lambda_2 & \dots\\ 
+	\vdots & \vdots & \vdots & \vdots & \vdots 
+	\end{pmatrix}.$$
+\end{lemma}
+\begin{proof}
+Directly from definition $$Q = \lim_{h\to 0}\frac{P(h) - I}{h}.$$
+\end{proof}
+
+\begin{lemma}[waiting time distribution]
+Consider a pure birth process with initial state $X_0 = i$. The waiting time $\tau_i$ for a new birth following exponential distribution 
+$$p(\tau_i = t) = \lambda_i \exp(-\lambda_i t).$$
+\end{lemma}
+\begin{proof}
+Note that $$p(\tau_i > t+h) - p(\tau_i > t)=  (- \lambda_i h)p(\tau_i > t).$$
+Both sides divided by $h\to 0$ and we can get an ODE to solve.
+\end{proof}
+
+
+\begin{definition}[death process]\index{death process}\cite[180]{privault2013understanding} Let state space $S=\{0,-1,-2,...\}$
+	A continuous-time Markov chain $X_t$ such that 
+	\begin{align*}
+	P(X_{t+h} - X_t = -1| X_t = i) &= \mu_i h + o(h)\\
+	P(X_{t+h} - X_t = 0| X_t = i) &= 1 - \mu_i h + o(h)\\
+	\end{align*}
+	is a pure death process with state-dependent death rate $\mu_i\geq 0$.
+\end{definition}
+
+
+\begin{definition}[birth and death process]\index{birth and death process}\cite[176]{privault2013understanding} Let state space $S=\Z$
+	A continuous-time Markov chain $X_t$ such that 
+	\begin{align*}
+	P(X_{t+h} - X_t = -1| X_t = i) &= \mu_i h + o(h)\\
+	P(X_{t+h} - X_t = 1| X_t = i) &= \lambda_i h + o(h)\\	
+	P(X_{t+h} - X_t = 0| X_t = i) &= 1 - \mu_i h + o(h)\\
+	\end{align*}
+	is a birth and death process with state-dependent death rate $\mu_i\geq 0$ and birth rate $\lambda_i\geq 0$.
+\end{definition}
+
+\begin{lemma}
+	The birth and death process has a generator matrix $Q$ is given as
+	$$Q=\begin{pmatrix}
+	-\lambda_0 & \lambda_0 & 0 & 0 & 0 & \dots \\ 
+	\mu_1 & -\lambda_1-\mu_1 & \lambda_1 & 0 & 0 & \dots\\ 
+	0 & \mu_2 & -\lambda_2-\mu_2 & \lambda_2 & 0 & \dots\\ 
+	0 & 0 & \mu_3 & -\lambda_3-\mu_3  & \lambda_3 & \dots\\ 
+	\vdots & \vdots & \vdots  & \ddots & \ddots & \ddots\\ 
+	\vdots & \vdots  & \vdots &\vdots  & \ddots & \ddots
+	\end{pmatrix}.$$
+\end{lemma}
+\begin{proof}
+	Directly from definition $$Q = \lim_{h\to 0}\frac{P(h) - I}{h}.$$
+\end{proof}
+
+\subsection{Poisson process}\index{Poisson process}\label{ch:continuous-time-markov-chain:def:Poissonprocess}
+\begin{definition}[Poisson process]Let state space $S=\{0,1,2,...\}$
+	A continuous-time Markov chain $X_t$ such that 
+	\begin{align*}
+	P(X_{t+h} - X_t = 1| X_t = i) &= \lambda h + o(h)\\
+	P(X_{t+h} - X_t = 0| X_t = i) &= 1 - \lambda h + o(h)
+	\end{align*}
+	is a Poisson process with  rate $\lambda\geq 0$.
+\end{definition}
+
+\begin{remark}
+Poisson process is a special case of birth process.	
+\end{remark}
+
+\begin{lemma}[Poisson process as a continuous-time Markov chain]
+	The Poisson process with rate $\lambda$ is defined as a Markov chain on $S=\{0,1,2,...\}$ with generator
+	$$\begin{pmatrix}
+	-\lambda & \lambda & 0 & 0 & \dots\\ 
+	0 & -\lambda & \lambda & 0 & \dots\\ 
+	0 & 0 & -\lambda & \lambda & \dots\\ 
+	\vdots & \vdots & \vdots & \vdots & \vdots 
+	\end{pmatrix}$$
+\end{lemma}
+\begin{proof}
+	Directly from definition $$Q = \lim_{h\to 0}\frac{P(h) - I}{h}.$$
+\end{proof}
+
+\begin{lemma}[transition matrix]
+The Poisson process with rate $\lambda$ has the following transition matrix
+$$P(t) = \exp(Qt) = \begin{pmatrix}
+e^{-\lambda t} & \lambda te^{-\lambda t} & \frac{\lambda^2t^2}{2}e^{-\lambda t} & \dots\\ 
+0 & e^{-\lambda t} & \lambda te^{-\lambda t} & \dots \\ 
+0 & 0 & e^{-\lambda t} & \dots \\ 
+\vdots & \vdots & \vdots & \ddots
+\end{pmatrix}$$	
+\end{lemma}
+\begin{proof}
+Use
+$$\exp(Qt) = I + Qt + \frac{1}{2}(Qt)^2 + \cdots.$$
+Another method is to calculate the generalized eigendecomposition of $Q$.
+\end{proof}
+
+\section{Limiting behavior}
+\begin{definition}[stationary distribution]\cite[191]{privault2013understanding}
+A probability distribution $\pi$ is said to be stationary for $P(t)$ if
+$$\pi P(t) = \pi,t\in \R_+.$$
+\end{definition}
+
+\begin{theorem}[sufficient and necessary condition for stationary distribution]
+Given a continuous-time Markov chain characterized by the generator $Q$, a probability distribution $\pi,\sum_i \pi_i$ is stationary if and only if
+	$$\pi Q = 0.$$
+\end{theorem}
+\begin{proof}
+(1) forward.
+$$\pi P(t) = \pi \exp(Qt) = \pi \sum_{n=0}^\infty \frac{t^n}{n!}Q^n = \pi$$
+(2) converse.differentiate the relation $\pi P(t)=\pi $ at $t = 0$, we have
+$$\pi P'(0) = 0 \implies \pi QP(0) = \pi Q I = 0.$$
+\end{proof}
+
+\begin{remark}[interpretation and detailed balance issue]\hfill
+\begin{itemize}
+	\item Note that $d\pi/dt = \pi Q$,$\pi Q =0$ means the net probability flow into any state is zero.
+	\item $\pi Q =0$ does not guarantee detailed balance, which is required $\pi_iQ_{ij} = \pi_j Q_{ji}$. 
+\end{itemize}
+\end{remark}
+
+
+
+\begin{lemma}[calculation of stationary distribution]\hfill
+\begin{itemize}
+	\item $Q$ must have eigenvalue of 0,i.e., $Q$ is singular.
+	\item $\pi$ is a left eigenvector of $Q$ corresponding to eigenvalue 0.
+\end{itemize}
+\end{lemma}
+\begin{proof}
+Because row sum of $Q$ is zero, then $Q$ has an right eigenvector of 1 associated with eigenvalue of 0. Because left and right eigenvalues are the same(\autoref{ch:linearalgebra:th:leftrighteigenvalue}).
+\end{proof}
+
+
+
+\begin{remark}[stationary distribution is not unique]
+The dimensionality of the eigenspace corresponding to eigenvalue 0 might be greater than 1.  
+\end{remark}
+
+\begin{example}[stationary probability for birth-death process]
+Consider a birth and death process defined on $\cN$ with generator
+	$$Q=\begin{pmatrix}
+	-\lambda_0 & \lambda_0 & 0 & 0 & 0 & \dots \\ 
+	\mu_1 & -\lambda_1-\mu_1 & \lambda_1 & 0 & 0 & \dots\\ 
+	0 & \mu_2 & -\lambda_2-\mu_2 & \lambda_2 & 0 & \dots\\ 
+	0 & 0 & \mu_3 & -\lambda_3-\mu_3  & \lambda_3 & \dots\\ 
+	\vdots & \vdots & \vdots  & \ddots & \ddots & \ddots\\ 
+	\vdots & \vdots  & \vdots &\vdots  & \ddots & \ddots
+	\end{pmatrix}.$$
+Let $\pi = (\pi_0,\pi_1,...)$ be the stationary distribution, we have
+\begin{align*}
+0 &= -\lambda_0\pi_0 + \mu_1\pi_1 \\
+0 &= \lambda_0\pi_0 -(\lambda_1+\mu_1)\pi_1 + \mu_2\pi_2 \\
+\vdots
+\end{align*}
+with constraint $\sum_i \pi_i = 1$.
+\end{example}
+
+
+\begin{lemma}[detailed balance implies stationary, not converse]
+Let $Q$ be the generator of a Markov chain, if a probability vector $\pi$ satisfying 
+$\pi_iQ_{ij} = \pi_j Q_{ji}$, then
+$\pi$ is stationary distribution. 
+\end{lemma}
+\begin{proof}
+	$\sum_j \pi_i Q_{ij} = 0 = \sum_j \pi_j Q_{ji},\forall i$, that is $\pi Q = 0$.
+\end{proof}
+
+\section{Reversibility}
+
+
+\section{Discrete time embedded chain}
+\begin{definition}[jump time]\cite[200]{privault2013understanding}
+Consider the sequence $T_n$ as the sequence of jump times of the continuous-time Markov chain $X_t$, defined recursively by 
+\begin{align*}
+T_0 &= 0\\
+T_1 &=\inf\{t>0:X_t\neq X_0\}\\
+T_{n+1} &= \inf\{t>T_n: X_t\neq X_{T_n}\}, n\in \N.
+\end{align*}
+\end{definition}
+
+\begin{lemma}[jump time interval distribution, stay time]
+Let $Q$ be the generator of a continuous-time Markov chain. The interval $\tau$ for a jump from state $i$ to occur is a exponential distribution with parameter $\theta = \sum_{j\neq i}q_{ij}$ with mean 
+$1/\theta$.
+\end{lemma}
+\begin{proof}
+The jump can be viewed as the sum of independent Poisson process.
+\end{proof}
+
+
+\begin{definition}[discrete time embedded chain]\index{discrete time embedded chain}
+The discrete time embedded chain of a continuous-time Markov chain $X_t$ is the discrete-time Markov chain $Z_n$ defined by $$Z_0 = X_0, Z_n = X_{T_n}, n\geq 1.$$
+\end{definition}
+
+\begin{lemma}[transition matrix of embedded chain]\cite[218]{He2007stochastic}
+Let $Q$ be the generator of a continuous-time Markov chain, let $S$ be the stochastic matrix of the embedded Markov chain. Then,
+$$S = I - (diag Q)^{-1}Q.$$
+More explicitly, 
+$$S_{ij} = \begin{cases}
+\frac{q_{ij}}{\sum_{k\neq i} q_{ik}}, i\neq j, q_{ii} > 0\\
+0, i = j, q_{ii} > 0.\\
+1, i=j,q_{ii} = 0
+\end{cases}$$
+\end{lemma}
+
+\begin{remark}
+The transition probability to different states is proportional their rates. 
+\end{remark}
+
+\begin{example}
+	$$P(t) = \frac{1}{5}\begin{pmatrix}
+	2+3e^{-3t} & 1-e^{-3t} & 2-2e^{-3t}\\ 
+2-2e^{-3t} & 1+4e^{-3t} &2-2e^{-3t} \\ 
+2-2e^{-3t} & 1-e^{-3t} & 2+3e^{-3t}
+\end{pmatrix}$$
+Then,
+\begin{itemize}
+	\item The generator $Q$ is given as
+	$$Q = P'(0) = \frac{1}{5}\begin{pmatrix}
+	-9 & 3 & 6\\ 
+	6 & -12 & 6\\ 
+	6 & 3 & -9
+	\end{pmatrix}.$$
+	\item The mean time for staying at states $1,2,3$ are
+	$$\frac{1}{q_{11}} = 5/9,\frac{1}{q_{22}} = 5/12,\frac{1}{q_{33}} = 5/9.$$
+	\item The transition matrix for the embedded chain is
+	$$\begin{pmatrix}
+	0 & 1/3 & 2/3\\ 
+	1/2 & 0 & 1/2\\ 
+	2/3 & 1/3 & 0
+	\end{pmatrix}$$
+\end{itemize}
+
+\end{example}
+
+
+
+\begin{remark}[adsorbing probability \& time]\cite[200]{privault2013understanding}
+\begin{itemize}
+	\item The adsorbing probability of the continuous-time Markov chain can be calculated using the embedded chain. 
+	\item The mean adsorbing time can be calculated using the embedded chain to set up linear equations except that the waiting time for jumps is $1/\sum_{j\neq i}q_{ij}$ instead of $1$. 
+\end{itemize}
+\end{remark}
+
+\section{Master equation}\index{master equation}
+\begin{definition}
+	Consider a stationary process. \textbf{Assume} 
+	$$P(n,t+\Delta t|n',t) = \begin{cases}
+	1 - k(n)\Delta t + o(\Delta t), if ~ n=n'\\
+	T(n|n')\Delta t + o(\Delta t), if ~ n\neq n'
+	\end{cases}$$
+	where $k(n)$ the jump out probability, $k(n) = \sum_{n'\neq n}T(n'|n)$. Then
+	$$\frac{dP(n,t)}{dt} = \sum_{n'\neq n}T(n|n')P(n',t) - \sum_{n'\neq n} T(n'|n) P(n,t)$$
+\end{definition}
+
+
+\begin{definition}[master equation in matrix form]
+	$$\frac{dP}{dt} = PA$$
+	where $P$ is a row vector(element $i$ represents state $i$), and $A$ is the transition rate matrix with entry $(i,j)$ representing transition rate from $i$ to $j$.
+\end{definition}
+
+\begin{remark}[structure of $A$]
+	If only neighboring states are transitioning to each other, then $A$ is sparse; If every pair of states may have a connection, then $A$ is dense.
+\end{remark}
+
+\begin{remark}[master equation vs. Markov chain]
+	The master equation is a Markov chain in the limit where time is continuous.
+\end{remark}
+
+
+\begin{definition}[generalized master equation]
+	$$\frac{dP}{dt} = \int_0^t P(\tau)A(t-\tau)d\tau,$$
+	where $P$ is a column vector(element $i$ represents state $i$), and $A$ is the transition rate matrix. 
+\end{definition}
+
+
+\begin{example}
+	$$\frac{dP(n,t)}{dt} = (n+1)P(n+1,t) - nP(n,t),n\in \cN$$
+	where on the right hand side, the first term is the death from $n+1$, and the second term is the birth from $n$.
+\end{example}
+
+
+\subsection{Kramers-Moyal expansions}
+
+\begin{lemma}
+The master equation is
+$$\frac{\Pa P(y,t)}{\Pa t} = \int dr W(y-r;r)P(y-r,t) - \int dr W(y;-r)P(y,t),$$
+where the first term is the probability flowing into $y$ and the second term is the probability flowing out of $y$,and $W(y;r)$ is the transition rate at $y$ with step size $r$. 
+\end{lemma}
+
+
+
+\begin{lemma}[Kramers-Moyal expansion]
+The Kramers-Moyal expansion of the master equation
+$$\frac{\Pa P(y,t)}{\Pa t} = \sum_{m=1}^\infty \frac{(-1)^m}{m!} \frac{\Pa^m}{\Pa y^m}[a^{(m)}(y,t)P(y,t)],$$
+where 
+$a^{(m)}(y,t) = \int dr r^m W(y;r)$, and $W(y;r)$ is the transition rate at $y$ with step size $r$. 
+\end{lemma}
+\begin{proof}
+From the master equation 
+$$\frac{\Pa P(y,t)}{\Pa t} = \int dr W(y-r;r)P(y-r,t) - \int dr W(y;-r)P(y,t),$$
+we expand the first term
+$$\int dr W(y-r;r)P(y-r,t) = \int dr W(y;r)P(y,t) + \sum_{m=1}^\infty \frac{(-1)^m}{m!} \frac{\Pa^m}{\Pa y^m}[\int dr r^m W(y;r)P(y,t)].$$
+\end{proof}
+
+
+
+\begin{remark}[interpretation]\hfill
+\begin{itemize}
+	\item $a^{(m)}(y,t) = \int dr r^m W(y;r)$ is the moment of displacements/jumps.
+	\item Master equation is more general than Fokker-Planck equation. The expansion truncated at second order (when the noise is Gaussian, higher moments will vanish when $\Delta t\to 0$.) will gives the Fokker-Planck equation.
+\end{itemize}
+\end{remark}
+
+
+\section{Notes on bibliography}
+For detailed description of non-negative matrix theory,see \cite{meyer2000matrix}\cite{cinlar2013introduction}.
+
+For elementary treatment on Markov chains, see \cite{privault2013understanding}\cite{Holmes-Cerfon2015applied}\cite{luenberger1979introduction}. In particular, for hitting time analysis in Markov chain, see \cite{privault2013understanding}.
+
+For in-depth treatment on Markov chains, see \cite{gallager2013stochastic}\cite{sericola2013markov}\cite{He2007stochastic}.
+
+For treatment of Markov chains from the perspective of non-negative matrix theory, see \cite{seneta2006non}.
+
+For Markov process, see\cite{pavliotis2014stochastic}.
+
+
+
+\printbibliography
+\end{refsection}

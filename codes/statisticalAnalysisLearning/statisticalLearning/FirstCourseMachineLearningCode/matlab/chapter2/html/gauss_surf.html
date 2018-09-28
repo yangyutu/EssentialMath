@@ -1,0 +1,106 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>gauss_surf</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2011-11-01"><meta name="DC.source" content="gauss_surf.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">gauss_surf.m</a></li><li><a href="#2">The Multi-variate Gaussian pdf is given by:</a></li><li><a href="#3">Define the Gaussian</a></li><li><a href="#4">Define the grid for visualisation</a></li><li><a href="#5">Define the constant</a></li><li><a href="#6">Make the plots</a></li></ul></div><h2>gauss_surf.m<a name="1"></a></h2><p>From A First Course in Machine Learning, Chapter 2. Simon Rogers, 01/11/11 [simon.rogers@glasgow.ac.uk] Surface and contour plots of a Gaussian</p><pre class="codeinput">clear <span class="string">all</span>;close <span class="string">all</span>;
+</pre><h2>The Multi-variate Gaussian pdf is given by:<a name="2"></a></h2><p><img src="gauss_surf_eq43081.png" alt="$p(\mathbf{x}|\mu,\Sigma) = \frac{1}{(2\pi)^{D/2}|\Sigma|^{1/2}}\exp\left\{-\frac{1}{2}(\mathbf{x}-\mu)^T\Sigma^{-1}(\mathbf{x}-\mu)\right\}$"></p><h2>Define the Gaussian<a name="3"></a></h2><pre class="codeinput">mu = [1;2];
+sigma = [1 0.8;0.8 4];
+</pre><h2>Define the grid for visualisation<a name="4"></a></h2><pre class="codeinput">[X,Y] = meshgrid(-5:0.1:5,-5:0.1:5);
+</pre><h2>Define the constant<a name="5"></a></h2><pre class="codeinput">const = (1/sqrt(2*pi))^2;
+const = const./sqrt(det(sigma));
+temp = [X(:)-mu(1) Y(:)-mu(2)];
+pdfv = const*exp(-0.5*diag(temp*inv(sigma)*temp'));
+pdfv = reshape(pdfv,size(X));
+</pre><h2>Make the plots<a name="6"></a></h2><pre class="codeinput">figure(1);hold <span class="string">off</span>
+contour(X,Y,pdfv);
+figure(2);hold <span class="string">off</span>
+surf(X,Y,pdfv);
+</pre><img vspace="5" hspace="5" src="gauss_surf_01.png" alt=""> <img vspace="5" hspace="5" src="gauss_surf_02.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% gauss_surf.m
+% From A First Course in Machine Learning, Chapter 2.
+% Simon Rogers, 01/11/11 [simon.rogers@glasgow.ac.uk]
+% Surface and contour plots of a Gaussian
+clear all;close all;
+%% The Multi-variate Gaussian pdf is given by:
+% $p(\mathbf{x}|\mu,\Sigma) =
+% \frac{1}{(2\pi)^{D/2}|\Sigma|^{1/2}}\exp\left\{-\frac{1}{2}(\mathbf{x}-\mu)^T\Sigma^{-1}(\mathbf{x}-\mu)\right\}$
+%% Define the Gaussian
+mu = [1;2];
+sigma = [1 0.8;0.8 4];
+%% Define the grid for visualisation
+[X,Y] = meshgrid(-5:0.1:5,-5:0.1:5);
+%% Define the constant
+const = (1/sqrt(2*pi))^2;
+const = const./sqrt(det(sigma));
+temp = [X(:)-mu(1) Y(:)-mu(2)];
+pdfv = const*exp(-0.5*diag(temp*inv(sigma)*temp'));
+pdfv = reshape(pdfv,size(X));
+%% Make the plots
+figure(1);hold off
+contour(X,Y,pdfv);
+figure(2);hold off
+surf(X,Y,pdfv);
+##### SOURCE END #####
+--></body></html>

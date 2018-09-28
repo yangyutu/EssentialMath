@@ -1,0 +1,846 @@
+
+\begin{refsection}
+\startcontents[chapters]	
+\chapter{Common notations and facts}\label{appendix}
+
+\printcontents[chapters]{}{1}{}
+\section{Some common spaces}\label{appendix:sec:some-common-spaces}
+The metric space $(\R^n,d_2)$ is the set $\R^n$ with metric $d_2(x,y) = \sqrt{\sum_{i=1}^n (x_i - y_i)^2}$.
+
+\cite[122]{johnsonbaugh2010foundations}The metric space $l^2$ is the set of all infinite sequence of real or complex numbers $\{x_1,x_2,...\}$ such that $\sum_{i=1}\infty x_i^2 < \infty$,i.e., $\sum_{i=1}\infty x_i^2$ converges. The metric is usually defined as $$d_2(\{x_n\},\{y_n\}) = \sqrt{\sum_{k=1}^\infty (x_i-y_i)^2}$$ 
+
+The metric space $l^p, 1\leq p < \infty$,is the set of all infinite sequence of real or complex numbers $\{x_1,x_2,...\}$ such that $\sum_{i=1}\infty \abs{x_i}^p < \infty$,i.e., $\sum_{i=1}\infty \abs{x_i}^p$ converges. The metric is usually defined as $$d_p(\{x_n\},\{y_n\}) = \sqrt[p]{\sum_{k=1}^\infty (x_i-y_i)^p}$$
+
+The metric space $l^\infty$, is the set all infinite sequence of real or complex numbers $\{x_1,x_2,...\}$ such that every $x_i$ is bounded. The metric is defined as
+$$d_\infty(\{x_n\},\{y_n\}) = \sup_n \abs{x_n-y_n}$$
+
+
+\cite[75]{moon2000mathematical}.The metric space $C[a,b] = (C[a,b],d_\infty)$ denote the set of real-valued(or complex valued) functions defined on the interval $[a,b]$. The metric $d_\infty$ is given as
+$$d_\infty(x,y) = \sup_t \abs{x(t)-y(t)}$$
+
+
+\begin{remark}
+\textbf{Caution!} Sometimes $C[a,b]$ refers to only continuous functions.\cite[23]{luenberger1969optimization}
+\end{remark}
+
+The metric space $(C[a,b],d_p)$ denote the set of real-valued(or complex valued) functions defined on the interval $[a,b]$. The metric $d_p$ is given as
+$$d_p(x,y) = [\int_a^b\abs{x(t)-y(t)}^pdt]^{1/p}$$
+where $1 \leq p < \infty$.\cite[75]{moon2000mathematical}.
+
+
+
+The vector space $\mathcal{L}(V,W)$ usually denotes the set of all linear operators from $V$ into $W$.
+
+\subsection{Notations on continuously differentiable functions}
+\begin{itemize}
+    \item $C^0$ refers to continuous function
+    \item $C^1$ refers to functions having continuous first derivatives, also called continuously differentiable functions.
+    \item $C^2$ refers to functions having continuous second derivatives
+    \item $C^\infty$ refers to smooth functions
+\end{itemize}
+
+\section{Different modes of continuity}
+Chain of inclusions for functions over a closed and bounded subset of the real line
+$$continuouslyDifferntiable \subseteq LipschitzContinouous\subseteq UniformlyContinuous $$
+
+\begin{remark}\hfill
+\begin{itemize}
+    \item Continuously differentiable on a closed interval indicates the derivative is bounded $f' \leq M$, then we have
+    $$\abs{f(x)-f(y)} = f'(s)\abs{x-y} \leq M \abs{x-y}$$
+    hence Lipschitz continuous.
+    \item $f(x)=\abs{x}$ is Lipschitz continuous but is not  differentiable everywhere except at $x=0$, therefore it is not continously differentiable.
+    \item Lipschitz continuous $\to$ continous: 
+    $$\abs{f(x)-f(y)} \leq L\abs{x-y} \to 0$$ as $\abs{x-y} \to 0$
+\end{itemize}
+\end{remark}
+
+
+\begin{lemma}[differentiable implies continuous]
+If $f$ is differentiable on $[a,b]$, then it is continuous on $[a,b]$.
+\end{lemma}
+Proof: 
+\begin{align*}
+   \lim_{y\to x} f(y)-f(x) = \lim_{y\to x} (y-x)(f(y)-f(x))/(y-x)= \\
+   \lim_{y\to x} (y-x)\lim_{y\to x}(f(y)-f(x))/(y-x) = 0 
+\end{align*}
+where we have use the property that if two limits exist then they can multiply.\cite[42]{johnsonbaugh2010foundations}.
+
+\begin{remark}
+This lemma indicates that a function differentiable everywhere will be continous everywhere.
+\end{remark}
+
+\begin{lemma}[differentiable everywhere NOT implies continuously differentiable]
+A function is differentiable everywhere NOT implies it is continuously differentiable function.
+\end{lemma}
+The standard example is
+$$f(x) = \begin{cases} x^2\sin(\frac{1}{x}),x\neq 0\\
+0,x=0 \end{cases}$$
+This function can be differentiated every where and $f'(0) = 0$, but $\lim_{x\to 0} f'(x) $ does not exist. See \href{http://math.stackexchange.com/questions/724716/does-a-differentiable-everywhere-function-have-a-continuous-derivative}{link}.
+
+
+\subsection{continuity vs. uniform continuity}
+\begin{definition}
+A function $f:X\rightarrow Y$ is \emph{uniformly continuous} if for every $\epsilon > 0$ there exist a $\delta > 0$ such that for every $x,x_0 \in X$,
+$$\rho(x,x_0) \leq \delta \Rightarrow \rho(f(x),f(x_0)) < \epsilon $$
+\end{definition}
+
+
+\begin{theorem}
+\cite[154]{johnsonbaugh2010foundations} If $f$ is a continuous function from a compact metric space $M_1$ into a metric space $M_2$, then $f$ is uniformly continuous on $M_1$.
+\end{theorem}
+
+\begin{corollary}\cite[154]{johnsonbaugh2010foundations}
+If $f$ is a continuous real-value function on a closed and bounded subset $X$ of $\R^n$, then $f$ is uniformly continuous on $X$.
+\end{corollary}
+
+\begin{example}
+The function $f(x)=x^2$ is continuous but not uniformly continuous on the interval $(0,\infty)$.
+\end{example}
+
+\begin{lemma}[sufficient condition]
+Let $S=\R$. if $f$ is global Lipschitz continuous, i.e.
+$$\abs{f(x_1)-f(x_2)} < M \abs{x_1-x_2}$$
+$\forall x_1,x_2 \in S$, then $f$ is uniformly continuous.
+\end{lemma}
+Proof: $\abs{f(x_1)-f(x_2)} < M \abs{x_1-x_2} \to 0$
+
+
+\section{Exchanges of limits}
+\subsection{Overall remark}
+\begin{remark}\hfill
+\begin{itemize}
+    \item Usually, the necessary conditions for exchanging limits is difficult to find, therefore only sufficient conditions are given. 
+    \item Many operations are in nature taking limits, for example, summing infinite terms is taking limits on partial sums; integrals is taking limits on both summation and partitions; derivative is taking limits on quotient expressions. 
+\end{itemize}
+
+\end{remark}
+
+\subsection{exchange limits with infinite summations}
+Let $\lim_{m\to \infty}\sum_{n=1}^\infty f(m,n) = \sum_{n=1}^\infty \lim_{m\to \infty} f(m,n)$
+Based on dominated convergence, if there is a $g(n)$ such that $f(m,n) < g(n),\forall m$ and $\sum_{n=1}^\infty g(n)$ exists, then we can exchange. 
+
+To use the dominated convergence theorem in Lebesgue integral, we can define a simple function $s_n$on $[0,\infty]$ take $f(m,n)$ on the interval $[m-1,m)$. Then the integral of $s_n$ with respect to Legesbue measure on real lime will give the $\int_{[0,\infty)} s_n d\mu = \sum_{m=1}^\infty f(m,n)$
+
+
+
+\begin{theorem}
+\cite[94,373]{johnsonbaugh2010foundations}Let $a_{m,n}$ be non-negative and $\sum_m^\infty \sum_n^\infty a_{m,n}$ exists, 
+then
+$$\sum_m^\infty \sum_n^\infty a_{m,n} = \sum_n^\infty \sum_m^\infty a_{m,n}$$
+\end{theorem}
+
+
+\begin{corollary}
+Let $a_{m,n}$ be increasing on both $m,n$ and $\lim_{m\to \infty}\lim_{n\to\infty} a_{m,n}$ exists, 
+then
+$$\lim_{m\to \infty}\lim_{n\to\infty} a_{m,n} = \lim_{n\to \infty}\lim_{m\to\infty} a_{m,n}$$
+\end{corollary}
+Proof: by constructing partial sums.
+
+\subsection{Exchange limits with integration and differentiation}
+\begin{theorem}
+\cite[249]{johnsonbaugh2010foundations} Let $\alpha$ be a function of bounded variation on $[a,b]$ and let $f_n$ be a sequence of functions in $\mathcal{R}_\alpha [a,b]$ which converges uniformly to a function $f$. Then $f \in \mathcal{R}_\alpha [a,b]$ and
+$$\lim_{n\to \infty} \int_a^b f_n d\alpha = \int_a^b \lim_{n \to \infty} f d\alpha$$
+\end{theorem}
+
+
+\begin{theorem}
+\cite[249]{johnsonbaugh2010foundations} Let $\{f_n\}$ be a sequence of differentiable functions on $(a,b)$. Suppose that
+\begin{itemize}
+    \item $f'_n$ is continuous on $(a,b)$
+    \item $\{f_n\}$ converges pointwise to $f$
+    \item $\{f'_n\}$ converges uniformly
+\end{itemize}
+then $f$ is differentiable on $(a,b)$ and $f'_n$ converges uniformly to $f'$.
+\end{theorem}
+
+
+\subsection{Exchange differentiation with integration}
+\begin{theorem}
+Let $f(x,y)$ be continuous on $[a,b]\times [c,d]$. Then $$\phi(y) = \int_a^b f(x,y) dx$$ defined above is continuous function on $[c,d]$
+\end{theorem}
+Proof: for any $\epsilon > 0$, there exist $\delta$, such that 
+$$\abs{\phi(y)-\phi(y')} \leq \int_a^b \abs{f(x,y)-f(x,y')} dx \leq \epsilon (b-a) \forall \abs{y-y'} <\delta$$
+where we have the fact of $f(x,y)-f(x,y)$ is bounded (since continuous function on a compace set is uniformly continuous and will have maximum and minimum)
+which shows $\phi(y)$is uniformly continuous. 
+
+
+\begin{theorem}
+Let $f$ and $f_y$ be continuous on $[a,b]\times [c,d]$. Then $\phi$ is differentiable and 
+$$\phi_y = \int_a^b f_y(x,y) dx$$
+\end{theorem}
+
+Proof: 
+$$\frac{\phi(y+h)-\phi(y)}{h} = \frac{1}{h}\int_a^b f(x,y+h) - f(x,y) dx = \int_a^b f_y(x,z)$$
+due to Taylor theorem, where $z \in [y,y+h]$.
+Then
+$$\abs{\frac{\phi(y+h)-\phi(y)}{h} - \int_a^b f_y(x,y) dx} \leq \int_a^b \abs{f_y(x,z) - f_y(x,y)} dx$$
+
+Because $f_y$ is continuous on compact set, then it is uniformly continuous. Therefore given $\epsilon > 0$, there exists $\delta$ such that
+$$\abs{f_y(x,y') - f_y(x,y)} < \epsilon/(b-a), \forall \abs{y-y'}<\delta$$
+
+Taking $h < \delta$, we have 
+$$\abs{\frac{\phi(y+h)-\phi(y)}{h} - \int_a^b f_y(x,y) dx} < \epsilon.
+$$ Take the limit on $h$ and we get the result. 
+
+
+\subsection{Exchange limit and function evaluations}
+\begin{lemma}
+Let $\{x_n\}$ be a sequence with limit $x$, let $f$ be a continuous function
+$$\lim_{n\to \infty} f(x_n) = f(\lim_{n\to\infty} x_n) = f(x)$$
+\end{lemma}
+Proof: from the definition of continuous function.
+
+\section{useful inequalities}
+
+\begin{lemma}[arithmetic-geometric mean inequality]
+For $x_1,...,X_n \geq 0$, we have
+$$(x_1x_2...x_n)^{1/n} \leq \sum_{i=1}^n x_i/n.$$
+Specifically,
+$$\frac{x_1+x_2}{x} \geq \sqrt{x_1x_2}$$
+\end{lemma}
+\begin{proof}
+use $y = \ln(x)$ and concavity of $\ln(x)$	
+\end{proof}
+
+
+\subsection{Gronwall's inequality}
+see \cite{wiki:Gronwall}
+
+\subsection{Inequality for norms}
+\begin{lemma}
+ \cite{wiki:Lpspace}For $L^p$ normed space, we have
+$$\norm{x}_2 \leq \norm{x}_1$$
+where
+$$\norm{x}_2 = (\int_{-\infty}^\infty \abs{f(x)}^2 d\mu(x))^{0.5}$$
+and
+$$\norm{x}_1 = \int_{-\infty}^\infty \abs{f(x)} d\mu(x)$$
+\end{lemma}
+Proof: for finite dimensional normed space cases: we need to prove
+$$\sqrt{x_1^2 + x_2^2 + ... + x_n^2} \leq \abs{x_1} + \abs{x_2} + ... + \abs{x_n}$$
+By squaring both sides, we can get the result. For continuous case, TODO
+
+
+\begin{theorem}
+ \cite{wiki:Lpspace}For $L^p$ normed space, we have
+$$\norm{x}_q \leq \norm{x}_q$$ whenever $p\leq q$
+where
+$$\norm{x}_q = (\int_{-\infty}^\infty \abs{f(x)}^q d\mu(x))^{1/q}$$
+\end{theorem}
+Proof: todo
+
+
+\begin{remark}
+For complete description on $L^p$ norms, see \cite{wiki:Lpspace}
+\end{remark}
+
+
+\subsection{Young's inequality for product}
+\begin{lemma}
+If $a,b \geq 0$, and $p,q >1, 1/p+1/q = 1$, then
+$$ab\leq a^p/p + b^q/q$$
+\end{lemma}
+Proof: $$\log(a^p/p + b^q/q) \geq \log(a^p)/p + \log(a^q)/q = \log(a)+\log(b) = \log(ab)$$
+where we use the fact of $\log$ is concave.
+
+
+
+\section{Basic logic for proof}
+
+
+\cite[60]{hammack2013book}The negation of 
+\begin{mdframed}
+for any $\epsilon > 0$, there exist $N>0$, such that for all $n > N$, we have $\abs{a_n - a} < \epsilon$
+\end{mdframed}
+is
+\begin{mdframed}
+there exist an $\epsilon > 0$, such that for every $N>0$, such that for all $n > N$, we have $\abs{a_n - a} > \epsilon$.
+\end{mdframed}
+
+
+\cite[60]{hammack2013book}The negation of 
+\begin{mdframed}
+for any $\epsilon > 0$, there exist $\delta>0$, such that for all $\abs{x-x_0} < \delta$, we have $\abs{f(x) - f(x_0)} < \epsilon$
+\end{mdframed}
+is
+\begin{mdframed}
+there exist an $\epsilon > 0$, such that for every $\delta>0$, such that for all $\abs{x-x_0} < \delta$, we have $\abs{f(x) - f(x_0)} > \epsilon$.
+\end{mdframed}
+
+\section{Common series summation}
+
+\begin{lemma}\cite[1]{gradshteyn2014table}\hfill
+\begin{itemize}
+	\item $$\sum_{k=1}^n k = \frac{n(n+1)}{2} $$
+	\item $$\sum_{k=1}^n k^2 = \frac{n(n+1)(2n+1)}{6} $$
+	\item $$\sum_{k=1}^n k^3 = [\frac{n(n+1)}{2}]^2 $$
+	
+\end{itemize}	
+\end{lemma}
+
+
+\begin{lemma}\cite[1]{gradshteyn2014table}\hfill
+Assume $q\neq 1$.	
+	\begin{itemize}
+		\item $$\sum_{k=1}^n aq^{k-1} = a\frac{q^n-1}{q-1} $$
+		\item $$\sum_{k=0}^{n-1} kq^{k} = \frac{(n-1)q^n}{q-1} + \frac{(q-q^n)}{(q-1)^2}$$
+		\item $$\sum_{k=0}^{n-1} (n-1-k)q^{k} = -(n-1)\frac{1}{q-1}- \frac{(q-q^n)}{(q-1)^2}$$
+
+	\end{itemize}	
+\end{lemma}
+\begin{proof}
+(3) use (1)(2), we have
+$$\sum_{k=0}^{n-1} (n-1-k)q^{k} = (n-1)\frac{q^n-1}{q-1}-\frac{(n-1)q^n}{q-1} - \frac{(q-q^n)}{(q-1)^2}$$
+
+\end{proof}
+\section{Some common limits}
+
+\begin{lemma}[Stirling approximation]
+	\href{https://en.wikipedia.org/wiki/Stirling%27s_approximation}{link} \hfill
+\begin{itemize}
+	\item For positive integer $n$,	
+	$$\ln n! = n\ln n - n + O(\ln n).$$
+	\item 
+	$$\sqrt{2\pi} n^{n+1/2}e^{-n} \leq n! \leq e n^{n+1/2}e^{-n}, \forall n > 0.$$
+\end{itemize}	
+\end{lemma}
+
+\begin{lemma}[common limits summary]\label{appendix:th:commonLimitssummary}\hfill
+\begin{itemize}
+	\item $$\lim_{n\to \infty} \frac{\ln n}{n} = 0.$$
+	\item 
+	$$\lim_{n\to \infty} \frac{x^n}{n!} = 0, \forall x\in \R.$$
+	\item 	$$\lim_{n\to\infty} \frac{n!}{n^n} = 0.$$
+	\item $$\lim_{n\to \infty} M^{1/n} = 1$$ for any $M > 0$.
+	\item $$\lim_{n\to\infty} \frac{\ln n!}{n} = \infty,\lim_{n\to\infty} (n!)^{1/n} = \infty.$$
+\end{itemize}
+\end{lemma}
+\begin{proof}
+(2)see \autoref{ch:functional-analysis:th:commonTaylorSeries} and \autoref{ch:sequences-series:th:squeezeTheorem}.(3)\autoref{ch:sequences-series:th:squeezeTheorem}.(4) \autoref{ch:sequences-series:th:limitOfExponent}.
+(5) (a)Use Stirling approximation $\ln n! = n\ln n - n + O(\ln n)$ and $\ln n!/n = n - 1 + O(\ln n / n) \to \infty.$(b) Note that
+ $(n!)^{1/n} = \exp(\ln (n!)^{1/n}) = \exp(\frac{\ln n!}{n}).$
+\end{proof}
+
+\begin{note}\label{appendix:th:sequenceGrowthRate}
+A helpful and general summary, as $n\to \infty$
+
+$$\ln n \ll n^r(r>0) \ll a^n (a>1) \ll n! \ll n^n.$$	
+\end{note}
+
+
+\begin{lemma}[property of e]\label{appendix:propertyofe}
+Define
+$$\lim_{n\to \infty} (1 + 1/n)^n = e$$
+and then
+$$\lim_{n\to \infty} (1 + x/n)^n = e^{x}$$
+for any real $x$.
+\end{lemma}
+\begin{proof}
+ $$\lim_{n\to \infty} ((1 + x/n)^{n/x})^x = e^{x}$$
+use the fact the $f(y) = y^x$ is continuous, such that function evaluation and limit can be exchanged.	
+\end{proof}
+
+
+
+\section{Some useful identity for matrix}
+\begin{remark}[references]
+	The most important reference for this section is the "The Matrix Cookbook".\cite{petersen3274matrix}
+\end{remark}
+
+\begin{itemize}
+    \item $\norm{A}_F^2 = Tr(AA^T)$
+\end{itemize}
+
+\begin{mdframed}
+For $A\in \R^{m\times n},x\in \R^n$, we have:
+$$\frac{\Pa a^Tx}{\Pa x} = \frac{\Pa x^Ta}{\Pa x} = a$$
+$$\frac{\Pa Ax}{\Pa x} = A $$
+$$\frac{\Pa BAx}{\Pa x} = BA $$
+$$\frac{\Pa x^TAx}{\Pa x} = (A+A^T)x $$
+$$\frac{\Pa x^TAx}{\Pa x} = 2A $$
+
+
+\end{mdframed}
+
+\begin{lemma}
+	If $f(x) = g(Ax), A\in \R^{n\times n},x\in \R^n$ for some differentiable function $g(y)$, then 
+	$$\nabla f = A^T \nabla g$$
+	In particularly, $a\in \R^n$, then
+	$$\nabla a^TAx = A^Tx $$
+	
+\end{lemma}
+
+
+
+\begin{lemma}[matrix inversion lemma]
+\cite[120]{murphy2012machine}
+\begin{itemize}
+    \item $(E-FH^{-1}G)^{-1} = E^{-1} + E^{-1}F(H-GE^{-1}F)^{-1}GE^{-1}$
+    \item $(E-FH^{-1}G)^{-1}FH^{-1} = E^{-1}F(H-GE^{-1}F)^{-1}$
+\end{itemize}
+\end{lemma}
+Proof: (1) can be verified (2) expand the parenthesis using (1).
+
+\begin{lemma}[matrix trace]\index{matrix trace}\label{appendix:th:matrixtraceproperty}\hfill
+	\begin{itemize}
+		\item (linearity)$Tr(aA + bB) = aTr(A) + bTr(B)$
+		\item (commutative) $Tr(AB) = Tr(BA)$
+		\item (invariance under transposition) $Tr(A) = Tr(A^T)$		
+		\item (cyclic rule) $Tr(ABCD) = Tr(DABC)  = Tr(CDAB)= Tr(BCDA) $ or
+		$Tr(ABC) = Tr(CAB) = Tr(BCA)$
+	\end{itemize}
+\end{lemma}
+\begin{proof}
+(1)(2)(3) can be proved directly from definition. (4) We can group three elements together and commute with the fourth. For example, we can group $(ABC)$ together and commute with $D$ to prove the first equality.
+\end{proof}
+
+\begin{corollary}\hfill
+		\begin{itemize}
+			\item (invariance under similar transformation) $Tr(PAP^{-1}) = Tr(A)$
+			\item $Tr(X^TY)=Tr(XY^T) = Tr(Y^TX) = Tr(XY^T)$
+		\end{itemize}
+\end{corollary}
+\begin{proof}
+(1) Use cyclic rule. (2) Use invariance under transposition and commutative rule.
+\end{proof}
+
+\begin{lemma}[elementary operator matrix]\index{elementary matrix} Left multiply a matrix $A$ by an elementary matrix is equivalent to performing row operation. The elementary operator matrix is given by	
+	
+\begin{itemize}
+	\item (Interchange row $i$ and $j$) For example, exchange  row 2 and row 3:
+	$$R_1=\begin{bmatrix}
+	1 &  &  & \\ 
+	& 0 & 1 & \\ 
+	& 1 & 0 & \\ 
+	&  &  & 1
+	\end{bmatrix}$$
+	\item (Multiply row $i$ by $s$) For example
+		$$R_2=\begin{bmatrix}
+	1 &  &  & \\ 
+	& s &  & \\ 
+	&  & 1 & \\ 
+	&  &  & 1
+	\end{bmatrix}$$
+	\item (Add $s$ times row $i$ to row $j$) For example, add s times row 2 to row 3
+	$$R_3=\begin{bmatrix}
+	1 &  &  & \\ 
+	& 1 & 0 & \\ 
+	& s & 1 & \\ 
+	&  &  & 1
+	\end{bmatrix}.$$
+	Note that $R_3 = R_1R_2 \neq R_2R_1.$
+\end{itemize}	
+\end{lemma}
+
+
+\begin{lemma}[elementary operator matrix] Right multiply a matrix $A$ by an elementary matrix is equivalent to performing row operation. The elementary operator matrix is given by	
+	\begin{itemize}
+		\item (Interchange column $i$ and $j$) For example, exchange  row 2 and row 3:
+		$$C_1=\begin{bmatrix}
+		1 &  &  & \\ 
+		& 0 & 1 & \\ 
+		& 1 & 0 & \\ 
+		&  &  & 1
+		\end{bmatrix}$$
+		\item (Multiply column $i$ by $s$) For example
+		$$C_2=\begin{bmatrix}
+		1 &  &  & \\ 
+		& s &  & \\ 
+		&  & 1 & \\ 
+		&  &  & 1
+		\end{bmatrix}$$
+		\item (Add $s$ times column $i$ to column $j$) For example, add s times column 2 to column 3
+		$$C_3=\begin{bmatrix}
+		1 &  &  & \\ 
+		& 1 & s & \\ 
+		&  & 1 & \\ 
+		&  &  & 1
+		\end{bmatrix}.$$
+		Note that $C_3 = C_1C_2 \neq C_2C_1.$
+	\end{itemize}	
+\end{lemma}
+
+
+\begin{lemma}[properties of determinant]\label{appendix:th:matrixDeterminantProperties} \hfill
+\begin{itemize}
+	\item All elementary operator matrix has determinant 1.
+	\item For matrix $A\in \R^{n\times n}$, $$det(kA) = k^n det(A).$$
+	\item $det(AB) = det(A)det(B)$.
+	\item All elementary operation on a matrix will not change its determinant. 
+\end{itemize}	
+\end{lemma}
+
+
+
+
+
+\section{Numerical integration}
+\begin{definition}[Newton-Cotes Formula]
+Suppose we want to evaluate $\int_a^b f(x)dx$. We can evaluate $f(x)$ at $n+1$ equally spacing points $x_i = a + i(b-a)/n$, and then we approximate $f(x)$ by $n$ degree of Lagrange polynomial and do the integral. Specifically, we have
+	$$\int_a^b f(x)dx \approx \int_a^b L(x)dx = \int_a^b (\sum_{i=0}^n f(x_i)l_i(x)) = \sum_{i=1}^n f(x_i)\int_a^b l_i(x)dx = \sum_{i=1}^n f(x_i)w_i$$
+where $L$ is the Lagrange polynomial of degree $n$, and $l_i(x),i=0,...,n$ is the (n+1) Lagrange polynomial basis, given as \autoref{ch:functional-analysis:th:Lagrangepolynomialapproximation}.
+\end{definition}
+
+\begin{example}
+Consider we use degree 1 Lagrange polynomial to approximate $f(x)$, then
+$$L(x) = f(a)\frac{x-a}{b-a} + f(b)\frac{x-b}{a-b}$$
+where $l_0(x) = \frac{x-a}{b-a}$ and $l_1(x) = \frac{x-b}{a-b}$. Then
+$$w_0 = \int_a^b l_0(x)dx = \frac{1}{2},w_1 = \int_a^b l_1(x)dx=\frac{1}{2}.$$	
+\end{example}
+
+
+
+
+\begin{table}[H]
+	\centering
+	\caption{Closed Newton-Cotes Formula}
+	\label{integral}
+	\begin{tabular}{|l|l|l|l|}
+	\hline
+		\multicolumn{4}{|l|}{Notation:	$\int_a^b f(x)dx$, $f_i = f(x_i), x_i = a + i(b-a)/n$} \\ \hline
+Degree	&  Name   &  Formula   &  Error term   \\ \hline
+	1	&  Trapezoid rule   &  $\frac{b-a}{2}(f_0 + f_1)$   &  $-\frac{(b-a)^3}{12}f^{(2)}(\eta)$   \\ \hline
+	2	&  Simpson's rule   & $\frac{b-a}{6}(f_0 + 4f_1 +  f_2)$    &   $-\frac{(b-a)^5}{2880}f^{(4)}(\eta)$   \\ \hline
+	3	&  Simpson's 3/8 rule   &  $\frac{b-a}{8}(f_0 + 3f_1 + 3f_2 + f_3)$   &   $-\frac{(b-a)^3}{6480}f^{(5)}(\eta)$   \\ \hline
+	\end{tabular}
+\end{table}
+
+\begin{remark}[Error analysis]
+For detailed error analysis, see \cite[252]{atkinson1989introduction}.
+\end{remark}
+
+\begin{remark}[how to use]
+	Usually, given the integral $\int_a^b f(x)dx$, we will first divide into smaller intervals and do the numerical integral on each interval and add them up. For example
+	$$\int_a^b f(x)dx = \int_a^{a+h} f(x)dx + \int_{a+h}^{a+2h}f(x)dx ... + \int_{b-h}^b f(x)dx.$$
+\end{remark}
+
+\begin{lemma}[Trapezoid rule and the error bound]\label{appendix:numericalintegralTrapezoidruleerrorbound}
+Given the integral $\int_a^b f(x)dx$, we have
+$$\int_a^b f(x)dx \approx \frac{b-a}{n}(\frac{f(a)}{2} + \sum_{k=1}^{n-1}(f(a + k\frac{b-a}{n})) + \frac{f(b)}{2} )$$
+where we divide $b-a$ into $n$ subintervals, and we do the Trapezoid rule on each subinterval.
+And the error bound is
+$$\frac{(b-a)^3}{12n^2} \max_{x\in [a,b]} f^{(2)}(x) $$
+\end{lemma}
+\begin{proof}
+Note that on each subinterval, the error is $-\frac{(b-a/n)^3}{12}f^{(2)}(\eta)$. Sum up $n$ terms, and we have upper bound
+$$\frac{(b-a)^3}{12n^3} n \max_{x\in [a,b]} f^{(2)}(x) $$
+\end{proof}
+
+\begin{lemma}[Midpoint rule and the error bound]
+	Given the integral $\int_a^b f(x)dx$, we have
+	$$\int_a^b f(x)dx \approx \frac{b-a}{n}( \sum_{k=1}^{n}(f(a + (k-0.5)\frac{b-a}{n})) )$$
+	where we divide $b-a$ into $n$ subintervals, and we do the Trapezoid rule on each subinterval.
+	And the error bound is
+	$$\frac{(b-a)^3}{n^2} K $$
+\end{lemma}
+
+
+\subsection{Gaussian quadrature}
+
+$$\int_a^b w(x)f(x)dx \approx \sum_{i=1}^n w_i f(x_i)$$
+which is exact when $f$ is a polynomial.
+
+\begin{remark}
+In Newton-Cotes formulas, we fix nodes and try to find suitable weights; in Gaussian quadrature, we use a weighted sum of function values at specified points within the domain of integration.
+\end{remark}
+
+\section{vector calculus}
+\begin{lemma}[divergence theorem]\label{appendix:th:divergencetheorem}
+	\begin{align*}
+	\iiint\limits_V(\nabla \cdot \mathbf{F}) dV
+	& = \oiint \limits_{S(V)} \mathbf{F \cdot \hat{n}} dS \\      \iiint\limits_V(\nabla \times \mathbf{F}) dV
+	& = \oiint \limits_{S(V)} \mathbf{\hat{n} \times F} dS \\      \iiint\limits_V(\nabla f) dV
+	& = \oiint\limits_{S(V)}\mathbf{\hat{n}}f dS
+	\end{align*}
+\end{lemma}
+
+
+\begin{lemma}[Lapacian product rule]
+Given functions $u: \R^n\to \R$ and $v:\R^n \to \R$, we have 
+	$$\nabla^2 (uv) = u\nabla v + 2\nabla u \cdot \nabla v + v\nabla^2 u.$$
+\end{lemma}
+\begin{proof}
+Directly use product rule. 
+\end{proof}
+
+
+
+\section{Pigeon Hole principle}
+\begin{lemma}\hfill
+\begin{itemize}
+	\item If there are $n$ holes and the number of pigeons $N \geq n+1$, then at least 2 pigeons have to share one of the holes.
+	\item If there are $n$ and the number of pigeons $N \geq mn+1$, then at least $m+1$ pigeons have to share one of the holes.
+\end{itemize}
+\end{lemma}
+
+
+
+\begin{example}
+Problem : Prove that in any party there will be at least two persons who have shaken hands with equal number of people.\\
+
+Solution : Let us say there are n persons attending the party. Obviously, this problem makes sense only when n $\geq$ 2. If no two person have shaken hands with equal number of people then there handshake count must differ at least by 1. So the possible choices for hand shake count would be 0,1,...,n-1. There are exactly n choices and n people. But the catch is that if there exist a person with n-1 handshake count, there can't be a person with 0 handshake count. Thus reducing the possible choices to n-1. Now, due to pigeon hole principle, we have that at least two person will have the same number of handshake count.
+\end{example}
+
+\section{Numerical linear algebra computation complexity}
+
+\begin{note}\cite[606]{nocedal2006numerical}
+	\begin{itemize}
+		\item For a $m\times n$ matrix multiplying a $n$ dimensional vector, $mn$.
+		\item For a $n\times n$ matrix multiplying a $n\times n$ matrix, $n^3$(without optimization).
+		\item For a $n\times n$ matrix, $LU$ decomposition $2n^3/3$ (for symmetric matrix $n^3/3$).
+		\item For a $m\times n$ matrix, Cholesky decomposition $4m^2n/3$ (for square matrix $4n^3/3$).
+		\item For a $m\times n$ matrix, QR decomposition $4m^2n/3$ (for square matrix $4n^3/3$).
+	\end{itemize}	
+\end{note}
+
+
+\begin{note}[solving triangular linear system]
+	Let $L$ be a $n\times n$ lower triangle matrix, the forward substitution algorithm for solving
+	$$Ly = d,$$
+	is given by
+	\begin{verbatim}
+	y(1) = d(1) / L(1,1);
+	for i=2:n
+	y(i) = (d(i) - L(i,1:i-1)* y(1:i-1))/L(i,i)
+	end
+	\end{verbatim}
+	This algorithm has complexity of $O(n^2)$.
+	
+	
+	Let $U$ be a $n\times n$ upper triangle matrix, the backward substitution algorithm for solving
+	$$Ux = d,$$
+	is given by
+	\begin{verbatim}
+	x(n) = d(n)/U(n,n);
+	for i = n - 1: -1 :1
+	x(i) = (d(i) - U(i,i + 1:n)*x(i + 1:n) )/U(i,i)
+	end
+	\end{verbatim}
+	This algorithm has complexity of $O(n^2)$.	
+\end{note}
+
+
+\section{Distributions}
+
+\begin{lemma}\label{appendix:th:propertiesDeltaFunctionStepFunction}\cite[579]{prosperetti2013advanced} Let $K$ be an externally given parameter. We have
+\begin{itemize}
+	\item $$\int_{-\infty}^{\infty} \delta(x)dx = 1, x\delta(x) = 0, \int_{-\infty}^{\infty} f(x)\delta(x-K)dx = f(K).$$
+	\item $\delta(g(x)) = \sum_{i} \frac{\delta(x-x_i)}{\abs{g'(x_i)}},$
+	where $x_i,i=1,2,...$ are the zeros of the function $g(x)$.
+	\item $\delta(\lambda x) = \frac{\delta(x)}{\abs{\lambda}}, \delta(x-K) = \delta(K-x)$.
+	\item (step function definition) $$H(x)\triangleq \frac{d}{dx}\max\{x,0\}, H(x- A)\triangleq \frac{d}{dx}\max\{x-A,0\}$$
+	\item $H(x-K) +　　H(K-x) = 1$.
+	\item $$\frac{dH(x-K)}{dx} = \delta(x-K), \frac{dH(K-x)}{dx} = -\delta(x-K).$$	
+\end{itemize}
+\end{lemma}
+\begin{proof}
+Use $H(x-K) +　　H(K-x) = 1$ to prove $\frac{dH(K-x)}{dx}$.
+\end{proof}
+
+\section{Common integrals}
+
+\begin{lemma}\hfill
+\begin{itemize}
+	\item $$\int_0^\infty e^{-ax^2}dx = \frac{1}{2}\sqrt{\frac{\pi}{a}},\int_{-\infty}^\infty e^{-ax^2}dx = \sqrt{\frac{\pi}{a}}$$
+	\item  $$\int_0^\infty xe^{-ax^2}dx = \frac{1}{2a},\int_{-\infty}^\infty xe^{-ax^2}dx = 0$$
+	\item  $$\int_0^\infty x^2e^{-ax^2}dx = \frac{1}{4a}\sqrt{\frac{\pi}{a}}$$
+	\item $$\int_0^\infty x^n e^{-ax}dx = \frac{n!}{a^{n+1}}$$
+	\item $$\int_0^\infty x^m e^{-ax^2} = \frac{\Gamma((m+1)/2)}{2a^{(m+1)/2}}$$	
+\end{itemize}	
+	
+\end{lemma}
+
+
+\section{Nonlinear root finding}
+\subsection{Bisection method}
+
+\begin{definition}\hfill
+\begin{itemize}
+	\item \textbf{(Goal)}: We want to find a $x^*\in \R$ such that $f(x^*) = 0$.
+	\item \textbf{(Initial input)}: Initial guess of $l_0$ and $r_0$ such that 
+	$$f(l_0) < 0, f(r_0) > 0; ~or~ f(l_0) > 0, f(r_0) < 0.$$
+	\item \textbf{Repeat ($i$) is the iteration index}: 
+	\begin{itemize}
+		\item Let $m = \frac{r_i + l_i}{2}$.
+		\item If $f(l_i)f(m) < 0$, then $l_{i+1} = l_i, r_{i+1} = m$.
+		\item If $f(l_i)f(m) > 0$(then we must have $f(r_i)f(m)<0$), then $l_{i+1} = m, r_{i+1} = r_i$.
+		\item If $f(l_i)f(m) = 0$, then $m$ is the root.
+	\end{itemize}
+\end{itemize}	
+	
+\end{definition}
+
+
+ \subsection{Newton method}
+ 
+ \begin{definition}\hfill
+ 	\begin{itemize}
+ 		\item \textbf{(Goal)}: We want to find a $x^*\in \R$ such that $f(x^*) = 0$. $f$ is assumed to be differentiable.
+ 		\item \textbf{(Initial input)}: Initial guess of $x_0$.
+ 		\item \textbf{Repeat}($i$ is the iteration index): 
+ 		\begin{itemize}
+ 			\item Let $x_{i+1} = x_i - \frac{f(x_i)}{f'(x_i)}$.
+ 			\item If $f(x_{i+1}) = 0$, then $x_{i+1}$ is the root.
+ 		\end{itemize}
+ 	\end{itemize}	
+ \end{definition}
+ 
+ 
+ \subsection{Secant method}
+ 
+  \begin{definition}\hfill
+ 	\begin{itemize}
+ 		\item \textbf{(Goal)}: We want to find a $x^*\in \R$ such that $f(x^*) = 0$. $f$ is assumed to be differentiable.
+ 		\item \textbf{(Initial input)}: Initial guess of $x_0, x_1$.
+ 		\item \textbf{Repeat}($i$ is the iteration index): 
+ 		\begin{itemize}
+ 			\item Let $$x_{i+1} = x_i - f(x_i)\frac{x_{i} - x_{i-1}}{f(x_i) - f(x_{i-1})}$$.
+ 			\item If $f(x_{i+1}) = 0$, then $x_{i+1}$ is the root.
+ 		\end{itemize}
+ 	\end{itemize}	
+ \end{definition}
+
+\begin{remark}[derivation]
+Starting with initial guesses $x_0,x_1$, we construct a first order approximation of $f(x)$ via
+$$y = \frac{f(x_1)-f(x_0)}{x_1-x_0}(x-x_1) + f(x_1).$$
+And we solve the root for the first-order approximation problem via
+$$\frac{f(x_1)-f(x_0)}{x_1-x_0}(x-x_1) + f(x_1) = 0\implies x_{2} = x_1 - f(x_1)\frac{x_{1} - x_{0}}{f(x_1) - f(x_{0})}.$$
+
+Then we continue the process with $x_1,x_2$.
+\end{remark}
+
+\begin{remark}[convergence property]\hfill
+\begin{itemize}
+	\item There is no guarantee on the global convergence to the root of $f$.
+	\item Only when the initial values $x_0$ and $x_1$ are sufficiently close to the root, the iterates $x_n$ will converge to the root. 
+\end{itemize}		
+	
+\end{remark}
+
+\section{Interpolation}
+
+
+\subsection{cubic interpolation}\label{appendix:sec:cubicSplineLine}
+
+\begin{definition}[the cubic spine line functional form]\cite{hagan2006interpolation}
+\begin{itemize}
+	\item Suppose $x_1,x_2,...,x_n$ and $y_1,y_2,...,y_n$ are known. 
+	\item A cubic spine line is given by
+	$$y(x) = a_i + b_i(x - x_i) + c_i(x-x_i)^2 + d_i(x-x_i)^3, x_i\leq x \leq x_{i+1}, i=1,2,...,n-1.$$
+	\item There are $4n-4$ unknowns.
+	\item Note that
+\begin{align*}
+y'(x) &= b_i + 2c_i(x-x_i) +　3d_i(x-x_i)^2, x_i < x < x_{i+1} \\
+y''(x) &= 2c_i +　6d_i(x-x_i), x_i < x < x_{i+1} \\
+y'''(x) &= 6d_i, x_i < x < x_{i+1} 
+\end{align*}
+\end{itemize}	
+\end{definition}
+
+
+
+\begin{definition}[natural cubic spline condition]\cite{hagan2006interpolation}\hfill
+Let $h_i = x_{i+1}-x_i$
+\begin{itemize}
+	\item \textbf{(spline line passing data points)}: for $i=1,2,...,n-1$, $a_i = y_i$; $a_{n-1} + b_{n-1}h_{n-1} + c_{n-1}h_{n-1}^2 + d_{n-1}h_{n-1}^3= y_n.$
+	
+	\item \textbf{(interpolating function is continuous)}; that is, $$\lim_{x\to x_i-} y(x) = \lim_{x\to x_i+} y(x)\implies a_i+b_ih_i + c_ih_i^2 + d_ih_i^3 = a_{i+1}, \forall i=1,2,...,n-2.$$
+	
+	\item \textbf{(interpolating function is differentiable)}; note that the interpolating function is differentiable on interval, therefore we require that, $$\lim_{x\to x_i-} y'(x) = \lim_{x\to x_i+} y'(x)\implies b_i + 2c_i h_i +  3d_ih_i^2 = b_{i+1}, \forall i=1,2,...,n-2$$:
+	\item \textbf{(interpolating function is twice differentiable and the second derivative at each endpoint is 0)}; that is, $$\lim_{x\to x_i-} y''(x) = \lim_{x\to x_i+} y''(x) \implies c_i + 3d_ih_i = c_{i+1}, \forall i=1,2,...,n-2,$$ 
+	and $y''(x_1+) = y''(x_n-) = 0.$
+	\item these $4n-4$ equations will solve the $4n-4$ unknowns.
+\end{itemize}
+	
+\end{definition}
+
+
+
+\section{Finance resources}
+
+\subsection{Book resources}
+
+\subsubsection{General advice}
+
+The website of Mark Joshi, see \href{http://www.markjoshi.com/}{link}.
+
+
+Recommended books on quantitative finance, see \href{http://www.markjoshi.com/RecommendedBooks.html}{link}.
+
+
+General advice for becoming a quant, see \href{http://www.markjoshi.com/downloads/advice.pdf}{link}.
+
+
+\subsubsection{Quantitative investment}
+Factor Investing and Asset Allocation: A Business Cycle Perspective
+
+Quantitative Equity Investing: Techniques and Strategies
+
+Asset Management: A Systematic Approach to Factor Investing
+
+Beyond Smart Beta: Index Investment Strategies for Active Portfolio
+Management
+
+Your Complete Guide to Factor-Based Investing: The Way Smart
+Money Invests Today
+
+Quantitative Investment Portfolio Analytics In R: An Introduction To R
+For Modeling Portfolio Risk and Return
+
+A Quantitative Primer on Investments with R
+
+\subsubsection{Softwares}
+
+Pyfolio: pyfolio is a Python library for performance and risk analysis of financial portfolios developed by Quantopian Inc. It works well with the Zipline open source backtesting library.
+
+Zipline: Zipline is a Pythonic algorithmic trading library. It is an event-driven system for backtesting. Zipline is currently used in production as the backtesting and live-trading engine powering Quantopian – a free, community-centered, hosted platform for building and executing trading strategies.
+
+PyAlgoTrade: PyAlgoTrade is a Python Algorithmic Trading Library with focus on backtesting and support for paper-trading and live-trading. Let’s say you have an idea for a trading strategy and you’d like to evaluate it with historical data and see how it behaves. PyAlgoTrade allows you to do so with minimal effort.
+
+backTrader: https://github.com/backtrader/backtrader
+
+\subsubsection{Commodity}
+
+Natural gas trading in north America
+
+Trading Natural Gas: Cash, Futures, Options and
+Swaps
+
+Valuation and Risk Management in Energy Markets
+
+Energy and Power Risk Management: New Developments in Modeling, Pricing, and Hedging
+
+Managing Energy Risk: An Integrated View on Power and Other Energy Markets
+\subsection{People to follow}
+
+Stefan Andreer (\href{https://www.linkedin.com/in/stefan-andreev-7b136332/}{linkin})
+
+Cristian Homescu (\href{https://www.linkedin.com/in/cristianhomescu/}{linkedin})
+
+
+Xuan Che (\href{https://www.linkedin.com/in/xuan-che-51260b136/}{linkedin})
+
+
+
+
+\printbibliography
+
+
+
+\end{refsection}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

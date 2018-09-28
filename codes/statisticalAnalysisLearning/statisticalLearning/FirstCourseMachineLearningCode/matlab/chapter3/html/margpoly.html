@@ -1,0 +1,173 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>margpoly</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2011-11-02"><meta name="DC.source" content="margpoly.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">margpoly.m</a></li><li><a href="#2">Generate the data</a></li><li><a href="#3">Fit models of various orders</a></li><li><a href="#6">Plot the marginal likelihoods</a></li></ul></div><h2>margpoly.m<a name="1"></a></h2><p>From A First Course in Machine Learning, Chapter 2. Simon Rogers, 01/11/11 [simon.rogers@glasgow.ac.uk] Marginal likelihood for model selection</p><pre class="codeinput">clear <span class="string">all</span>;close <span class="string">all</span>;
+</pre><h2>Generate the data<a name="2"></a></h2><pre class="codeinput">N = 100;
+x = sort(rand(N,1)*10-5);
+noise_var = 150;
+t = 5*x.^3 - x.^2 + x;
+<span class="comment">% Try adding and removing terms from this function, or changing term</span>
+<span class="comment">% weights. e.g.</span>
+<span class="comment">% t = 0.0005*x.^3 - x.^2 + x;</span>
+
+t = t + randn(size(x)).*sqrt(noise_var);
+
+<span class="comment">% Plot the data</span>
+plot(x,t,<span class="string">'k.'</span>,<span class="string">'markersize'</span>,10);
+xlabel(<span class="string">'x'</span>);
+ylabel(<span class="string">'t'</span>);
+</pre><img vspace="5" hspace="5" src="margpoly_01.png" alt=""> <h2>Fit models of various orders<a name="3"></a></h2><pre class="codeinput">orders = [0:8];
+testx = [-5:0.01:5]';
+X = [];
+testX = [];
+<span class="keyword">for</span> i = 1:length(orders)
+</pre><pre class="codeinput">    si0 = eye(orders(i)+1);
+    mu0 = repmat(0,orders(i)+1,1);
+    X = [X x.^orders(i)];
+    testX = [testX testx.^orders(i)];
+    siw = inv((1/noise_var)*X'*X + inv(si0));
+    muw = siw*((1/noise_var)*X'*t + inv(si0)*mu0);
+    <span class="comment">% Plot the data and mean function</span>
+    figure(1);hold <span class="string">off</span>;
+    plot(x,t,<span class="string">'k.'</span>,<span class="string">'markersize'</span>,10);
+    xlabel(<span class="string">'x'</span>);
+    ylabel(<span class="string">'t'</span>);
+    hold <span class="string">on</span>
+    plot(testx,testX*muw,<span class="string">'r'</span>);
+    ti = sprintf(<span class="string">'Model order %g'</span>,orders(i));
+    title(ti);
+    <span class="comment">% Compute the marginal likelihood</span>
+    margcov = noise_var*eye(N) + X*si0*X';
+    margmu = X*mu0;
+    D = length(margmu);
+    log_marg(i) = -(D/2)*log(2*pi) - 0.5*log(det(margcov));
+    log_marg(i) = log_marg(i) - 0.5*(t-margmu)'*inv(margcov)*(t-margmu);
+</pre><img vspace="5" hspace="5" src="margpoly_02.png" alt=""> <img vspace="5" hspace="5" src="margpoly_03.png" alt=""> <img vspace="5" hspace="5" src="margpoly_04.png" alt=""> <img vspace="5" hspace="5" src="margpoly_05.png" alt=""> <img vspace="5" hspace="5" src="margpoly_06.png" alt=""> <img vspace="5" hspace="5" src="margpoly_07.png" alt=""> <img vspace="5" hspace="5" src="margpoly_08.png" alt=""> <img vspace="5" hspace="5" src="margpoly_09.png" alt=""> <img vspace="5" hspace="5" src="margpoly_10.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+</pre><h2>Plot the marginal likelihoods<a name="6"></a></h2><pre class="codeinput">figure(1); hold <span class="string">off</span>
+bar(orders,exp(log_marg));
+xlabel(<span class="string">'Model Order'</span>);
+ylabel(<span class="string">'Marginal likelihood'</span>);
+</pre><img vspace="5" hspace="5" src="margpoly_11.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% margpoly.m
+% From A First Course in Machine Learning, Chapter 2.
+% Simon Rogers, 01/11/11 [simon.rogers@glasgow.ac.uk]
+% Marginal likelihood for model selection
+clear all;close all;
+
+%% Generate the data
+N = 100;
+x = sort(rand(N,1)*10-5);
+noise_var = 150;
+t = 5*x.^3 - x.^2 + x;
+% Try adding and removing terms from this function, or changing term
+% weights. e.g.
+% t = 0.0005*x.^3 - x.^2 + x;
+
+t = t + randn(size(x)).*sqrt(noise_var);
+
+% Plot the data
+plot(x,t,'k.','markersize',10);
+xlabel('x');
+ylabel('t');
+
+%% Fit models of various orders
+orders = [0:8];
+testx = [-5:0.01:5]';
+X = [];
+testX = [];
+for i = 1:length(orders)
+    %%
+    si0 = eye(orders(i)+1);
+    mu0 = repmat(0,orders(i)+1,1);
+    X = [X x.^orders(i)];
+    testX = [testX testx.^orders(i)];
+    siw = inv((1/noise_var)*X'*X + inv(si0));
+    muw = siw*((1/noise_var)*X'*t + inv(si0)*mu0);
+    % Plot the data and mean function
+    figure(1);hold off;
+    plot(x,t,'k.','markersize',10);
+    xlabel('x');
+    ylabel('t');
+    hold on
+    plot(testx,testX*muw,'r');
+    ti = sprintf('Model order %g',orders(i));
+    title(ti);
+    % Compute the marginal likelihood
+    margcov = noise_var*eye(N) + X*si0*X';
+    margmu = X*mu0;
+    D = length(margmu);
+    log_marg(i) = -(D/2)*log(2*pi) - 0.5*log(det(margcov));
+    log_marg(i) = log_marg(i) - 0.5*(t-margmu)'*inv(margcov)*(t-margmu);
+    
+end
+
+%% Plot the marginal likelihoods
+figure(1); hold off
+bar(orders,exp(log_marg));
+xlabel('Model Order');
+ylabel('Marginal likelihood');
+##### SOURCE END #####
+--></body></html>

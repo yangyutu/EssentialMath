@@ -1,0 +1,1188 @@
+
+\begin{refsection}
+\startcontents[chapters]	
+\chapter{Differential Equations II \& Numerical methods}\label{ch:numerical-methods}	
+\printcontents[chapters]{}{1}{}
+\section{Numerical difference and analysis}
+
+\subsection{Basic numerical difference approximation}
+\begin{definition}[consistence of numerical difference approximation]
+	An numerical difference approximation is consistent if it approaches $f(x_i)$ as $h\to 0$
+\end{definition}
+
+\begin{table}[h!]
+	\centering
+	%\caption{Numerical difference formula}
+	
+	\begin{tabular}{|l|l|l|}
+		\hline
+		Type & Difference formula & truncation error \\ \hline
+		forward& $f'(x_i) = \frac{f(x_{i+1}) - f(x_i)}{h} + \tau_i$ & $\tau_i = -h/2f''(\eta_i)$ \\ \hline
+		backward& $f'(x_i) = \frac{f(x_{i}) - f(x_{i-1})}{h} + \tau_i$ & $\tau_i = h/2f''(\eta_i)$ \\ \hline
+		centered& $f'(x_i) = \frac{f(x_{i+1}) - f(x_{i-1})}{2h} + \tau_i$ & $\tau_i = -h^2/6f'''(\eta_i)$ \\ \hline
+		one-sided& $f'(x_i) = \frac{-f(x_{i+2}) +4 f(x_{i+1}) - 3f(x_i)}{2h} + \tau_i$ & $\tau_i = -h^2/3f'''(\eta_i)$ \\ \hline
+		one-sided& $f'(x_i) = \frac{3f(x_{i}) -4f(x_{i-1}) + f(x_{i-2})}{2h} + \tau_i$ & $\tau_i = h^2/3f'''(\eta_i)$ \\ \hline
+		centered & $f'(x_i) = \frac{f(x_{i+1}) -2f(x_i) + f(x_{i-1})}{h^2} + \tau_i$ & $\tau_i = -h^2/12f''''(\eta_i)$ \\ \hline
+	\end{tabular}
+	\caption{Numerical difference formula}
+\end{table}
+
+\begin{remark}[Application of one-sided difference scheme]
+	The one-sided numerical scheme can be use for boundary points of $y$.
+\end{remark}
+
+
+\begin{remark}
+	\textbf{Derivation via Taylor expansion}\\
+	\begin{itemize}
+		\item Forward\&backward. We have $$f(x_{i+1)} = f(x_i) + f'(x_i)h + h^2/2 f''(\eta_i)$$
+		\item centered(first order). We have $$f(x_{i+1)} = f(x_i) + f'(x_i)h + h^2/2 f''(x_i) + h^3/6 f'''(\eta1_i)$$ and 
+		$$f(x_{i-1)} = f(x_i)  -f'(x_i)h + h^2/2 f''(x_i) - h^3/6 f'''(\eta2_i)$$ Subtract two equations and we can get the desired formular with truncation terms of $\tau_i = h^3/12 (f'''(\eta1_i) + f'''(\eta2_i))$. Further use intermediate value theorem for the existence of $f'''(\eta_i) = 1/2(f'''(\eta1_i) + f'''(\eta2_i))$ 
+	\end{itemize}
+\end{remark}
+
+\begin{remark}
+	\textbf{Derivation via Method of Undetermined Coefficients}. See here \href{http://www2.math.umd.edu/~dlevy/classes/amsc466/lecture-notes/differentiation-chap.pdf}{link}.\\
+	General strategy:
+	\begin{itemize}
+		\item Assume that the derivative can be written as a linear combination of the values of the function at certain points.
+		\item Write the Taylor expansions of the function at the approximation points.
+		\item Equate the coefficients of the function and its derivatives on both sides.
+	\end{itemize}
+	
+	
+\end{remark}
+\begin{example}
+	\begin{align*}
+	f'(x_i) &= Af(x_{i+2}) + Bf(x_{i+1}) + Cf(x_i)\\
+	&= A(f(x_i) + f'(x_i)2h + 2h^2 f''(x_i) + 8h^3/6 f'''(\eta1))\\& + B(f(x_{i}) + hf'(x_i) + +h^2/2f''(x_i) +  h^3/6f'''(\eta2)) + C(f(x_i))\\
+	& = (A + B + C)f(x_i) + (A2h + Bh)f'(x_i) \\&+ (A2h^2 + Bh^2/2) f''(x_i) + (Ah^3/6+B8h^3/6) f'''(\eta)\\
+	\end{align*}
+	Let $A+B+C=0, 2A + B = 1/h, 2A + B/2 = 0$
+	We have $A = -1/2h, B = 4/2h, C=-3/2h$
+\end{example}
+
+
+
+\begin{remark}
+	For a complete account on numerical difference formula, see here \href{https://en.wikipedia.org/wiki/Finite_difference_coefficient}{link}
+\end{remark}
+
+\subsection{A general approach for explicit scheme}
+\begin{mdframed}
+\textbf{notation:}\\
+\begin{itemize}
+	\item $E^n u_i = u_{i+n}$
+	\item $\delta^+u_i = u_{i+1}-u_i \implies \delta^+ = E-1$
+	\item $\delta^-u_i = u_{i}-u_{i-1} \implies \delta^+ = 1-E^{-1}$
+	\item $\mean{\delta}u_i = \frac{1}{2}(u_{i+1} - u_{i-1})\implies \mean{\delta} = \frac{1}{2}(E - E^{-1})$
+	\item $Du = \frac{\Pa u}{\Pa x}$
+\end{itemize}
+\end{mdframed}
+
+\begin{lemma}[connections between operators]\cite[287]{karniadakis2003parallel}
+The operator $E$ and the differential operator $D$ is connected via
+$$ E = e^{\Delta x D} $$
+or equivalently, 
+$$ \Delta x D = \ln(E).$$
+\end{lemma}
+\begin{proof}
+Note that 
+$Eu(x) = u(x+\Delta x) = [u(x) + \Delta x u_x + \frac{\Delta x^2}{2!} u_{xx} + \frac{\Delta x^3}{3!} u_{xxx} + \dots]$.
+The corresponding operator form is
+$$Eu(x) = (1 + \Delta x D + \frac{(\Delta x D)^2}{2!} + \frac{(\Delta x D)^3}{3!} + \dots) u(x)$$
+or
+$$Eu(x) = e^{\Delta x D} u(x) \implies E = e^{\Delta x D} \implies \Delta x D = \ln(E).$$	
+\end{proof}
+
+
+
+\begin{lemma}[first order derivative]\cite[288]{karniadakis2003parallel}
+Using $\Delta x D = \ln E$, we can derive:
+\begin{itemize}
+	\item Forward scheme:
+	$$D = \frac{1}{\Delta x}(\delta^+ - \frac{\delta^{+2}}{2} - \frac{\delta^{+3}}{3}  - \frac{\delta^{+4}}{4} + ...).$$
+	\item Backward scheme:
+	$$D = \frac{1}{\Delta x}(\delta^- + \frac{\delta^{-2}}{2} + \frac{\delta^{-3}}{3}  + \frac{\delta^{-4}}{4} + ...).$$
+	\item Central scheme:
+	$$D = \frac{1}{\Delta x}(\mean{\delta} - \frac{\mean{\delta}^{3}}{6} + \frac{\mean{\delta}^{5}}{40} + ...).$$
+\end{itemize}
+\end{lemma}
+\begin{proof}
+(1) 
+Using Taylor expansion(\autoref{ch:functional-analysis:th:commonTaylorSeries})
+\begin{align*}
+\Delta x D &= \ln (E) = \ln(1 + \delta^+)\\
+		&= \delta^+ - \frac{\delta^{+2}}{2} + \frac{\delta^{+3}}{3} + ... 
+\end{align*}
+We can similarly prove (2)(3).
+\end{proof}
+
+\begin{remark}[forward and backward scheme to handle boundary condition]
+The forward and backward scheme can be used to handle boundary condition on spatial variables. 
+\end{remark}
+
+\begin{corollary}[second order forward/backward numerical scheme]\label{ch:numerical-methods:th:secondorderforwardbackwardscheme}\hfill
+\begin{itemize}
+		\item $(u_{x})_i = \frac{1}{2\Delta x}(-3u_i + 4u_{i+1} -u_{i+2}) + o(x^3)$
+		\item $(u_{x})_i = \frac{1}{2\Delta x}(3u_i - 4u_{i-1} -u_{i-2})$
+\end{itemize}
+\end{corollary}
+\begin{proof}
+(1)
+Take the first two terms,
+\begin{align*}
+\Delta x(Du)_i &= \delta^+ u_i - \frac{\delta^{+2}}{2}u_i\\
+			   &= u_{i+1} - u_i - \frac{1}{2}(E^2 -2E + 1)u_i \\
+			   &= (u_{i+1} - u_i) - \frac{1}{2}(u_{i+2} -2u_{i+1} + u_i) \\
+			   &= \frac{-3u_i + 4u_{i+1} -u_{i+2}}{2\Delta x}
+\end{align*} 
+(2)
+Take the first two terms,
+\begin{align*}
+\Delta x(Du)_i &= \delta^- u_i + \frac{\delta^{-2}}{2}u_i\\
+&= u_{i} - u_{i-1} + \frac{1}{2}(E^{-2} -2E^{-1} + 1)u_i \\
+&= (u_{i} - u_{i-1}) + \frac{1}{2}(u_{i-2} -2u_{i-1} + u_i) \\
+&= \frac{3u_i - 4u_{i-1} -u_{i-2}}{2\Delta x}
+\end{align*} 
+\end{proof}
+
+\begin{lemma}[high order derivatives]\cite[288]{karniadakis2003parallel}
+Using $(\Delta x D)^2 = (\ln E)^2$, we can derive:
+\begin{itemize}
+	\item Forward scheme:
+	$$D^2 = \frac{1}{(\Delta x)^2}(
+	\delta^{+2} - \delta^{+3} + \frac{11}{12}\delta^{+4} ...)$$
+	\item Backward scheme:
+	$$D^2 = \frac{1}{(\Delta x)^2}(
+	\delta^{-2} - \delta^{-3} + \frac{11}{12}\delta^{-4} ...)$$
+	\item Central scheme:
+	$$D^2 = \frac{1}{(\Delta x)^2}(
+\mean{\delta}^{2} - \frac{1}{12}\mean{\delta}^{4} + \frac{1}{90}\mean{\delta}^{6} ...)$$
+\end{itemize}
+\end{lemma}
+\begin{proof}
+Using Taylor expansion(\autoref{ch:functional-analysis:th:commonTaylorSeries})
+\begin{align*}
+(\Delta x D)^2 &= (\ln(1 + \delta^+))^2\\
+			   &= (\delta^+ - \frac{\delta^{+2}}{2} + \frac{\delta^{+3}}{3} + ...)(\delta^+ - \frac{\delta^{+2}}{2} + \frac{\delta^{+3}}{3} + ...) \\
+			   &=\delta^{+2} - \delta^{+3} ...
+\end{align*}	
+\end{proof}
+
+
+
+\begin{corollary}\hfill
+\begin{itemize}
+	\item $(u_{xx})_i = \frac{1}{\Delta x^2}(2u_i - 5u_{i+1} + 4u_{i+2} -u_{i+3}) + \frac{11}{12}\Delta x^2 (\frac{\Pa^4 u}{\Pa x^4})$
+	\item $(u_{xx})_i = \frac{1}{\Delta x^2}(2u_i - 5u_{i-1} + 4u_{i-2} -u_{i-3}) + \frac{11}{12}\Delta x^2 (\frac{\Pa^4 u}{\Pa x^4})$
+	\item $(u_{xx})_i = \frac{1}{\Delta x^2}(-u_{i+2} + 16u_{i+1} - 30u_i + 16u_{i-1} - u_{i-2}) + \frac{\Delta x^4}{90}(\frac{\Pa^6 u}{\Pa x^6})$
+\end{itemize}
+\end{corollary}
+
+\begin{remark}[extension to higher order scheme]
+It is straight forward to extend higher order schemes using Taylor expansion.
+\end{remark}
+
+
+\subsection{A general approach for implicit scheme}\cite[288]{karniadakis2003parallel}\hfill
+\begin{remark}[explicit vs. implicit numerical scheme]\hfill
+\begin{itemize}
+	\item In explicit schemes, we express a derivative
+	at one grid point in terms of function values of nearby grid points. 
+	\item In implicit schemes, we express a derivative
+	at one grid point in terms of \textbf{function values as well as derivative values} at adjacent grid points (spatial discretization) or in terms of previous and current time levels (temporal discretization). 
+	\item In implicit schemes, matrix inversion is usually needed to obtain the solution.
+\end{itemize}
+
+	
+\end{remark}
+
+
+\subsection{Von Neumann analysis}
+\begin{definition}
+Von Neumann stability analysis  is a procedure used to check the stability of finite difference schemes in linear partial differential equations based on Fourier component evolutions.
+\end{definition}
+
+
+
+\begin{remark}[difficulties with nonlinear PDE]
+In general, it is difficult to investigate Von Neumann stability for nonlinear PDE.
+\end{remark}
+
+
+
+
+\begin{example}[two time level analysis]
+	Consider
+$$y_{n+1,m} = y_{n,m+1} + y_{n,m-1} - y_{n-1,m}$$
+where the $n$ is temporal coordinate and $m$ is the spatial coordinate. 
+
+Substitute $Y_n(k)e^{ik m \Delta x}$ for $y_{n,m}$, where $k$ is the wave length, $i$ is the imaginary number, then we have
+
+$$Y_{n+1}(k) = (e^{ik\Delta x} + e^{ik\Delta x})Y_n(k) - Y_{n-1}(k) = 2\cos(k\Delta x)Y_n(k) - Y_{n-1}(k).$$
+
+Note that this is a linear difference equation, and its growth is bounded if the characteristic equation
+$$\lambda^2 - 2\cos(k\Delta x) \lambda + 1 = 0$$ 
+have all roots $\abs{\lambda} < 1$ (\autoref{ch:dynamical-systems:th:solutiontolineardifferenceequationwithconstantcoefficients}). 
+\end{example}
+
+
+\begin{example}[one time level analysis]
+$$y_{n+1,m} = (1-\lambda) y_{n,m} + \lambda y_{n,m-1}$$
+Substitute $Y_n(k)e^{ik m \Delta x}$ for $y_{n,m}$ and $Y_{n+1} = G(k)Y_n(k)$, then
+$$G(k)Y_{n}(k) = (1-\lambda)Y_n(k) + \lambda Y_n(k) e^{-ik\Delta x}.$$
+To achieve stability, we require $$\abs{G(k)}\leq 1,$$
+where $G(k) = (1-\lambda) + \lambda e^{-ik\Delta x}$.
+\end{example}
+
+
+\section{Initial value problem}
+\begin{definition}[initial value problem]\index{initial value problem}
+A general form of initial value problem(IVP) is given as
+$$y'(t) = f(t,y),y\in \R^m,t\in \R, \forall 0<t$$
+where the initial condition is $y(0) = a$.
+\end{definition}
+
+
+
+\subsection{Numerical method for IVP}
+\begin{table}[h]
+\centering
+\caption{Finite difference method for IVP \cite[16]{holmes2007introduction}}
+\begin{tabular}{|l|l|l|l|}
+\hline
+\multicolumn{4}{|l|}{ Methods for solving the differential equation
+$\frac{d}{dt}y(t) = f(t,y)$, $k=\Delta t $} \\ \hline
+ Method    &  Difference formula &  $\tau_j$   &    Properties \\ \hline
+Euler     &  $y_{j+1} = y_j + kf_j$    &    $O(k)$ &    Explicit. conditionally A-stable \\ \hline
+Backward Euler     & $y_{j+1} = y_j + kf_{j+1}$     & $O(k)$    &    Implicit. A-stable \\ \hline
+Trapezoidal     &   $y_{j+1} = y_j + k(f_j+f_{j+1})/2$  &   $O(k^2)$  &   Implicit. A-stable  \\ \hline
+Runge-Kutta (RK4)     &      &  $O(k^4)$   &  Explicit. conditionally A-stable   \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{lemma}[accuracy analysis]\label{ch:numerical-methods:th:initalvalueproblemnumericalschememaccuracyanalysis}\hfill
+\begin{itemize}
+	\item (explicit scheme)Using Taylor expansion, we have
+	$$y_{j+1} - y_{j} = \frac{dy_j}{dt}k + \frac{1}{2}\frac{d^2y_j}{dt^2}(k)^2 + O(k^3).$$
+	Then
+	$$\frac{dy}{dt} = \frac{y_{j+1} - y_{j}}{k} + O(k) = f_j.$$
+	\item (implicit scheme)Using Taylor expansion, we have
+	$$y_{j} = y_{j+1} - \frac{dy_{j+1}}{dt}k + \frac{1}{2}\frac{d^2y_{j+1}}{dt^2}k^2 + O(k^3).$$
+	Then
+	$$\frac{dy}{dt} = \frac{y_{j+1} - y_{j}}{k} + O(k) = f(t_j,y(t_{j})).$$
+	
+	\item (trapezoidal scheme)We have
+	$$y_{j+1} - y_{j} = \frac{1}{2}(f_j + f_{j+1}) k + O(k^3).$$
+\end{itemize}
+\end{lemma}
+\begin{proof}
+(1)(2)Straight forward.
+(3) Using numerical integration (\autoref{appendix:numericalintegralTrapezoidruleerrorbound} \cite[19]{holmes2007introduction})
+$$y_{j+1} - y_j=\int_{t_j}^{t_{j+1}} f(y)dy = \frac{1}{2}(f_{j+1} + f_j)k + O(k^3).$$
+\end{proof}
+
+
+\begin{remark}[Trapezoidal method vs Backward Euler]
+Trapezoidal method is better than Backward Euler in accuracy,i.e., truncation error.	
+\end{remark}
+
+\begin{remark}[Implicit schemes involve finding roots]
+In the backward Euler scheme, we have
+$$y_{j+1} = y_j + k f(t_{j+1},y_{j+1}).$$
+If $f$ is a linear function on $y$, then we can solve $y_{j+1}$ by solving linear equations; if $f$ is a nonlinear function on $y$, then we can solve $y_{j+1}$ via Newton root finding method.
+\end{remark}
+
+
+\FloatBarrier
+\subsection{Stability of numerical scheme}
+
+\begin{theorem}[Lax equivalence theorem]\index{Lax equivalence theorem}\cite[32]{strikwerda2004finite}
+Given a consistent finite difference method for a well-posed linear initial value problem, the method is convergent if and only if it is stable.	
+\end{theorem}
+
+
+
+\begin{remark}[stability vs. consistence]\hfill
+\begin{itemize}
+    \item Consistence in the numerical difference approximation alone cannot guarantee the convergence to the exact solution.
+    \item Stability is also needed. And stability is about how the error is propagated during the iterative solution process.
+\end{itemize}
+\end{remark}
+
+\begin{definition}[A-stable]\cite[13]{holmes2007introduction}\index{A-stable}
+Given a IVP, known as A-stable test problem, as
+$$dy/dt = -ry,y(0) = a,r>0$$
+If the method applied to this problem producing a bounded solution, irrespective of the $r$ and $\delta t$, then the method is said to be \textbf{A-stable}. If boundedness occurs only when $k$ is small then the method is \textbf{conditionally A-stable}. Otherwise, the method is \textbf{unstable}.
+\end{definition}
+
+
+\begin{remark}[why this $A$-stable test problem?]\hfill
+\begin{itemize}
+	\item The $A$-stable test problem will be globally asymptotically stable at 0. If any numerical method cannot obtain stable numerical solution, then such numerical method is unstable. 
+	\item The $A$-stable test problem is the linearized problem at fixed point. Consider 
+	$y' = f(y,t)$ with fixed point $y^*$. Then any perturbation around $y^*$ is
+	$$(y^* + \delta y)' = f(y^* + \delta y,t) \approx f(y^*,t) + f'(y^*)\delta y$$
+	use $(y^*)' = f(y^*)$, we have the dynamics for perturbation as
+	$$(\delta y)' = f'(y^*)\delta y = -r\delta y$$
+	where $r = -f'(y^*)$(If $y' = f(y,t)$ has a stable fixed point, then $f'(y^*)\leq $ to ensure stability.). 
+\end{itemize}
+\end{remark}
+
+
+
+\begin{lemma}[Euler method stability]
+The Euler method for the $A$-stable test problem is
+$$y_{j+1} = (1 - rk)y_j$$
+where $k = \Delta t$. And Euler method is conditionally $A$ stable when $k$ is such that
+$$\abs{1-rk}\leq 1,$$
+or equivalently, $k\leq 2/ r.$
+\end{lemma}
+\begin{proof}
+In Euler scheme, we have
+ $$\frac{y_{j+1} - y_j}{\Delta t} = -ry_j$$
+ then we get
+ $$y_{j+1} = (1-rk)y_j = (1-rk)^j y_0.$$
+ Therefore, $y_n$ will be bounded if $$\abs{1-rk}\leq 1.$$
+\end{proof}
+
+\begin{lemma}[Backward Euler method stability]
+	The backward Euler method for the $A$-stable test problem is
+	$$y_{j+1} = (1 + rk)y_j$$
+	where $k = \Delta t$. And Backward Euler method is $A$-stable.
+\end{lemma}
+\begin{proof}
+	In Euler scheme, we have
+	$$\frac{y_{j+1} - y_j}{\Delta t} = -ry_{j+1}$$
+	then we get
+	$$(1+rk)y_{j+1} = y_j \implies y_{j+1} = \frac{y_j}{(1+rk)} =  \frac{y_0}{(1+rk)^j}.$$
+	Therefore, given $r>0$, backward Euler method is unconditionally stable for any $k>0$.
+\end{proof}
+
+
+\subsection{Stiffness}
+\begin{definition}[stiffness of linear systems, stiffness ratio]\index{stiffness}
+Given a linear constant system
+$$y' = Ay + f(x)$$
+where $y,f\in \R^n, A\in \R^{n\times n}$. Assuming $A$ can be diagonalized as $A = V\Lambda V^{-1}$ and all $Re(\lambda_i) < 0$, then we can define that \textbf{stiffness ratio} as
+$$R = \frac{Re(\lambda_{min})}{Re(\lambda_{max})}$$
+(note that all $Re(\lambda_i) < 0$.)	
+\end{definition}
+
+\begin{remark}[issues with stiff linear system]\hfill
+	\begin{itemize}
+		\item A linear system has a \textbf{large stiffness ratio} is called stiff system. In such system, there are both fast and slow evolving dynamical mode. When we use conditionally stable method to numerically and stably solve such problem, we are forced to time step size $$k \leq -\frac{2}{Re(\lambda_{min})},$$ which will be a small number. 
+		\item For stiff problem, we can use backward Euler method.
+	\end{itemize}
+\end{remark}
+
+\begin{example}
+Consider a linear system with 
+$$A = \begin{bmatrix}
+0 & 1\\
+-1000 & -1001
+\end{bmatrix}$$
+which has $\lambda=-1000,-1$.The system has a large stiffness ratio of 1000.
+\end{example}
+
+
+
+
+
+
+
+
+\section{First-order linear PDE(wave equation)}
+\subsection{Basic definitions and numerical schemes}
+\begin{definition}[first-order linear PDE]\index{first-order linear PDE}
+The first-order linear PDE is given as
+$$\frac{\Pa u(x,t)}{\Pa t} + a(x)\frac{\Pa u(x,t)}{\Pa x} = 0, a(x) > 0$$
+with initial condition of $u(x,0) = g(x)$.
+\end{definition}
+
+\begin{remark}[linearity of the solution]
+\end{remark}
+
+\begin{lemma}[solution to constant first-order linear PDE]\cite[132]{holmes2007introduction}
+The solution to $$\frac{\Pa u(x,u)}{\Pa t} + a\frac{\Pa u(x,t)}{\Pa x} = 0,a>0$$
+with initial condition of $u(x,0) = g(x)$, is $u(x,t) = g(x-at)$
+\end{lemma}
+\begin{proof}
+directly verified.	
+\end{proof}
+
+\begin{remark}[property of solutions]\hfill
+	\begin{itemize}
+		\item The initial shape is preserved, including jumps.
+		\item The information/shape travels at a speed $a$.
+	\end{itemize}
+\end{remark}
+
+\subsubsection{Upwind scheme in space}
+\begin{definition}[upwind scheme]\index{upwind scheme}
+Let $u_{i,j}$ represent the solution at $i\Delta x =ik, j\Delta t = jh$, then the upwind scheme is defined as
+$$\frac{u_{i,j+1} - u_{i,j}}{k} + a \frac{u_{i,j} - u_{i-1,j}}{h} = 0.$$
+
+Rearrange and we have
+$$u_{i,j+1} = (1 - \lambda)u_{i,j} + \lambda u_{i-1,j},$$
+where $\lambda = ak/h$.
+\end{definition}
+
+\begin{remark}[interpretation via mass flow]
+We can write the update formula for spatial point $i$ as
+$$u_{i,j+1} = u_{i,j} + \lambda u_{i-1,j} - \lambda u_{i,j},$$
+which can be interpreted as the mass flow out from $u_{i,j}$ and \textbf{mass flow in from the downstream} $u_{i-1,j}$.
+\end{remark}
+
+
+\begin{definition}[second order upwind scheme]
+In the second order upwind scheme, we use the following spatial difference scheme as
+$$\frac{\Pa u}{\Pa x} = \frac{3u_{n,i}-4u_{n,i-1}+u_{n,i-2}}{2\Delta x},$$
+which follows  \autoref{ch:numerical-methods:th:secondorderforwardbackwardscheme}.	
+\end{definition}
+
+
+\subsubsection{Downwind scheme in space}
+\begin{definition}[downwind scheme]
+Let $u_{i,j}$ represent the solution at $i\Delta x =ik, j\Delta t = jh$, then
+$$\frac{u_{i,j+1} - u_{i,j}}{k} + a \frac{u_{i+1,j} - u_{i,j}}{h} = 0.$$
+
+Rearrange and we have
+$$u_{i,j+1} = (1 + \lambda)u_{i,j} - \lambda u_{i+1,j}$$
+where $\lambda = ak/h$.
+\end{definition}
+
+\begin{remark}[interpretation via mass flow]
+We can write the update formula for spatial point $i$ as
+$$u_{i,j+1} = u_{i,j} - \lambda u_{i-1,j} + \lambda u_{i,j},$$
+which can be interpreted as the mass flow out from $u_{i,j}$ and \textbf{mass flow in from the upstream} $u_{i+1,j}$.
+\end{remark}
+
+
+\subsection{Stability}
+%\begin{definition}[Von Neumann stability]\cite[259]{griffiths2015essential}
+
+%\end{definition}
+
+
+\begin{definition}[Courant-Friedrichs-Lewy condition]
+\cite[134]{holmes2007introduction}\index{Courant-Friedrichs-Lewy condition}
+\textbf{CFL(Courant-Friedrichs-Lewy) condition}: The numerical domain of dependence must bound, or contain the domain of dependence for the problem. 
+\end{definition}
+
+\begin{remark}\hfill
+\begin{itemize}
+    \item The CFL condition cannot completely guarantee a stable solution(\textbf{we still need to check Von Neumann stability}). But it gives a quick way to judge whether the discretion parameter is proper.
+    \item The CFL can \textbf{only apply to wave problem, it cannot apply to heat/diffusion equation, which has infinite propagation speed}.
+    \item The CFL makes no statement about accuracy.
+\end{itemize}
+\end{remark}
+
+
+
+\begin{lemma}[stability of upwind scheme]
+	\cite[138]{holmes2007introduction}
+	Consider the upper wind scheme is 
+	$$u_{i,j+1} = (1 - \lambda)u_{i,j} + \lambda u_{i-1,j}$$
+	where $\lambda = ak/h$, 
+	we have
+	\begin{itemize}
+		\item It will satisfy CFL condition if $0 \leq \lambda \leq 1$;
+		\item It is Von Neumann stable if $0 \leq \lambda \leq 1$.
+	\end{itemize}
+\end{lemma}
+\begin{proof}
+(1)The numerical dependence of $u_{i,j+1}$ includes $u_{i,j}, u_{i-1,j}$, whereas the problem dependence includes $u_{i-\left \lceil{\lambda}\right \rceil,j},\lambda > 0$. Therefore, we require $\lambda \leq 1$.\\
+(2) Consider the propagation of a Fourier basis of spatial frequency $r$, $w(t)e^{rxI}$, where $I$ is the imaginary number. Let $$u_{ij} = w_j e^{rx_i I},$$ then
+\begin{align*}
+w_{j+1}e^{rx_i I} = (1-\lambda)w_j e^{rx_i I} + \lambda w_j e^{rx_i I}e^{rhI} \\
+w_{j+1} = ((1-\lambda) + \lambda e^{rhI} )w_j  \\
+\end{align*}
+The \textbf{magnitude} of the wave is $w_j$ and will grow with a factor
+ $$\frac{w_{j+1}}{w_j} = \kappa = ((1-\lambda) + \lambda e^{rhI}).$$ By requiring $\abs{\kappa}^2 \leq 1$ can lead to $0 \leq \lambda \leq 1$.	
+\end{proof}
+
+
+\begin{remark}[intuition]
+When the transport speed is large, i.e., $a$ is large, then we need to choose smaller time step(to reduce to the problem numerical dependence) and increase the spatial step(to increase the numerical dependence).
+\end{remark}
+
+\begin{lemma}[downwind scheme is not stable]
+	The downwind scheme, 
+	$$u_{i,j+1} = (1 + \lambda)u_{i,j} - \lambda u_{i+1,j}$$
+	where $\lambda = ak/h$,
+	does not satisfy CFL condition.	
+	
+	Moreover, it is \textbf{Von Neumann unstable} for all $\lambda > 0$.
+\end{lemma}
+\begin{proof}
+(1)The numerical dependence of $u_{i,j+1}$ only includes $u_{i,j}, u_{i+1,j}$, whereas the problem dependence includes $u_{i-\left \lceil{\lambda}\right \rceil,j},\lambda > 0$.
+(2)(2) Consider the propagation of a Fourier basis of spatial frequency $r$, $w(t)e^{rxI}$, where $I$ is the imaginary number. Let $$u_{ij} = w_j e^{rx_i I},$$ then
+\begin{align*}
+w_{j+1}e^{rx_i I} = (1+\lambda)w_j e^{rx_i I} - \lambda w_j e^{rx_i I}e^{-rhI} \\
+w_{j+1} = ((1+\lambda) - \lambda e^{-rhI} )w_j  \\
+\end{align*}
+The \textbf{magnitude} of the wave is $w_j$ and will grow with a factor
+$$\frac{w_{j+1}}{w_j} = \kappa = ((1+\lambda) - \lambda e^{rhI}).$$ We now show that $$\abs{\kappa}^2\geq 1,\forall \lambda \geq 0.$$
+\begin{align*}
+\kappa &=  (1+\lambda - \lambda C) - I\lambda S\\
+\kappa &= (1+\lambda - \lambda C)^2 + \lambda ^2 S^2 \\
+&= (1 + \lambda)^2 - 2 \lambda(1+\lambda) C + \lambda^2\\
+&=(1+\lambda)(1+\lambda - 2\lambda C) + \lambda^2 \geq 1,\forall \lambda \geq 0.
+\end{align*}
+where $C=cos(-rh),S=sin(-rh)$.
+\end{proof}
+
+
+\begin{remark}[explicit vs. implicit scheme in time]\hfill
+	\begin{itemize}
+		\item For explicit scheme, usually the numerical dependence domain is smaller than implicit scheme(see more on heat equation stability); and therefore, the explicit scheme will require $\lambda$ to be smaller in order to satisfy CFL condition.
+	\end{itemize}
+\end{remark}
+
+
+\subsubsection{Summary of numerical schemes}
+
+Numerical solutions for solving $$\frac{\Pa u}{\Pa t} + a \frac{\Pa u}{\Pa x} = 0,a > 0 $$ can be all rearranged to an unified form:
+$$u_{i,j+1} = Au_{i+1,j} + Bu_{i+1,j} + Cu_{i-1,j}$$
+
+The properties of various numerical schemes are summarized in \autoref{}\cite[138]{holmes2007introduction}.
+
+\begin{sidewaystable}
+\centering
+\caption{Numerical method for linear PDE \cite[136]{holmes2007introduction}}
+\label{ch:numerical-methods:table:numericalschemefirstorderpde}
+\begin{tabular}{|l|l|l|l|l|l|}
+\hline
+\multicolumn{6}{|l|}{} \\ \hline
+method   & coefficients   & truncation error  & CFL  & stability  & monotone  \\ \hline
+upperwind   & $A=0,B=1-\lambda,C=\lambda$  & $O(h)+O(k)$  &  $\lambda \leq 1$ & conditional $\lambda \leq 1$  &  Yes \\ \hline
+Lax-Friedrichs   & $A=\frac{1}{2}(1-\lambda),B=0,C=\frac{1}{2}(1+\lambda)$  & $O(h^2)+O(k) + O(h^2/k)$  & $\lambda \leq 1$  &  conditional $\lambda \leq 1$ &  Yes \\ \hline
+Lax-Wendroff   & $A=-\frac{\lambda}{2}(1-\lambda),B=1-\lambda^2,C=\frac{\lambda}{2}(1+\lambda)$  & $O(h^2)+O(k^2)$  & $\lambda \leq 1$  & conditional $\lambda \leq 1$  & No  \\ \hline
+Center   & $A=-\frac{\lambda}{2},B=1,C=\frac{\lambda}{2}$  &  $O(h^2)+O(k)$ & $\lambda \leq 1$  & unstable  &  No \\ \hline
+\end{tabular}
+\end{sidewaystable}
+
+
+
+\subsubsection{Remarks on implicit schemes}
+
+\begin{remark}\cite[146]{holmes2007introduction}
+	\begin{itemize}
+		\item Implicit scheme is much more often used in diffusion problem than wave problem. In explicit scheme, for diffusion problem, we require $\Delta t \leq h^2/D$ whereas in wave problem $\Delta t\leq \Delta x / a$. The time step in diffusion problem is much  smaller in explicit scheme. 
+		\item Even though implicit scheme in wave problem can increase the numerical dependence, but it might lose the capability to preserve discontinuities.
+	\end{itemize}
+\end{remark}
+
+
+
+
+
+\section{Parabolic equation}
+\subsection{Diffusion problem}
+\begin{definition}
+	A typical diffusion equation is given as
+	$$\frac{\Pa u}{\Pa t} = D\frac{\Pa^2 u}{\Pa x^2 }$$
+	where $0<x<l,t>0$ with boundary condition $u(0,t) = u_L,u(l,t)=u_R,0<t$ and initial condition $u(x,0) = g(x)$.
+\end{definition}
+
+
+\begin{remark}[Properties of diffusion equation solution]:
+\begin{itemize}
+	\item \textbf{smoothness}: Even the initial condition is discontinuous, the solution at $t>0$, no matter how small $t>0$ is, will be smooth, i.e., in $C^\infty$.
+	\item \textbf{instant messaging}: Consider the initial condition is a delta spiking function, the solution at $t>0$, no matter how small $t>0$ is, will be nonzero at the whole domain. 
+	\item \textbf{maximum and minimum principle}: the maximum and minimum of the solution occur on the boundary.
+\end{itemize}	
+\end{remark}
+
+
+
+
+\begin{remark}[instant messaging and explicit/implicit method]
+	The instant messaging property of diffusion equation solution suggest that implicit method is usually better at maintaining this property; whereas explicit method can only pass the message to nearby region. 
+\end{remark}
+
+\begin{theorem}[maximum principle for heat equation]\cite[120]{griffiths2015essential}
+	Let $k > 0$, suppose that the function $u(x,t)$ satisfies the inequality 
+	$$-ku_{xx}+u_t \leq 0$$
+	for $(x,t) \in \Omega_{\tau}$, where
+	$$\Omega_{\tau} =\{(x,t):0<x<1,0<t<\tau\}$$
+	then $u(x,t)$ is either constant or else attains its maximum value on $\Gamma_{\tau}$, which is the boundary of $\Omega_{\tau}$ excluding the side $t= \tau$.
+\end{theorem}
+
+\subsubsection{Explicit scheme}
+\begin{definition}
+Consider the inhomogeneous heat equation:
+$$D\frac{\Pa u}{\Pa x^2} = \frac{\Pa u}{\Pa t} + f(x,t)$$
+for $0<x<l,0<t$, where the boundary conditions are
+$$u(0,t)=0,u(l,t)=0$$ and initial conditions are
+$$u(x,0) =g(x)$$
+
+The explicit numerical difference scheme is
+\begin{align*}
+D\frac{u(x_{i+1},t_j) - 2u(x_i,t_j) + u(x_{i-1},t_j)}{h^2}  =\\ \frac{u(x_i,t_{j+1})-u(x_i,t_{j})}{k} + f(x_i,t_j).    
+\end{align*}
+
+Let $\lambda = Dk/h^2$ and we have
+\begin{align*}
+u_{i,j+1} &= \lambda u_{i+1,j} + (1-2\lambda) u_{ij} + \lambda u_{i-1,j} - kf_{i,j} \\
+		  &= u_{ij} + \lambda u_{i+1,j} - 2\lambda u_{ij} + \lambda u_{i-1,j} - kf_{i,j} \\
+\end{align*}
+for $i=1,2,...,N,j=0,1,....,M-1$.
+
+More compactly, we can write as
+$$\bm{u}_{j+1} = \bm{Au}_j - k\bm{f}_j.$$
+\end{definition}
+
+
+\begin{remark}[interpretation via mass flow]
+We can write the update formula for spatial point $i$ as
+$$u_{i,j+1} = u_{ij} + \lambda u_{i+1,j} + -2\lambda u_{ij} + \lambda u_{i-1,j} - kf_{i,j} $$
+which can be interpreted as the mass flow out from $u_{i,j}$ and \textbf{mass flow in from the near by sites}  $u_{i+1,j}$ and $u_{i-1,j}$.
+\end{remark}
+
+\begin{remark}[lack of instant messaging property of explicit scheme]
+Note that explicit scheme does not have instant messaging property in the solutions; that is, the solution at current step at a specified position $x$ does not depend on values of all the positions at the previous steps.
+\end{remark}
+
+
+\subsubsection{Implicit scheme}
+\begin{definition}
+\cite[101]{holmes2007introduction}
+Consider the inhomogeneous heat equation:
+$$D\frac{\Pa^2 u}{\Pa x^2} = \frac{\Pa u}{\Pa t} + f(x,t)$$
+for $0<x<l,0<t$, where the boundary conditions are
+$$u(0,t)=0,u(l,t)=0$$ and initial conditions are
+$$u(x,0) =g(x).$$
+
+The implicit numerical difference scheme is given by
+\begin{align*}
+D\frac{u(x_{i+1},t_{j+1}) - 2u(x_i,t_{j+1}) + u(x_{i-1},t_{j+1})}{h^2} =\\ \frac{u(x_i,t_{j+1})-u(x_i,t_{j})}{k} + f(x_i,t_j)    
+\end{align*}
+
+Let $\lambda = Dk/h^2$, then we have
+
+$$ \lambda u_{i+1,j+1} - (1+2\lambda) u_{i,j+1} + \lambda u_{i-1,j+1} = -u_{i,j} + kf_{i,j}$$
+for $i=1,2,...,N,j=0,1,....,M-1$.
+
+We need to solve linear equations to calculate $u_{i,j+1},\forall i$ from $u_{i,j},\forall i$, given as
+$$B\bm{u_j} = \bm{u}_{j-1} - k\bm{f}_j, j=1,2,...,M$$
+where
+$$B = \begin{pmatrix}
+1+2\lambda & -\lambda &  &  &  & \\ 
+-\lambda & 1+2\lambda & -\lambda &  & 0 & \\ 
+&  -\lambda & 1+2\lambda & -\lambda   &  & \\ 
+&  &  \ddots & \ddots & \ddots & \\ 
+& 0 &  &  -\lambda & 1+2\lambda & -\lambda  \\ 
+&  &  &  &  -\lambda & 1+2\lambda
+\end{pmatrix}$$
+\end{definition}
+
+
+
+
+\begin{lemma}[nonsingularity of matrix B]
+The matrix $B$ is nonsingular, and therefore $\bm{u}_j$ can be solved uniquely from $\bm{u}_{j-1}$
+\end{lemma}
+\begin{proof}
+$B$ is diagonally dominant, and therefore nonsingular(\autoref{ch:linearalgebra:th:diagonallydominantmatrixproperty}).
+\end{proof}
+
+\begin{remark}[instant messaging property of implicit scheme]
+	Note that implicit scheme has instant messaging property in the solutions; that is, the solution at current step at a specified position $x$ depends on values of all the positions at the previous steps. This can be showed using recursive expansion: $u_1$ depends on $u_2$, $u_2$ depends on $u_3$ ...
+\end{remark}
+
+
+\subsubsection{Crank-Nicholson scheme}\index{Crank-Nicholson scheme}
+\begin{definition}[Crank-Nicholson scheme]
+The Crank-Nicholson scheme for the diffusion equation without sources is given as
+$$\frac{1}{2}D(\frac{u_{i+1,j+1} - 2u_{i,j+1} + u_{i-1,j+1}}{h^2} + \frac{u_{i+1,j} - 2u_{i,j} + u_{i-1,j}}{h^2} ) = \frac{u_{i,j+1}-u_{i,j}}{k}.$$
+\end{definition}
+
+\begin{lemma}[second order accuracy in time and space]
+The Crank-Nicholson scheme is second order accuracy in time. 
+\end{lemma}
+\begin{proof}
+Similar to \autoref{ch:numerical-methods:th:initalvalueproblemnumericalschememaccuracyanalysis}.
+Note that $(\frac{u_{i+1,j} - 2u_{i,j} + u_{i-1,j}}{h^2})$ is spatial derivative approximation at time $t_j$ and $(\frac{u_{i+1,j+1} - 2u_{i,j+1} + u_{i-1,j+1}}{h^2})$ is the spatial derivative approximation at time $t_{j+1}$.
+\end{proof}
+
+
+\begin{remark}[advantages and issues]\hfill
+	\begin{itemize}
+		\item  It is a second-order method in time; whereas implicit and explicit methods are first order in time. 
+		\item The Crank-Nicholson scheme is unconditionally stable.
+	\end{itemize}	
+\end{remark}
+
+\subsubsection{Stability analysis}
+
+%\begin{definition}[von Neumann stability]
+%\end{definition}
+
+
+\begin{lemma}[Von Neumann stability analysis for explicit scheme]\cite[95]{holmes2007introduction}\index{Von Neumann stability}
+	The explicit scheme is stable
+	$$u_{i,j+1} = \lambda u_{i+1,j} + (1-2\lambda) u_{ij} + \lambda u_{i-1,j}$$
+	 if $\lambda = Dk/h^2 < 0.5$.
+\end{lemma}
+\begin{proof}
+	Consider a Fourier basis at the frequency $r$ given as $w(r)e^{rxI}$, where $I = \sqrt{-1}$. We investigate how this basis evolves under the explicit scheme. We have
+	\begin{align*}
+	w_{j+1}e^{rx_iI} &= \lambda w_j e^{rx_{i+1}I} + (1-2\lambda) w_j e^{rx_i I} + \lambda w_j e^{rx_{i-1}I} \\
+	& = (\lambda e^{rhI} + 1 - 2\lambda + \lambda e^{-rhI}) w_j )e^{rx_i I} \\
+	& = (1-4\lambda sin^2(\frac{rh}{2})) w_j e^{rx_i I}
+	\end{align*}
+	Therefore, if the growth factor
+	$$\abs{\kappa} = \abs{\frac{w_{j+1}}{w_j}} = \abs{(1-4\lambda sin^2(\frac{rh}{2}))}<1,\forall r,$$ the iteration process will not explode.
+We have
+$$-1\leq 1-4\lambda \sin^2(\frac{rh}{2}) \leq 1,$$
+which gives
+$$0\leq \lambda \leq 2/\sin^2(\frac{rh}{2}),$$
+
+\end{proof}
+
+\begin{remark}
+	The proof uses the fact that any continuous initial condition can be approximated by Fourier series.
+\end{remark}
+
+
+\begin{lemma}[Von Neumann stability analysis for implicit scheme]
+	The implicit scheme 
+	$$\lambda u_{i+1,j+1} - (1+2\lambda) u_{i,j+1} + \lambda u_{i-1,j+1} = -u_{i,j}$$
+	is unconditionally stable for all $\lambda \geq 0$.
+\end{lemma}
+\begin{proof}
+Similar to the explicit scheme, the growth rate
+$$G = \frac{1}{(1+4\lambda sin^2(\frac{rh}{2}))}$$
+and $\abs{G}\leq 1$ for any $\lambda \geq 0$.
+\end{proof}
+
+\begin{lemma}[Von Neumann stability analysis for Crank-Nicholson scheme]
+	The Crank-Nicholson scheme 
+	$$\frac{1}{2} \lambda(u_{i+1,j+1} - 2u_{i,j+1} + u_{i-1,j+1}) + \frac{1}{2}\lambda(u_{i+1,j} - 2u_{i,j} + u_{i-1,j}) = u_{i,j+1}-u_{i,j}, \lambda = D\frac{k}{h^2}$$
+	is unconditionally stable for all $\lambda\geq 0$.
+\end{lemma}
+\begin{proof}
+	Similar to the explicit scheme, the growth factor be $G$, we have
+	$$\frac{1}{2} G\lambda(e^{Irh} - 2 + e^{-Irh}) + \frac{1}{2}\lambda(e^{Irh} - 2 + e^{-Irh}) = G -1.$$
+	Then, we have
+	$$G = \frac{1 - \lambda (1-\cos(rh))}{1 + \lambda(1-\cos(rh))}$$
+	and $\abs{G}\leq 1$ for any $\lambda > 0, r$.
+\end{proof}
+
+\subsection{Black-Scholes equation}
+\begin{definition}[Black-Scholes equation]\index{Black-Scholes equation}
+The Black-Scholes equation is given as \autoref{ch:mathematical-finance-theory:th:Black-ScholesEquation}\index{Black-Scholes equation}
+$$\frac{\Pa V}{\Pa t} + \frac{1}{2}\sigma^2 S^2 \frac{\Pa^2 V}{\Pa S^2} + rS\frac{\Pa V}{\Pa S} - rV = 0$$
+with final condition $V(S(T),T) = V_T(S(T))$ and boundary condition $V(S,t) = V_a(t)$ on $S = a$ and $V(S,t) = V_b(t)$ on $S=b$. 
+\end{definition}
+
+\subsubsection{Implicit scheme}
+\begin{definition}[implicit scheme]
+Suppose $T$ is the maturity of the option and $S_{max}$ is the maximum stock price. Let $M\Delta S = S_{max}$ and $N\Delta t = T$. $f_{i,j}$ denotes the option value $(i\Delta t, j\Delta S)$
+We use the following finite difference approximations:
+\begin{itemize}
+	\item $$\frac{\Pa f}{\Pa s} = \frac{f_{i,j+1}-f_{i,j-1}}{2\Delta S}$$
+	\item $$\frac{\Pa f}{\Pa t} = \frac{f_{i+1,j}-f_{i,j}}{\Delta t}$$
+	\item $$\frac{\Pa^2 f}{\Pa S^2} = \frac{f_{i,j+1}-2f_{i,j}+f_{i,j-1}}{\Delta S^2}$$
+	
+\end{itemize}
+
+
+
+
+The discrete form B-S equation gives
+
+$$\frac{f_{i+1,j}-f_{i,j}}{\Delta t} + rj\Delta S \frac{f_{i,j+1}-f_{i,j-1}}{2\Delta S} + \frac{1}{2}\sigma^2j^2\Delta S^2 \frac{f_{i,j+1}-2f_{i,j}+f_{i,j-1}}{\Delta S^2} = rf_{i,j}$$
+
+By rearranging, we have
+$$a_j f_{i,j-1} + b_jf_{i,j} + c_j f_{i,j+1} = f_{i+1,j}, i=1,...,N-1, j=1,...,M-1$$
+where
+\begin{align*}
+a_j & = \frac{1}{2}rj\Delta t - \frac{1}{2}\sigma^2j^2\Delta t\\
+b_j &= 1 + \sigma^2 j^2 \Delta t + r\Delta t\\
+c_j &= -\frac{1}{2}rj\Delta t - \frac{1}{2}\sigma^2 j^2 \Delta t
+\end{align*}
+\end{definition}
+
+\begin{remark}[boundary and final conditions for an European put]
+Consider the boundary and final conditions for an European put option:
+\begin{itemize}
+	\item $f_{N,j} = \max(K-j\Delta S,0),j=0,1,...,M$
+	\item $f_{i,0} = Ke^{-r(T-t)},i=0,1,...,N$
+	\item $f_{i,M}= 0$ ($f\to 0$ as $S \to \infty$).
+\end{itemize}
+
+With calculated $f_{i+1,j},j=0,...,M$, we use linear equation to solve $f_{i,j},j=0,...,M$.	
+\end{remark}
+
+
+
+\begin{remark}[European call option]\cite[47]{Lalley2001mathematical}
+the boundary and final condition for an European put option:
+\begin{itemize}
+	\item $f_{N,j} = \max(j\Delta S - K,0),j=0,1,...,M$
+	\item $f_{i,0} = 0,i=0,1,...,N$
+	\item $f_{i,M}= S(or ~ S-Ke^{-r(T-t)})$ ($f\to S$ as $S \to \infty$).
+\end{itemize}
+\end{remark}
+
+
+\begin{remark}[stability]
+Since implicit method is stable for both the wave equation and the diffusion equation, implicit method is also stable for Black-Scholes equation.
+\end{remark}
+
+
+
+\begin{remark}[American option]
+For American call options, we add one more step in calculating the value on each node: $f_{i,j} = \max(j\Delta S - K, f_{i,j})$.
+\end{remark}
+
+
+\subsubsection{Explicit scheme}
+\begin{definition}[explicit scheme]
+For explicit form, we have the finite difference approximations as:
+\begin{itemize}
+	\item $$\frac{\Pa f}{\Pa s} = \frac{f_{i+1,j+1}-f_{i+1,j-1}}{2\Delta S}$$
+	\item $$\frac{\Pa f}{\Pa t} = \frac{f_{i+1,j}-f_{i,j}}{\Delta t}$$
+	\item $$\frac{\Pa^2 f}{\Pa S^2} = \frac{f_{i+1,j+1}-2f_{i+1,j}+f_{i+1,j-1}}{\Delta S^2}$$
+\end{itemize}
+
+The discrete form B-S equation gives
+
+$$\frac{f_{i+1,j}-f_{i,j}}{\Delta t} + rj\Delta S \frac{f_{i+1,j+1}-f_{i+1,j-1}}{2\Delta S} + \frac{1}{2}\sigma^2j^2\Delta S^2 \frac{f_{i+1,j+1}-2f_{i+1,j}+f_{i+1,j-1}}{\Delta S^2} = rf_{i+1,j}$$
+\end{definition}
+
+\begin{remark}[stability]
+The explicit scheme is usually unstable for large time step $\Delta t$. See wave equation and diffusion equation for the guidance on how to choose $\Delta t$.
+\end{remark}
+
+
+\subsubsection{Crank-Nicholson scheme}\index{Crank-Nicholson scheme}
+\begin{definition}[Crank-Nicholson scheme]
+We have implicit scheme
+$$\frac{f_{i+1,j}-f_{i,j}}{\Delta t} + rj\Delta S \frac{f_{i,j+1}-f_{i,j-1}}{2\Delta S} + \frac{1}{2}\sigma^2j^2\Delta S^2 \frac{f_{i,j+1}-2f_{i,j}+f_{i,j-1}}{\Delta S^2} = rf_{i,j}$$
+and explicit scheme
+$$\frac{f_{i+1,j}-f_{i,j}}{\Delta t} + rj\Delta S \frac{f_{i+1,j+1}-f_{i+1,j-1}}{2\Delta S} + \frac{1}{2}\sigma^2j^2\Delta S^2 \frac{f_{i+1,j+1}-2f_{i+1,j}+f_{i+1,j-1}}{\Delta S^2} = rf_{i+1,j}.$$
+
+Add these two schemes together and divide by 2, we get
+the Crank-Nicholson scheme as:
+$$a f_{i,j-1} + b f_{i,j} + cf_{i,j+1} = d f_{i+1,j+1} + e f_{i+1,j} +g f_{i+1,j+1}$$
+where
+\begin{align*}
+a &= \frac{\sigma^2 j^2}{2} - \frac{rj}{2}\\
+b &= \frac{-2}{\Delta t} -\sigma^2j^2- 2r\\
+c &= \frac{\sigma^2 j^2}{2} + \frac{rj}{2}\\
+d &= -\frac{\sigma^2 j^2}{2} + \frac{rj}{2}\\
+e &= \frac{-2}{\Delta t} -\sigma^2j^2\\
+f &= -\frac{\sigma^2 j^2}{2} - \frac{rj}{2}
+\end{align*}
+\end{definition}
+
+\begin{remark}[accuracy and stability]\hfill
+	\begin{itemize}
+		\item  It is a second-order method in time; whereas implicit and explicit methods are first order in time. 
+		\item Since  Crank-Nicholson method is stable for both the wave equation and the diffusion equation, implicit method is also stable for Black-Scholes equation.
+	\end{itemize}	
+\end{remark}
+
+
+\section{Elliptic problem}
+\begin{definition}
+A two-D elliptic equation is given as
+$$\nabla \cdot (a \nabla u) + b \cdot \nabla u + cu = f,\forall x,y \in D$$
+with Dirichlet boundary condition given as
+$$u = g(x,y), \forall x,y\in \Pa D$$
+\end{definition}
+
+
+\subsection{Laplace equation on rectangular domain}
+\begin{definition}
+A two-D Laplace equation is given as
+$$\nabla^2 u = 0,\forall x,y \in D$$
+with Dirichlet boundary condition given as
+$$u = g(x,y), \forall x,y\in \Pa D$$
+\end{definition}
+
+
+\subsubsection{Finite difference method}
+\begin{definition}[finite difference scheme for 2D Laplace equation]
+Let $u_{i,j}$ represent the solution at $x = ih, y = jk$, then using centered difference, we have
+$$\frac{u_{i+1,j}-2u_{i,j} + u_{i-1,j}}{h^2} + \frac{u_{i,j+1}-2u_{i,j} + u_{i,j-1}}{k^2} = 0$$
+
+Rearrange, and we have
+$$-\lambda^2 u_{i+1,j} + 2(1+\lambda^2)u_{ij} - \lambda^2 u_{i-1,j} - u_{i,j+1} - u_{i,j-1} = 0,i=1,...,N,j=1,...,M$$
+with boundary conditions given as 
+\begin{itemize}
+	\item $u_{0,j} = g_L(jk),j=1,...,M$
+	\item $u_{N+1,j} = g_R(jk),j=1,...,M$
+	\item $u_{i,0} = g_B(ih),j=1,...,M$
+	\item $u_{i,M+1} = g_T(ih),j=1,...,M$
+\end{itemize}
+
+In matrix form, we have 
+$$Au = b$$
+where $u$ is the vector form the solution $u_{i,j}$.
+\end{definition}
+
+\begin{remark}[implications]\hfill
+\begin{itemize}
+    \item The unknowns vector $x$ only contains the interior points in Dirichlet boundary condition.
+    \item $A$ will be symmetric positive definite (See below)
+\end{itemize}
+\end{remark}
+
+\begin{lemma}\cite[190]{holmes2007introduction}
+The matrix $A$ is symmetric positive definite.
+\end{lemma}
+\begin{proof}
+$A$ is symmetric because when $A(i,j)$ has value $A(j,i)$ has the same value. $A$ is positive definite because its eigenvalues $\lambda > 0$.(\autoref{ch:linearalgebra:th:GerschgorinTausskytheorem})
+\end{proof}
+
+
+
+\subsection{Poisson equation}
+\begin{definition}[Poisson equation]\index{Poisson equation}
+A two-D Poisson equation is given as
+$$\nabla^2 u = f,\forall x,y \in D$$
+with Dirichlet boundary condition given as
+$$u = g(x,y), \forall x,y\in \Pa D$$
+\end{definition}
+
+\begin{example}[Poisson's equation for electrostatics]
+	$$\nabla \psi = -\frac{\rho_f}{\epsilon}$$
+is the Poisson's equation for electrostatics, where $\psi$ is the electrostatic potential, $\rho_f$ is the charge density, and $\epsilon$ is the permittivity. 
+\end{example}
+
+
+
+\begin{theorem}[Maximum principle for Poisson problem]\cite[122]{griffiths2015essential}
+Suppose that the function $u(x,y)$ satisfies the inequality
+$$-u_{xx} - u_{yy} \leq 0$$
+for $(x,y)\in \Omega$ then $u(x,y)$ is either constant or else attains its maximum value on $\Pa \Omega$, the boundary of $\Omega$.
+\end{theorem}
+
+
+\begin{corollary}[Maximum principle for Laplace's equation]\cite[122]{griffiths2015essential}
+If $u_{xx} + u_{yy} = 0$ in $\Omega$, then $u$ attains its maximum and minimum value of the boundary $\Pa \Omega$
+\end{corollary}
+
+
+\begin{remark}[intuition]
+We can understand Laplace equation of the steady state solution of a diffusion equation. Therefore, any maximum value or minimum value point will diffuse away when research steady state.
+\end{remark}
+
+\section{Boundary value problem theory}\index{boundary value problem}
+\subsection{Boundary value problem}
+
+\begin{definition}[Boundary value problem and its solution]\index{boundary value problem}
+A boundary value problem is a differential equation together with a set of additional constraints, called the boundary conditions. A solution to a boundary value problem is a solution to the differential equation which also satisfies the boundary conditions.
+\end{definition}
+
+\begin{example}
+Examples of BVP(without boundary conditions) are:\\
+Wave equation:
+$$u_{tt} = c^2u_{xx}$$
+heat equation:
+$$u_t = ku_{xx}$$
+Black-Scholes equation:
+$$u_t + \frac{1}{2}\sigma^2 x^2 u_{xx} + rxu_x -ru = 0$$
+\end{example}
+
+
+
+\begin{remark}
+The initial value problem can also be viewed as boundary value problem since it has a initial boundary at time domain.
+\end{remark}
+
+\begin{definition}[BVP operator]\index{boundary value problem operator}\cite[15]{griffiths2015essential}
+A Boundary value problem operator $\mathscr{L}$ is operator such that $\mathscr{L}:V(\cB) \to V(\cB)$, which maps a function space $V$ to itself on both the interior of $\cB$ but also the the boundary of $\cB$.
+\end{definition}
+
+\begin{example}
+Consider the PDE $\nabla^2 u = 0, x\in \Omega = (0,1)\times(0,1)$ and $u=0,x\in \Pa\Omega$. Then we can define a BVP operator as
+$$\mathscr{L}u = \begin{cases}
+\nabla^2 u, x\in \Omega\\
+u,x\in \Pa\Omega
+\end{cases}$$
+\end{example}
+
+
+
+\subsection{Linear boundary value problems}\index{linear boundary value problem}
+
+\begin{definition}[linearity of BVP operator]\cite[17]{griffiths2015essential}
+	A BVP $\sL:V(\cB)\to V(\cB)$ is linear if 
+	$$\sL(au+bv)=a\sL u+ b\sL v$$
+	where $a,b\in \R,u,v \in V(\cB)$ 
+\end{definition}
+
+\begin{remark}
+	We check whether an BVP operator is linear, \textbf{We also need to consider linearity of Boundary conditions}. 
+\end{remark}
+
+\begin{example}\cite[18]{griffiths2015essential}
+Examples of linear BVPs includes:
+\begin{itemize}
+	\item Laplace's equation.
+	\item Black-Scholes equation.
+	\item linear first-order equation.
+\end{itemize}
+\end{example}
+
+\begin{remark}[implications of linearity]
+When the BVP operator is linear, we can possibly linearly superposition of solutions, where each solution is the solution corresponding to a specific boundary condition.
+\end{remark}
+
+
+
+\begin{definition}[Homogeneous linear BVP]
+	A linear homogeneous BVP is given as
+	$$\sL u = 0$$
+	where $\sL$ is required to be linear operator.
+\end{definition}
+
+\begin{remark}[nonhomogeneous linear BVP]
+	Note that nonhomogeneous linear BVP is like 
+$$\sL u = \cF$$
+where $\sL$ is required to be linear operator and $\cF$ is non-zero.
+\end{remark}
+
+
+\begin{lemma}[principle of superposition]\cite[18]{griffiths2015essential}\hfill
+\begin{itemize}
+	\item Suppose $u_1,u_2$ are two solutions of $\sL u = 0$, then
+	$$\sL(\alpha u_1 + \beta u_2) = 0, \alpha,\beta\in\R.$$
+	\item Suppose $u^*$ is a particular solution to $\sL u = \cF$, and that $v$ is a solution $sL v = 0$, then
+	$w = u^* + v$ is the solution to $\sL u = \cF$.
+\end{itemize}
+\end{lemma}
+\begin{proof}
+Directly from linearity of BVP operator.
+\end{proof}
+
+
+
+\begin{lemma}[conditions for unique solution of linear homogeneous BVP]
+	A linear homogeneous BVP has an unique solution $v$ if and only if
+	$$\sL v = 0 \Rightarrow v=0$$
+	that is, $v=0$ is only unique solution or $\cN(\sL)=\{0\}$.
+\end{lemma}
+
+\begin{corollary}[solution properties to a linear homogeneous BVP]
+	The solution to a linear homogeneous BVP $\sL u =0$can only have two possibilities:
+	\begin{itemize}
+		\item $u=0$
+		\item infinitely many solutions that form a vector space.
+	\end{itemize}
+\end{corollary}
+
+\begin{example}\hfill
+	\begin{itemize}
+		\item The heat equation with Dirichlet condition of 0 can only have $v=0$ as the solution.
+		\item The heat equation with Neumann condition of 0 can have infinitely many solution of the form $v=const$.
+	\end{itemize}
+\end{example}
+
+
+\begin{corollary}[unique solution to linear non-homogeneous BVP]\cite[20]{griffiths2015essential}
+A linear non-homogeneous BVP $\sL u = \cF$ will have a unique solution if and only if $v = 0$ is the only solution to $\sL u = 0$.
+\end{corollary}
+
+
+\subsection{Classification of boundary value problem}
+
+\begin{definition}[well-posed BVP]\cite[21]{griffiths2015essential}
+A boundary value problem which has a unique solution that varies continuously with the initial and boundary data is said to be \textbf{well posed}. A problem that is not well-posed is ill-posed.
+\end{definition}
+
+\begin{example}[ill-posed problem]\cite[22]{griffiths2015essential}
+The backward heat equation
+$$u_t = - u_{xx}$$
+with the initial condition $u(x,0) = 0$ is a ill-posed problem. When the initial condition is perturbed, the solution will vary dramatically.
+\end{example}
+
+
+\iffalse
+
+\begin{theorem}[sufficient condition for well-posedness]
+
+\end{theorem}
+
+
+\begin{definition}
+If the linear operator $\mathscr{L}$ is inverse monotone, then the equation $\mathscr{L}u = \mathscr{F}$ has a unique solution.
+\end{definition}
+\fi
+
+\begin{theorem}[maximum principle for heat equation]\cite[120]{griffiths2015essential}
+Let $k > 0$, suppose that the function $u(x,t)$ satisfies the inequality 
+$$-ku_{xx}+u_t \leq 0$$
+for $(x,t) \in \Omega_{\tau}$, where
+$$\Omega_{\tau} =\{(x,t):0<x<1,0<t<\tau\}$$
+then $u(x,t)$ is either constant or else attains its maximum value on $\Gamma_{\tau}$, which is the boundary of $\Omega_{\tau}$ excluding the side $t= \tau$.
+\end{theorem}
+
+\subsection{Two-point Boundary value problem}
+\begin{definition}
+	The two-point boundary value problem is given as
+	$$\frac{d^2y}{dx^2} + p(x)\frac{dy}{dx} + q(x)y = f(x)$$
+	for $0<x<l$, where $y(0)=\alpha, y(l) = \beta$ as one example of boundary conditions. All types boundary conditions include
+	\begin{itemize}
+		\item \textbf{Dirichlet condition}: the value of $y$ is specified.
+		\item \textbf{Neumann condition}: the value of $y'$ is specified
+		\item \textbf{Robinson condition}: A linear combination of $y'$ and $y$ is specified.
+	\end{itemize}
+\end{definition}
+
+
+
+\begin{remark}
+	When use Neumann and Robinson condition, we can use one-sided numerical difference approximation for first order derivatives. As a consequence, we have added one equation in order to solve one unknown $u$ at the boundeary.  
+\end{remark}
+
+
+\iffalse
+\section{Burger's equation}
+
+\section{Sturm-Liouville problem}
+\subsection{Definition: Sturm-Liouville equation}
+An equation of the form
+$$\frac{\partial}{\partial x} p(x)\frac{\partial y}{\partial x} + [q(x) + \lambda r(x)]y = 0$$ 
+We can introduce a linear differential operator $L$, defined as
+$$Ly = \frac{\partial}{\partial x} p(x)\frac{\partial y}{\partial x} + q(x)y$$
+then we have $$Ly + \lambda ry = 0$$
+The space of all functions $y$ that satisfies the boundary conditions $BC^2[a,b]$ is the subspace of $C^2[a,b]$
+
+\subsection{Definition: self-adjoint operator}
+When $f,g$ satisfy the one of following boundary conditions at both ends
+\begin{enumerate}
+\item $y=0$
+\item $dy/dx = 0$
+\item $y+ady/dx = 0$
+\end{enumerate}
+then $L$ will have $(Lf|g)=(f|Lg)$, which is self-adjoint in $BC^2[a,b]$
+
+
+\fi
+\section{Notes on bibliography}
+
+For a good introduction on PDE, see \cite{strauss1992partial}. For advanced treatment on theoretical PDE, see
+
+For a good introduction on numerical PDE, see \cite{holmes2007introduction}.
+For general treatment of numerical PDE, see \cite{larsson2008partial}\cite{griffiths2015essential}\cite{leveque2007finite}.
+For general numerical methods, see \cite{sauer2012numerical}.
+
+For analysis and application of finite difference schemes, see \cite{strikwerda2004finite}\cite{leveque2007finite}\cite{karniadakis2003parallel}.
+ 
+For finite element method, see \cite{bickford1990first}\cite{larson2013finite}.
+
+For computational fluid dynamics, see \cite{zikanov2010essential}.
+
+For Stokes flow, see \cite{barthes2012microhydrodynamics}.
+
+For PDE financial applications, see \cite{zhu2004derivative}\cite{duan2011handbook}\cite{platen2010numerical}\cite{seydel2006tools}.
+\printbibliography
+\end{refsection}

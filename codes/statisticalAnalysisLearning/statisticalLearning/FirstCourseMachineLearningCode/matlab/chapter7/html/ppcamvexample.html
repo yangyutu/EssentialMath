@@ -1,0 +1,388 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>ppcamvexample</title><meta name="generator" content="MATLAB 7.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2011-11-14"><meta name="DC.source" content="ppcamvexample.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">ppcamvexample.m</a></li><li><a href="#2">Generate the data</a></li><li><a href="#3">Plot the original data</a></li><li><a href="#4">Remove some values</a></li><li><a href="#5">Initialise the parameters</a></li><li><a href="#6">Run the algorithm</a></li><li><a href="#7">Plot the bound</a></li><li><a href="#8">Plot the projection</a></li><li><a href="#9">Find something with nothing missing, something with one value missing and something with two values</a></li></ul></div><h2>ppcamvexample.m<a name="1"></a></h2><p>From A First Course in Machine Learning, Chapter 6. Simon Rogers, 01/11/11 [simon.rogers@glasgow.ac.uk] Probabilistic PCA example using Variational Bayes with missing values</p><pre class="codeinput">clear <span class="string">all</span>;close <span class="string">all</span>;
+</pre><h2>Generate the data<a name="2"></a></h2><pre class="codeinput">Y = [randn(20,2);randn(20,2)+5;randn(20,2)+repmat([5 0],20,1);randn(20,2)+repmat([0 5],20,1)];
+<span class="comment">% Add 5 random dimensions</span>
+N = size(Y,1);
+Y = [Y randn(N,5)];
+<span class="comment">% labels - just used for plotting</span>
+t = [repmat(1,20,1);repmat(2,20,1);repmat(3,20,1);repmat(4,20,1)];
+</pre><h2>Plot the original data<a name="3"></a></h2><pre class="codeinput">symbs = {<span class="string">'ro'</span>,<span class="string">'gs'</span>,<span class="string">'b^'</span>,<span class="string">'kd'</span>};
+figure(1);hold <span class="string">off</span>
+<span class="keyword">for</span> k = 1:4
+    pos = find(t==k);
+    plot(Y(pos,1),Y(pos,2),symbs{k});
+    hold <span class="string">on</span>
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="ppcamvexample_01.png" alt=""> <h2>Remove some values<a name="4"></a></h2><pre class="codeinput">[N,M] = size(Y);
+Z = rand(N,M)&lt;0.9; <span class="comment">% I.e. 10 percent missing - try changing this</span>
+order = randperm(N);
+Z(order(1),1:2) = [0 0]; <span class="comment">% Make sure at least one has two missing in first two dimensions.</span>
+</pre><h2>Initialise the parameters<a name="5"></a></h2><pre class="codeinput">a = 1;b = 1; <span class="comment">% Hyper-parameters for precision</span>
+e_tau = a/b;
+D = 2; <span class="comment">% Number of projection dimensions</span>
+e_w = randn(M,D);
+<span class="keyword">for</span> m = 1:M
+    e_wwt(:,:,m) = eye(D) + e_w(m,:)'*e_w(m,:);
+<span class="keyword">end</span>
+tol = 1e-3;
+e_tau = 1;
+</pre><h2>Run the algorithm<a name="6"></a></h2><p>Mean center the data (for visualisation later)</p><pre class="codeinput">Y = Y - repmat(mean(Y,1),N,1);
+MaxIts = 100;
+<span class="keyword">for</span> it = 1:MaxIts
+    <span class="comment">% Update X</span>
+    <span class="comment">% Compute \Sigma_x - this is the same for all x</span>
+
+    <span class="keyword">for</span> n = 1:N
+        sigx(:,:,n) = inv(eye(D) + e_tau*sum(e_wwt.*repmat(reshape(Z(n,:),[1 1 M]),[D D 1]),3));
+        e_X(n,:) = e_tau*sigx(:,:,n)*sum(e_w.*repmat((Z(n,:).*Y(n,:)),D,1)',1)';
+        e_XXt(:,:,n) = sigx(:,:,n) + e_X(n,:)'*e_X(n,:);
+    <span class="keyword">end</span>
+
+    <span class="comment">% Update W</span>
+
+    <span class="keyword">for</span> m = 1:M
+        sigw(:,:,m) = inv(eye(D) + e_tau*sum(e_XXt.*repmat(reshape(Z(:,m),[1 1 N]),[D D 1]),3));
+        e_w(m,:) = e_tau*sigw(:,:,m)*sum(e_X.*repmat((Z(:,m).*Y(:,m)),1,D),1)';
+        e_wwt(:,:,m) = sigw(:,:,m) + e_w(m,:)'*e_w(m,:);
+    <span class="keyword">end</span>
+
+    <span class="comment">% Update tau</span>
+    e = a + sum(sum(Z))/2;
+    <span class="comment">% Compute the nasty outer expectation.  Note that these two loops could</span>
+    <span class="comment">% be made *much* more efficient</span>
+    outer_expect = 0;
+    <span class="keyword">for</span> n = 1:N
+        <span class="keyword">for</span> m = 1:M
+            outer_expect = outer_expect + Z(n,m)*(<span class="keyword">...</span>
+                trace(e_wwt(:,:,m)*sigx(:,:,n)) + <span class="keyword">...</span>
+                e_X(n,:)*e_wwt(:,:,m)*e_X(n,:)');
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    f = b + 0.5*sum(sum(Z.*(Y.^2))) - sum(sum(Z.*(e_X*e_w'))) + <span class="keyword">...</span>
+        0.5*outer_expect;
+    e_tau = e/f;
+    e_log_tau = mean(log(gamrnd(e,1/f,[1000,1])));
+
+
+    <span class="comment">% Compute the bound</span>
+    LB = a*log(b) + (a-1)*e_log_tau - b*e_tau - gammaln(a);
+    LB = LB - (e*log(f) + (e-1)*e_log_tau - f*e_tau - gammaln(e));
+
+
+    <span class="keyword">for</span> n = 1:N
+        LB = LB + (<span class="keyword">...</span>
+            -(D/2)*log(2*pi) - 0.5*(trace(sigx(:,:,n)) + e_X(n,:)*e_X(n,:)'));
+        LB = LB - (<span class="keyword">...</span>
+            -(D/2)*log(2*pi) - 0.5*log(det(sigx(:,:,n))) - 0.5*D);
+    <span class="keyword">end</span>
+
+    <span class="keyword">for</span> m = 1:M
+        LB = LB + (<span class="keyword">...</span>
+            - (D/2)*log(2*pi) - 0.5*(trace(sigw(:,:,m)) + e_w(m,:)*e_X(m,:)'));
+        LB = LB - (<span class="keyword">...</span>
+            -(D/2)*log(2*pi) - 0.5*log(det(sigw(:,:,m))) - 0.5*D);
+    <span class="keyword">end</span>
+
+    outer_expect = 0;
+    <span class="keyword">for</span> n = 1:N
+        <span class="keyword">for</span> m = 1:M
+            outer_expect = outer_expect + Z(n,m)*(trace(e_wwt(:,:,m)*sigx(:,:,n)) + e_X(n,:)*e_wwt(:,:,m)*e_X(n,:)');
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    <span class="comment">% likelihood bit</span>
+    LB = LB + (<span class="keyword">...</span>
+        -(N*M/2)*log(2*pi) + (N*M/2)*e_log_tau - <span class="keyword">...</span>
+        0.5*e_tau*(sum(sum(Z.*Y.^2)) - 2*sum(sum(Z.*Y.*(e_w*e_X')')) + outer_expect));
+    B(it) = LB;
+
+    <span class="keyword">if</span> it&gt;2
+        <span class="keyword">if</span> abs(B(it)-B(it-1))&lt;tol
+            <span class="keyword">break</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><h2>Plot the bound<a name="7"></a></h2><pre class="codeinput">figure(1);hold <span class="string">off</span>
+plot(B);
+xlabel(<span class="string">'Iterations'</span>);
+ylabel(<span class="string">'Bound'</span>);
+</pre><img vspace="5" hspace="5" src="ppcamvexample_02.png" alt=""> <h2>Plot the projection<a name="8"></a></h2><pre class="codeinput">figure(1);hold <span class="string">off</span>
+<span class="keyword">for</span> k = 1:4
+    pos = find(t==k);
+    plot(e_X(pos,1),e_X(pos,2),symbs{k});
+    hold <span class="string">on</span>
+<span class="keyword">end</span>
+title(<span class="string">'Projection'</span>);
+</pre><img vspace="5" hspace="5" src="ppcamvexample_03.png" alt=""> <h2>Find something with nothing missing, something with one value missing and something with two values<a name="9"></a></h2><p>Uncertainty increases as more values in the first two dimensions are missing.</p><pre class="codeinput">path(path,<span class="string">'../utilities'</span>);
+s = sum(Z(:,1:2)==0,2);
+figure(1);hold <span class="string">off</span>
+<span class="keyword">for</span> k = 1:4
+    pos = find(t==k);
+    plot(e_X(pos,1),e_X(pos,2),symbs{k});
+    hold <span class="string">on</span>
+<span class="keyword">end</span>
+pos = find(s==0);
+pos = pos(1);
+plot_2D_gauss(e_X(pos,:),sigx(:,:,pos),[-2:0.1:2],[-2:0.1:2]);
+title(<span class="string">'No missing values'</span>);
+
+figure(2);hold <span class="string">off</span>
+<span class="keyword">for</span> k = 1:4
+    pos = find(t==k);
+    plot(e_X(pos,1),e_X(pos,2),symbs{k});
+    hold <span class="string">on</span>
+<span class="keyword">end</span>
+pos = find(s==1);
+pos = pos(1);
+plot_2D_gauss(e_X(pos,:),sigx(:,:,pos),[-2:0.1:2],[-2:0.1:2]);
+title(<span class="string">'1 missing values in first two dimensions'</span>);
+
+figure(3);hold <span class="string">off</span>
+<span class="keyword">for</span> k = 1:4
+    pos = find(t==k);
+    plot(e_X(pos,1),e_X(pos,2),symbs{k});
+    hold <span class="string">on</span>
+<span class="keyword">end</span>
+pos = find(s==2);
+pos = pos(1);
+plot_2D_gauss(e_X(pos,:),sigx(:,:,pos),[-2:0.1:2],[-2:0.1:2]);
+title(<span class="string">'2 missing values in first two dimensions'</span>);
+</pre><img vspace="5" hspace="5" src="ppcamvexample_04.png" alt=""> <img vspace="5" hspace="5" src="ppcamvexample_05.png" alt=""> <img vspace="5" hspace="5" src="ppcamvexample_06.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.13<br></p></div><!--
+##### SOURCE BEGIN #####
+%% ppcamvexample.m
+% From A First Course in Machine Learning, Chapter 6.
+% Simon Rogers, 01/11/11 [simon.rogers@glasgow.ac.uk]
+% Probabilistic PCA example using Variational Bayes with missing values
+clear all;close all;
+
+%% Generate the data
+Y = [randn(20,2);randn(20,2)+5;randn(20,2)+repmat([5 0],20,1);randn(20,2)+repmat([0 5],20,1)];
+% Add 5 random dimensions
+N = size(Y,1);
+Y = [Y randn(N,5)];
+% labels - just used for plotting
+t = [repmat(1,20,1);repmat(2,20,1);repmat(3,20,1);repmat(4,20,1)];
+
+%% Plot the original data
+symbs = {'ro','gs','b^','kd'};
+figure(1);hold off
+for k = 1:4
+    pos = find(t==k);
+    plot(Y(pos,1),Y(pos,2),symbs{k});
+    hold on
+end
+
+%% Remove some values
+[N,M] = size(Y);
+Z = rand(N,M)<0.9; % I.e. 10 percent missing - try changing this
+order = randperm(N);
+Z(order(1),1:2) = [0 0]; % Make sure at least one has two missing in first two dimensions.
+%% Initialise the parameters
+a = 1;b = 1; % Hyper-parameters for precision
+e_tau = a/b;
+D = 2; % Number of projection dimensions
+e_w = randn(M,D);
+for m = 1:M
+    e_wwt(:,:,m) = eye(D) + e_w(m,:)'*e_w(m,:);
+end
+tol = 1e-3;
+e_tau = 1;
+%% Run the algorithm
+% Mean center the data (for visualisation later)
+Y = Y - repmat(mean(Y,1),N,1);
+MaxIts = 100;
+for it = 1:MaxIts
+    % Update X
+    % Compute \Sigma_x - this is the same for all x
+    
+    for n = 1:N
+        sigx(:,:,n) = inv(eye(D) + e_tau*sum(e_wwt.*repmat(reshape(Z(n,:),[1 1 M]),[D D 1]),3));
+        e_X(n,:) = e_tau*sigx(:,:,n)*sum(e_w.*repmat((Z(n,:).*Y(n,:)),D,1)',1)';
+        e_XXt(:,:,n) = sigx(:,:,n) + e_X(n,:)'*e_X(n,:);
+    end
+    
+    % Update W
+    
+    for m = 1:M
+        sigw(:,:,m) = inv(eye(D) + e_tau*sum(e_XXt.*repmat(reshape(Z(:,m),[1 1 N]),[D D 1]),3));
+        e_w(m,:) = e_tau*sigw(:,:,m)*sum(e_X.*repmat((Z(:,m).*Y(:,m)),1,D),1)';
+        e_wwt(:,:,m) = sigw(:,:,m) + e_w(m,:)'*e_w(m,:);
+    end
+    
+    % Update tau
+    e = a + sum(sum(Z))/2;
+    % Compute the nasty outer expectation.  Note that these two loops could
+    % be made *much* more efficient
+    outer_expect = 0;
+    for n = 1:N
+        for m = 1:M
+            outer_expect = outer_expect + Z(n,m)*(...
+                trace(e_wwt(:,:,m)*sigx(:,:,n)) + ...
+                e_X(n,:)*e_wwt(:,:,m)*e_X(n,:)');
+        end
+    end
+    f = b + 0.5*sum(sum(Z.*(Y.^2))) - sum(sum(Z.*(e_X*e_w'))) + ...
+        0.5*outer_expect;
+    e_tau = e/f;
+    e_log_tau = mean(log(gamrnd(e,1/f,[1000,1])));
+
+    
+    % Compute the bound
+    LB = a*log(b) + (a-1)*e_log_tau - b*e_tau - gammaln(a);
+    LB = LB - (e*log(f) + (e-1)*e_log_tau - f*e_tau - gammaln(e));
+    
+
+    for n = 1:N
+        LB = LB + (...
+            -(D/2)*log(2*pi) - 0.5*(trace(sigx(:,:,n)) + e_X(n,:)*e_X(n,:)'));
+        LB = LB - (...
+            -(D/2)*log(2*pi) - 0.5*log(det(sigx(:,:,n))) - 0.5*D);
+    end
+    
+    for m = 1:M
+        LB = LB + (...
+            - (D/2)*log(2*pi) - 0.5*(trace(sigw(:,:,m)) + e_w(m,:)*e_X(m,:)'));
+        LB = LB - (...
+            -(D/2)*log(2*pi) - 0.5*log(det(sigw(:,:,m))) - 0.5*D);
+    end
+    
+    outer_expect = 0;
+    for n = 1:N
+        for m = 1:M
+            outer_expect = outer_expect + Z(n,m)*(trace(e_wwt(:,:,m)*sigx(:,:,n)) + e_X(n,:)*e_wwt(:,:,m)*e_X(n,:)');
+        end
+    end
+    
+    % likelihood bit
+    LB = LB + (...
+        -(N*M/2)*log(2*pi) + (N*M/2)*e_log_tau - ...
+        0.5*e_tau*(sum(sum(Z.*Y.^2)) - 2*sum(sum(Z.*Y.*(e_w*e_X')')) + outer_expect));
+    B(it) = LB;
+    
+    if it>2
+        if abs(B(it)-B(it-1))<tol
+            break
+        end
+    end
+end
+
+
+%% Plot the bound
+figure(1);hold off
+plot(B);
+xlabel('Iterations');
+ylabel('Bound');
+
+%% Plot the projection
+figure(1);hold off
+for k = 1:4
+    pos = find(t==k);
+    plot(e_X(pos,1),e_X(pos,2),symbs{k});
+    hold on
+end
+title('Projection');
+
+%% Find something with nothing missing, something with one value missing and something with two values
+% Uncertainty increases as more values in the first two dimensions are
+% missing.
+path(path,'../utilities');
+s = sum(Z(:,1:2)==0,2);
+figure(1);hold off
+for k = 1:4
+    pos = find(t==k);
+    plot(e_X(pos,1),e_X(pos,2),symbs{k});
+    hold on
+end
+pos = find(s==0);
+pos = pos(1);
+plot_2D_gauss(e_X(pos,:),sigx(:,:,pos),[-2:0.1:2],[-2:0.1:2]);
+title('No missing values');
+
+figure(2);hold off
+for k = 1:4
+    pos = find(t==k);
+    plot(e_X(pos,1),e_X(pos,2),symbs{k});
+    hold on
+end
+pos = find(s==1);
+pos = pos(1);
+plot_2D_gauss(e_X(pos,:),sigx(:,:,pos),[-2:0.1:2],[-2:0.1:2]);
+title('1 missing values in first two dimensions');
+
+figure(3);hold off
+for k = 1:4
+    pos = find(t==k);
+    plot(e_X(pos,1),e_X(pos,2),symbs{k});
+    hold on
+end
+pos = find(s==2);
+pos = pos(1);
+plot_2D_gauss(e_X(pos,:),sigx(:,:,pos),[-2:0.1:2],[-2:0.1:2]);
+title('2 missing values in first two dimensions');
+
+##### SOURCE END #####
+--></body></html>

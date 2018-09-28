@@ -1,0 +1,442 @@
+
+\begin{refsection}
+	\startcontents[chapters]	
+	
+\chapter{Multiscale modeling and Pertubration methods}\label{ch:multiscale-modeling}
+\printcontents[chapters]{}{1}{}
+%\minitoc
+
+\section{Multiscale Differential Equations}
+\subsection{Multiscale Ordinary Differential Equations}
+\begin{definition}[two scale ODE problem]\cite[128]{pavliotis2008multiscale}\label{ch:multiscale-modeling:def:twoscaleODE}
+\begin{align*}
+	\frac{d x}{d t} &= f(x,y)\\
+\frac{d y}{d t} &= \frac{1}{\epsilon}g(x,y),\epsilon \ll 1
+\end{align*}
+\end{definition}
+
+\begin{remark}[implications]
+\begin{itemize}
+	\item The dynamics of $y(t)$ evolves in a much faster/smaller time scale than $x(t)$.
+	\item When given any $x$ value, $\frac{d y}{d t} = \frac{1}{\epsilon}g(x,y)$ will quickly evolve to equilibrium position $y^{eq}$ determined by
+	$0 = \frac{d y}{d t} = \frac{1}{\epsilon}g(x,y^{eq}).$ 
+\end{itemize}
+\end{remark}
+
+
+\begin{theorem}\cite[128]{pavliotis2008multiscale}\label{ch:multiscale-modeling:th:largetimescalesolutionformultiscaleODE}[solution method]
+For $\epsilon \ll 1$ and time $t$ upto $O(1)$, $x(t)$ solving the two scale ODE problem \autoref{ch:multiscale-modeling:def:twoscaleODE} is \textbf{approximated} by $X(t)$ solving
+$$\frac{dX}{dt} = F_0(X)$$
+where
+$$F_0 = f(x,\eta(x))$$
+and $\eta(x)$ is the solution of $y$ given $x$ at $t\to \infty$(which satisfies $g(x,\eta(x)) = 0$).
+\end{theorem}
+
+
+\begin{example}
+	\begin{align*}
+	\frac{\Pa u_1}{\Pa t} &= -u_1 -u_2 + 2\\
+	\frac{\Pa u_2}{\Pa t} &= \frac{1}{\epsilon} (w - u_2)
+	\end{align*}
+where $\epsilon \ll 1$. Then the system quickly relax to 
+	\begin{align*}
+	\frac{\Pa u_1}{\Pa t} &= -u_1 -w + 2\\
+	u_2 &= w
+\end{align*}
+When we use explicit method in time, we are forced to use $\delta t = O(\epsilon)$ in order to achieve stability.
+\end{example}
+
+
+
+\subsection{Multiscale Stochastic Differential Equations}
+\begin{definition}[two scale SDE problem]\cite[128]{pavliotis2008multiscale}\label{ch:multiscale-modeling:def:twoscaleSDE}
+	\begin{align*}
+	dx &= f(x,y)dt\\
+	dy &= \frac{1}{\epsilon}g(x,y)dt + \frac{1}{\sqrt{\epsilon}} \beta(x,y) dW_t,\epsilon \ll 1
+	\end{align*}
+	where $W_t$ is a Wiener process.
+\end{definition}
+
+
+\begin{remark}[implications]
+	\begin{itemize}
+		\item The stochastic dynamics of $y(t)$ evolves in a much faster/smaller time scale than $x(t)$.
+		\item When given any $x$ value, $y$ will quickly evolve to the steady-state/equilibrium position $y^{eq}$ determined by the Fokker-Planck equation associated with the stochastic differential equation(\autoref{ch:theory-of-stochastic-process:th:1DFokkerPlanckEquationAssociatedWithItoSDE}). 
+	\end{itemize}
+\end{remark}
+
+\begin{theorem}\cite[146]{pavliotis2008multiscale}\label{ch:multiscale-modeling:th:largetimescalesolutionformultiscaleSDE}[solution method]
+For $\epsilon \ll 1$ and time $t$ upto $O(1)$, $x(t)$ solving the two scale SDE problem \autoref{ch:multiscale-modeling:def:twoscaleSDE} is approximated by $X$ solving
+$$\frac{dX}{dt} = F(X), X(0) = x_0$$
+where
+$$F(X) = \int_{\cY} f(x,y) \mu_x dy$$
+with $\mu_x = \rho^{\infty}(y|x)$ as the solution of $y$ given $x$ at $t\to \infty$. 
+Note that $\mu_x$ is also known as invariant measure.
+\end{theorem}
+
+
+\begin{example}\cite[149]{pavliotis2008multiscale}
+	\begin{align*}
+	dx &= (1-y^2)xdt\\
+	dy &= -\frac{\alpha}{\epsilon}ydt + \sqrt{\frac{2\lambda}{\epsilon}} dW_t
+	\end{align*}
+	where $\epsilon \ll 1$. Then random process $y(t)$ will  quickly relax to $$y(t) \sim \rho^{\infty} (y) = \sqrt{\frac{\alpha}{2\pi\lambda}} \exp(-\lambda y^2 /\lambda).$$
+	Then we can solve for $x(t)$ as
+	$$\frac{dX}{dt} = \int (1-y^2) x \rho^\infty (y)dy = (1 - \frac{\lambda}{\alpha})X.$$
+\end{example}
+
+\begin{remark}[implicit method will fail when stochastic differential equations are present]
+	Traditionally in the context of ODE, the method of choice for integrating stiff systems has been to use implicit schemes. Unfortunately, such schemes become ineffective when the dynamics of the system is stochastic in some way, e.g. if it is governed by a stochastic differential equation, a Markov chain as in kinetic Monte Carlo methods, or even by a large set of ODEs whose solutions are chaotic.
+\end{remark}
+
+
+\iffalse
+https://people1.cs.kuleuven.be/~giovanni.samaey/Site/Multiscale_blog/4ACEF474-2FAE-47BE-8CA3-C39E7EA3C765_files/course-multiscale-lecture-7.pdf
+\subsection{Equation-Free numerical method}
+Generic strategy for the development of multiscale methods
+Coarse time-stepper as a building block for efficient algorithms
+
+Microscopic level
+model known
+simulation code available
+Macroscopic level
+only state variables
+corresponding evolution law
+unknown
+
+Start from a macroscopic state 
+$$X = X^n$$
+Lift to the corresponding microscopic state($y$ is sampled from the invariant distribution)
+$$\cL: X = X^n \to \{(x_i^n = X^n, y_i^n)\}_{i=1}^I,y_i^n \sim \mu_{X^n}(y)$$
+
+Evolve each of the realizations over a microscopic time 
+$$t^n\to t^n + \delta t, \{(x_i^n , y_i^n)\}_{i=1}^I \to \{(x_i^{n,\delta} , y_i^{n,\delta})\}_{i=1}^I$$
+
+Restrict to macroscopic state
+$$X^{n,\delta} = \frac{1}{I} \sum_{i=1}^I x_i^{n,\delta}$$
+
+$$X^{n+1} = X^{n,\delta} + (\Delta t - \delta t) \frac{X^{n,\delta} - X^n}{\delta t}.$$
+(note that $\Delta t \gg \delta t$)
+
+
+\begin{remark}
+	$$dy = \frac{1}{\epsilon} g(\xi,y) dt + \frac{1}{\sqrt{\epsilon}} \beta(\xi,y)dW_t$$
+Under the assumption of ergodicity, we can simulate
+$$y^{m+1} = y^m + g(\xi,y^m) \Delta t + \beta(\xi,y^m) \Delta t$$
+and compute the restriction as
+$$\hat{F}(X^n) = \frac{1}{M} \sum_{m=1}^M f(X^n,y^m) \approx \int f(X^n,y) d\mu_{X^n}(y)$$
+\end{remark}
+
+\fi
+
+\section{Asymptotic Approximations}\index{Asymptotic Approximations}
+\subsection{Basic Concepts}
+\begin{definition}[asymptotically equal to]\cite[8]{holmes2012introduction}
+	We say $f(x)$ is asymptotically equal to $g(x)$ as $x\to a$, written as
+	$$f(x)\sim g(x), x\to a$$
+	if
+	$$L = \lim_{x\to a} \frac{f(x)}{g(x)} = 1.$$
+\end{definition}
+
+\begin{remark}[pointwise asymptotically approximation]
+When we say asymptotically equal to, we always refers to $x$ approaches some point rather than for all $x$.0
+\end{remark}
+
+
+\begin{definition}[asymptotic sequence]\index{asymptotic sequence}\cite[13]{johnson2006singular}\cite[10]{holmes2012introduction}
+	The set of function $\{\phi_n(x)\}, n=0,1,2,...$ is an asymptotic sequence as $x\to a$, if
+	$$\phi_{n+1}(x) = o[\phi_n(x)], x\to a$$
+	for every n.
+\end{definition}
+
+\begin{remark}[how to check a sequence to a asymptotic sequence?]
+	We can simply check
+	$$\lim_{x\to a} \frac{\phi_{n+1}(x)}{\phi_n(x)} = 0$$
+	to confirm a sequence is an asymptotic sequence.
+\end{remark}
+
+\begin{example}The following are asymptotic sequence
+	\begin{itemize}
+		\item $\{x^n\},x\to 0$.
+		\item $\{x^{-n}\},x\to \infty$.
+		\item $\{\ln(1 + (1-x)^n)\}, x\to 1$.
+	\end{itemize}
+\end{example}
+
+
+
+
+\begin{definition}[asymptotic expansion of a function]\cite[14]{johnson2006singular}\cite[10]{holmes2012introduction}
+	The series of terms written as
+	$$\sum_{n=0}^N c_n\phi_n(x) + O(\phi_{n+1})$$
+	where the $c_n$ are constants, is an asymptotic expansion of $f(x)$, with respect to the asymptotic sequence $\{\phi_n(x)\}$ if, for every $N \geq 0$,
+	$$f(x) - \sum_{n=0}^N c_n\phi_n(x) = o[\phi_N(x)],x\to a.$$
+	If this expansion exists, it is unique in that the coefficient in that the coefficients, $c_n$, are completely determined.
+\end{definition}
+
+\begin{remark}
+See \cite[12]{holmes2012introduction} for methods to construct asymptotic expansions.  	
+\end{remark}
+
+\begin{example}\hfill
+	\begin{itemize}
+		\item $\sin(3x) \sim 3x - \frac{9}{2}x^3 + \frac{81}{40}x^5 ..., x\to 0$
+		\item $\sin(3x) \sim 3\ln(1+x) + \frac{3}{2}\ln(1+x^2) - \frac{11}{2}\ln(1+x^3) ..., x\to 0$
+	\end{itemize}
+\end{example}
+
+
+\begin{remark}[convergent series vs. divergent series]
+	Suppose that we have a function $f(x)$ and a series
+	$$f_N(x) = \sum_{n=0}^{N} a_n(x),$$
+	then $f_N$ is a convergent series if $f_N(x)\to f(x)$ as $N\to \infty, \forall \abs{x - a} < R$.
+\end{remark}
+
+\subsection{Asymptotic Matching Principle}
+\begin{definition}[asymptotic matching principle]\index{asymptotic matching principle}\cite[30]{johnson2006singular}\cite[60]{holmes2012introduction}\label{ch:multiscale-modeling:def:asymptoticmatchingprinciple}
+Given asymptotic expansions of the same function $f(x;\epsilon)$ at $\epsilon \to 0^+$, and valid for $x\ = O(1)$ and $X=O(1)$, where $X = x/\epsilon^\alpha, \alpha > 0$, in the form
+$$g(x;\epsilon) = \sum_{n=0}^N a_n(x;\epsilon),h(X;\epsilon) = \sum_{m=0}^M b_m(X;\epsilon).$$
+
+Then the matching principle requires that 
+$$\lim_{x\to 0} g(x;\epsilon) = \lim_{X\to \infty} h(X;\epsilon).$$
+
+Moreover, if two asymptotic expansions at different scales of the same function satisfies above relation, we say the two asymptotic expansions are matched. 
+\end{definition}
+\begin{remark}[interpretation]\hfill
+\begin{itemize}
+	\item $g(x;\epsilon)$ is the asymptotic expansion of $f(x;\epsilon)$ as $\epsilon \to 0$ when $x = O(1)$.
+	\item $h(x;\epsilon)$ is the asymptotic expansion of $f(x;\epsilon)$ as $\epsilon \to 0$ when $x = O(\epsilon^\alpha),\alpha >0$.
+	\item Therefore $g$ and $h$ are asymptotic expansion of the same function valid at different scales of $x$. 
+	\item The matching principle provides a way to piece these two asymptotic expansions together such that we can obtain an approximate asymptotic expansions for the whole region of $x$.    
+\end{itemize}
+\end{remark}
+
+
+
+
+\begin{example}
+	Given asymptotic expansions of the same function at different regions with $\epsilon \to 0^+$
+	$$f(x;\epsilon) \sim g(x;\epsilon) \equiv \sqrt{1+x}(1 + \frac{\epsilon}{2x(1+x)}), x = O(1)$$
+	and
+	$$f(\epsilon X;\epsilon) \sim  F(X;\epsilon)\equiv \sqrt{\frac{2+X}{1+X}}(1 + \frac{\epsilon X(1+X)}{2(2+X)}), X=O(1)$$
+	
+	We can show that
+	$$\lim_{X\to \infty} F(X;\epsilon) = \lim_{x\to 0} g(x;\epsilon) .$$
+\end{example}
+
+\section{Regular Perturbation Method}
+
+
+\subsection{Algebraic Equations}
+\begin{example}
+Suppose we want to solve 
+$$x^2 + \epsilon x - 1 = 0.$$
+We can first set $\epsilon = 0$ and find the unperturbed root $x = \pm 1$. Now we expand around $x_0 = 1$, we have
+$$x = x_0 + \epsilon x_1 + \epsilon^2 x_2 + ...$$
+where $x_1,x_2,...$ are undetermined \emph{constants} that correcting the original solution $x_0$.  Plug the expansion into the equation, we have
+$$(x_0 + \epsilon x_1 + \epsilon^2 x_2 + ...)^2 + \epsilon(x_0 + \epsilon x_1 + \epsilon^2 x_2 + ...) - 1 = 0,$$
+then we equate the coefficients of the powers of $\epsilon$. 
+\begin{itemize}
+	\item at $\epsilon^0 = 1$, $x_0 = 1$.
+	\item at $\epsilon^1$, $2x_1 + 1= 0, x_2 = -\frac{1}{2}$.
+	\item at $\epsilon^2$, $x_1^2 + 2x_2 + x_1 = 0, x_2 = \frac{1}{8}$.
+	\item $\dots$
+\end{itemize}
+\textbf{Note that we can take the first $k$ terms as the approximate solution; the truncation error will be $O(\epsilon^k)$.} 
+\end{example}
+
+\begin{remark}[multiple scale view of the approximation solution]
+Let $x$ be the true solution, then the two solutions are both in the scale of $O(1)$. For singular perturbation problem, solutions are usually in different scales. 
+\end{remark}
+
+
+
+\subsection{Ordinary Differential Equations}
+\begin{example}\footnote{\url{http://www.ucl.ac.uk/~ucahhwi/LTCC/section2-3-perturb-regular.pdf}}
+	$$\frac{df(x)}{dx} + f(x) -\epsilon f^2(x) = 0, f(0) = 2.$$
+When $\epsilon = 0$, we have the equation
+$$\frac{df(x)}{dx} + f(x) = 0, f(0) = 2,$$
+with solution $f_0(x) = 2e^{-x}$.
+Now we expand around the solution $f_0$ and propose the solution to the original problem is given as
+$$f(x) = f_0(x) + \epsilon f_1(x) + \epsilon^2 f_2(x) + ...$$
+and \textbf{in order to satisfy the boundary condition}, we require $f_0(0) = 2,f_1(0) = 0,f_2(0) = 0, ...$
+Plug the expansion into the original equation, we have
+\begin{align*}
+\frac{d}{dx}(f_0(x) + \epsilon f_1(x) + \epsilon^2 f_2(x) + ...) + (f_0(x) + \epsilon f_1(x) + \epsilon^2 f_2(x) + ...)\\ - \epsilon^2 (f_0(x) + \epsilon f_1(x) + \epsilon^2 f_2(x) + ...)^2 = 0.
+\end{align*}
+In terms of $\epsilon$ powers, we have
+\begin{itemize}
+	\item $\epsilon^0$, $f_0 = 2e^{-x}$.
+	\item $\epsilon^1$, $f_1' + f_1 - 4e^{-2x} = 0,f_1(0) = 0$
+	\item $\epsilon^2$,$f_2' + f_2 -4e^{-x}f_1 = 0,f_2(0) = 0$
+	\item $\dots$
+\end{itemize}
+And we can solve
+$$f_1(x) = 4(e^{-x} - e^{-2x}), f_2(x) = 8(e^{-x} - 2e^{-2x} + e^{-3x}) ...$$
+\textbf{Note that we can take the first $k$ terms as the approximate solution; the truncation error will be $O(\epsilon^k)$.} 
+\end{example}
+
+
+
+\section{Singular Perturbation Method}
+
+
+\subsection{Algebraic Equations}
+\begin{example}[singular perturbation problem, multiple scale solution]\cite[25]{holmes2012introduction}
+	$$\epsilon x^2 + 2x - 1 = 0$$
+We can first require the equation to hold at scale $x = O(1)$, then we have one approximate solution $x_1 = 1/2$.(We can of course get the higher order correction using methods in regular perturbation problems.)\\
+
+Then there are two possibilities for the other solution: it might be in the scale of $O(\epsilon^\alpha),\alpha > 0$(that is, small value), or in the scale of $O(1/\epsilon^\alpha)$(that is, large scale). Let $x = X/\epsilon^\alpha, X=O(1)$, then we have
+$$\epsilon x^2 + 2 x - 1= 0 \leftrightarrow \epsilon^{1-2\alpha}X^2 + 2\epsilon^{-\alpha}X - 1 = 0$$
+Balance the first two terms to get $\alpha = 1$, and the first two terms are in large scale(therefore the third term can be ignored.). Then we get 
+$$X=-2 \implies x_2 = -\frac{2}{\epsilon}$$
+which is the desired large scale solution. 
+Note that the other possibility that $x_2 = O(\epsilon^\alpha)$ is impossible, because then the left hand side of the equality will be $\sim-1$(i.e., the equality cannot hold).  
+\end{example}
+\begin{remark}[multiple scale view of the approximation solution]
+	Let $x$ be the true solution, then 
+	\begin{itemize}
+		\item $x_1$ is the solution(i.e. what makes the equality hold) when $x=O(1)$
+		\item $x_2$ is what makes the equality hold when $x=O(1/\epsilon)$. 
+	\end{itemize}
+\end{remark}
+
+\begin{example}[singular perturbation problem, multiple scale solution]\cite[29]{holmes2012introduction}
+	$$\epsilon x^3 - 3x + 1 = 0$$
+	We can first require the equation to hold at scale $x = O(1)$, then we have one approximate solution $x_1 = 1/3$.(We can of course get the higher order correction using methods in regular perturbation problems.)\\
+	
+	Then there are two possibilities for the other solution: it might be in the scale of $O(\epsilon^\alpha),\alpha > 0$(that is, small value), or in the scale of $O(1/\epsilon^\alpha)$(that is, large scale). Let $x = X/\epsilon^\alpha, X=O(1)$, then we have
+	$$\epsilon x^3 - 3x + 1= 0 \leftrightarrow \epsilon^{1-3\alpha}X^3 + 3\epsilon^{-\alpha}X - 1 = 0$$
+	Balance the first two terms to get $\alpha = 1/2$, and the first two terms are in large scale(therefore the third term can be ignored.). Then we get 
+	$$X= \pm \sqrt{3} \implies x_{2,3} = \pm \frac{\sqrt{3}}{\epsilon^{0.5}}$$
+	which is the desired large scale solution. 
+	Note that the other possibility that $x_2 = O(\epsilon^\alpha)$ is impossible, because then the left hand side of the equality will be $\sim-1$(i.e., the equality cannot hold).  
+\end{example}
+
+\begin{example}[singular perturbation problem, multiple scale solution]\cite[29]{holmes2012introduction}
+	$$\epsilon^2 x^3 - x + \epsilon = 0$$
+	We can first require the equation to hold at scale $x = O(\epsilon)$(require it to be hold at $x=O(1)$ is impossible), then we have one approximate solution $x_1 = \epsilon$.(We can of course get the higher order correction using methods in regular perturbation problems.)\\
+	
+	Another possibility for the other solution is$x  = O(1/\epsilon^\alpha)$(that is, large scale). Let $x = X/\epsilon^\alpha, X=O(1)$, then we have
+	$$\epsilon x^3 - 3x + 1= 0 \leftrightarrow \epsilon^{2-3\alpha}X^3 - \epsilon^{-\alpha}X + \epsilon = 0$$
+	Balance the first two terms to get $\alpha = 1$, and the first two terms are in large scale(therefore the third term can be ignored.). Then we get 
+	$$X= \pm 1 \implies x_{2,3} = \pm \frac{1}{\epsilon}$$
+	which is the desired large scale solution. 
+\end{example}
+
+
+\subsection{Ordinary Differential Equations}
+\begin{lemma}[change of scale]\label{ch:multiscale-modeling:th:changeofscale}
+	Let $\bar{x} = \frac{x}{\epsilon^\alpha}, \alpha > 0$. Then
+	$$\frac{d}{dx} = \frac{d \bar{x}}{dx}\frac{d}{\bar{x}} = \frac{1}{\epsilon^\alpha} \frac{d}{d \bar{x}},$$
+	and
+	$$\frac{d^2}{dx^2} = \frac{1}{\epsilon^{2\alpha}} \frac{d^2}{d \bar{x}^2}.$$
+\end{lemma}
+\begin{example}[singular perturbation problem, multiscale analysis]\footnote{\url{https://en.wikipedia.org/wiki/Method_of_matched_asymptotic_expansions}}
+	$$\epsilon \frac{d^2 y}{dx^2} + \frac{d y}{dx} + y = 0, y(0) = a, y(1) = b.$$
+\textbf{Outer solution:} consider that when $y$ and $x$ are both of size $O(1)$, then the three terms in the left-hand side are of sizes $O(\epsilon), O(1), O(1)$, then we have reduced ODE:
+$$\frac{d y}{dx} + y = 0, y(0) = a, y(1) = 1.$$
+with solution
+$$y_0 = A\exp(-x).$$
+Impose boundary condition $y(1) = 1$, we have $y_0 = \exp(1-x)$.\\
+
+\textbf{inner solution:} consider that when $x$ is of size $O(\epsilon)$, and $y$ is of size $O(1)$, then the three terms in the left-hand side are of sizes $O(\epsilon^{-1}), O(\epsilon^{-1}), O(1)$,then we have reduced ODE(set $x = X/\epsilon$):
+$$\frac{d^2 y}{dX^2} + \frac{d y}{dX} = 0, y(0) = 0, y(1) = b.$$
+with solution
+$$y_1 = B - C\exp(-X) = B - C\exp(-x/\epsilon).$$
+
+Impose boundary condition $y(0) = 0$, we have $y_1 =C - C\exp(-x/\epsilon)$.\\
+
+\textbf{Matching asymptotic}: use matching principle \autoref{ch:multiscale-modeling:def:asymptoticmatchingprinciple}, we have
+$$\lim_{x\to \infty} y_1(x) = \lim_{x\to 0} y_0(x),$$
+which gives $C = e$. 
+
+\textbf{The composite approximate solution is}
+\begin{align*}
+y(x) = y_0(x) + y_1(x) - y_{overlap}=\\
+ \exp(1-x) + e(1 - \exp(-x/\epsilon)) - e =  \exp(1-x)  - \exp(1 -x/\epsilon)).
+\end{align*}
+\end{example}
+
+\begin{remark}\hfill
+	\begin{itemize}
+		\item For complicated problems, we usually need to systematically examine the location of the boundary layers and different scale pairing of $y$ and $x$. 
+		\item In this example, we only examine the boundary layer location at $x = 0$ and $y = O(1)$. In complicated problem, we need to examine more cases. 
+	\end{itemize}
+\end{remark}
+
+\subsection{Dynamical System}
+
+\begin{example}[multiscale analysis in time domain]\cite[79]{verhulst2005methods}
+Consider the dynamical system	
+\begin{align*}
+\epsilon \frac{du}{dt} &= e^{-t} - uv^2 - u\\
+\frac{dv}{dt} &= uv^2 + u -v
+\end{align*}
+with initial condition $u(0) = v(0) =1$. 
+
+\textbf{large time-scale solution}: Using \autoref{ch:multiscale-modeling:th:largetimescalesolutionformultiscaleODE}, we have for $t = O(1)$
+$$u_0 = e^{-t}/(v_0^2 + 1), v_0 = (t + a)e^{-t}$$
+where $a$ is constant will be determined from matching.
+
+\textbf{small time-scale solution}: Using $t = T\epsilon, T=O(1)$, we have
+\begin{align*}
+ \frac{du}{dT} &= e^{-t} - uv^2 - u\\
+\frac{dv}{dt} &= (uv^2 + u -v)\epsilon 
+\end{align*}
+Using \autoref{ch:multiscale-modeling:th:largetimescalesolutionformultiscaleODE}, we have for $T = O(1)$
+$$u_1 = \frac{1}{2}(1 + e^{-2t/\epsilon}), v_1 = v(0).$$
+
+\textbf{Matching asymptotic}: use matching principle \autoref{ch:multiscale-modeling:def:asymptoticmatchingprinciple},
+we have $$u_1(\infty) = u_0(0), v_1(\infty) = v_0(0):$$
+\begin{align*}
+u\sim \frac{1}{2}e^{-2t/\epsilon} +  e^{-t}/(v^2 + 1)\\
+v\sim (t + 1)e^{-t}
+\end{align*}
+\end{example}
+
+
+
+
+
+
+
+\section{Mori-Zwanzig Formalism}
+\begin{example}\cite[85]{weinan2011principles}
+	\begin{align*}
+	\frac{dp}{dt} &= A_{11}p + A_{12}q\\
+	\frac{dq}{dt} &= A_{21}p + A_{22}q
+	\end{align*}
+	Sovle $q$ in terms of $p$ we get
+	$$q(t) = e^{A_{22}t} q(0) + \int_0^t e^{A_{22}(t-\tau)} A_{21} p(\tau) d\tau.$$
+	Plug into $p$, we have
+	\begin{align*}
+	\frac{dp}{dt} &= A_{11}p + A_{12}\int_0^t e^{A_{22}(t-\tau)} A_{21} p(\tau) d\tau +  e^{A_{22}t} q(0) \\
+	&=A_{11} p + \int_0^t K(t-\tau) p(\tau) d\tau + f(t).
+	\end{align*}
+	where $K(t) = A_{12}e^{A_{22}t} A_{21}$ is the memory kernel and $f(t) = A_{12}e^{A_{22}t}q(0)$.
+\end{example}
+
+
+
+
+\begin{remark}\hfill
+	\begin{itemize}
+		\item Divide the variables into two sets: A set of retained variables and a set of variables to be eliminated.
+	\end{itemize}
+\end{remark}
+
+
+
+\section{Notes on Bibliography}
+
+
+For multiscale differential equations, see \cite{pavliotis2008multiscale}\cite{verhulst2005methods}.
+
+For equation-free approach, see \cite{kevrekidis2009equation}.
+
+For singular perturbation method, see \cite{johnson2006singular}\cite{holmes2012introduction}\cite{verhulst2005methods}.
+\printbibliography
+
+
+\end{refsection}

@@ -1,0 +1,755 @@
+\begin{refsection}
+
+
+\startcontents[chapters]
+\chapter{Basic Abstract Algebra}\label{ch:topics-in-abstract-algebra}
+%\minitoc
+
+\printcontents[chapters]{}{1}{}
+
+\section{Groups}
+\subsection{Definitions and examples}
+\begin{definition}[binary operation and group]\cite[26]{pinter2012book}\index{group}
+	\hfill
+\begin{itemize}
+	\item A \textbf{binary operation} on a set is a calculation that combines two elements of the set(called operands) to produce anther element in the set. We can view a binary operation as a function map $$f:V\times V \rightarrow V.$$
+	\item  A \textbf{group} is a set $G$ with a binary operation $\circ$ which satisfies:
+	\begin{itemize}
+		\item $\circ$ is associative such that
+		$$(a\circ b)\circ c = a(b\circ c), \forall a,b,c\in G.$$
+		\item (existence of identity) There is an element $e\in G$ such that $a\circ e = e\circ c = a, \forall a\in G$;
+		\item (existence of inverse) For every element $a \in G$, there is an element $a^{-1}\in G$, such that $a\circ a^{-1} = a^{-1}\circ a = e$.
+	\end{itemize}
+\end{itemize}	
+\end{definition}
+
+
+\begin{definition}[Abelian group]\index{Abelian group}
+A group $G$ is called \textbf{Abelian} if
+$$xy=yx,\forall x,y\in G$$
+\end{definition}
+
+\begin{example}[common groups]\hfill
+\begin{enumerate}
+\item $\mathbb{Z}_n = \{0,1,2,...,n-1\}$ is a group under addition mod $n$
+\item $C_n = \{e,a,a^2,...a^n-1\}$ is called cyclic group with generator $a, a^n = e$. 
+\item Symmetric group $S_n$ on a finite set of $n$ symbols is the group whose elements are all the permutations. The order of $S_n$ is $n!$.
+\item Dihedral group $D_n$ is the group of symmetries of a regular $n$-polygon, which includes rotations and reflections. The order of $D_n$ is $2n$.
+\item Alternating group $A_n$ is the set of all the even permutations in $S_n$. 
+\item Isometry group of a metric space is the set of all bijective isometries (i.e. bijective, distance-preserving maps) from the metric space onto itself, with the function composition as group operation. Its identity element is the identity function. Examples are $C_n, O(n),E(n),D_n$.
+\end{enumerate}
+\end{example}
+
+\subsection{Matrix groups}
+\begin{example}[matrix groups]\hfill
+	\begin{enumerate}
+		\item $GL_n(\mathbb{R})$ generalized linear(invertible) matrix group
+		\item $SO(2)$ special orthogonal group ($Det=1$)the group of rotations of $\mathbb{R}^2$ about origin.
+		\item $O(2)$ special orthogonal group ($Det=\pm 1$)
+		\item The set of n by n real-valued matrices \textbf{do not form a group since the inverse might not exist for some matrix}.
+	\end{enumerate}
+\end{example}
+
+
+\subsection{Elementary properties of groups}
+
+\begin{lemma}[basic algebraic properties of groups]
+Let $G$ is a group and $a,b,c$ are elements of $G$, then
+\begin{itemize}
+    \item if $ab=ac$, then $b=c$.
+    \item if $ba=ca$, then $b=c$.
+\end{itemize}
+\end{lemma}
+\begin{proof}
+(1)(2) multiply $a^{-1}$(which exists based on definition) on both sides of the equation.
+\end{proof}
+
+\begin{remark}[Important implications]
+In general algebra equations, we cannot cancel $a$ in the equation of $ab=ca$. For example, in matrix equations; unless we are in the general invertible matrix group.
+\end{remark}
+
+\begin{lemma}
+If $G$ is a group and $a,b$ are elements of $G$, then 
+\begin{itemize}
+    \item $(ab)^{-1} = b^{-1}a^{-1}$.
+    \item $(a^{-1})^{-1} = a$.
+    \item Let $e$ be the identity element in $G$, then $e^{-1} = e$.
+\end{itemize}
+\end{lemma}
+\begin{proof}
+(1)
+$$e=ab(ab)^{-1} = abb^{-1}a^{-1}=aea^{-1} = e.$$
+(2) $$a^{-1}(a^{-1})^{-1} = e = a^{-1}a = e.$$
+(3) Because $ee=e$, therefore $e^{-1} = e$ based on definition.	
+\end{proof}
+
+
+\subsection{Homomorphism and isomorphism}
+\begin{definition}[homomorphism]\index{homomorphism}
+Let $G$ and $H$ be two groups. A function $\phi:G\to H$ is called a homomorphism if
+$$\phi(xy)=\phi(x)\phi(y) \forall x,y\in G$$
+\end{definition}
+
+
+\begin{definition}[isomorphism]\index{isomorphism}
+A bijective homomorphism is called isomorphism.
+\end{definition}
+
+\begin{theorem}
+\cite[139]{pinter2012book} Let $G$ and $H$ be two groups. Let $f:G\to H$ be a homomorphism. Then
+$f(e)=e$ and $f(a^{-1}) = (f(a))^{-1},\forall a\in G$
+\end{theorem}
+\begin{proof}
+	(1)$f(e)f(e)=f(ee)=f(e) \Rightarrow f(e)=e$ by multiplying both sides of $f(e)^{-1}$. (2) $f(a)f(a^{-1}) = f(aa^{-1}) = f(e) = e$
+\end{proof}
+
+
+\subsection{Subgroup}
+\begin{definition}
+A \textbf{subgroup} is a subset $H$ of a group $G$($H \subseteq G$) which is itself a group that is closed under the group operation of $G$. We denote as $H < G$.
+\end{definition}
+
+\begin{remark}[identity element in the subgroup]
+The identity element of $G$ will also be the identity element of its subgroups. 
+\end{remark}
+
+\begin{remark}[trivial subgroup]
+Each group has at least two improper subgroups $\{e\}$ and itself.
+\end{remark}
+
+
+\begin{example}\hfill
+\begin{itemize}
+    \item Consider three group $\Z,\Q,\R$ with the addition as the binary operator. Then $\mathbb{Z} < \mathbb{Q} < \mathbb{R}$.
+    \item $\{0,2,4\}$ forms a subgroup of $\mathbb{Z}_6$ under the binary operator addition and then module 6.
+\end{itemize}
+\end{example}
+
+\subsection{Cyclic group}
+\begin{definition}
+	A group $G$ is called \textbf{cyclic group} if there is an element $x\in G$ such that
+	$$G = \{x^n|n\in \Z \}$$
+	Such an element $x$ is called\textbf{ generator} of group $G$.
+\end{definition}
+
+\begin{example}\hfill
+	\begin{itemize}
+		\item the set of integers is an infinite cyclic group generated by 1 under addition
+		\item The set $U_n=\{\exp(j2\pi k/n)| k=0,1,...,n-1\}$ is a cyclic group under multiplication.
+	\end{itemize}
+\end{example}
+
+\begin{lemma}
+	Every cyclic group is Abelian.
+\end{lemma}
+
+
+\begin{theorem}[classification of cyclic group]
+	Any infinite cyclic group is isomorphic to the additive group $\Z$. Any cyclic group of size $n$ is isomorphic to the additive group $\Z_n$.
+\end{theorem}
+
+\subsection{Permutation groups}
+
+\begin{definition}[permutation]\cite[277]{banerjee2014linear}
+	A \textbf{permutation} is \textbf{one-one map }from a finite non-empty set $S$ onto itself. Let $S=\{s_1,s_2,...,s_n\}$. A permutation $\sigma$ is often represented as 
+	$$\sigma = \begin{pmatrix}
+	s_1 & s_2 & \cdots s_n\\
+	\sigma(s_1) & \sigma(s_2) &\cdots \sigma(s_n)
+	\end{pmatrix},$$
+	in which we map $s_i$ to $\sigma(s_i)$.	
+\end{definition}
+
+\begin{example}
+A permutation $\sigma \in S_5$ is given by
+	$$\sigma = \begin{pmatrix}
+	s_1 & s_2 & s_3 & s_4 & s_5\\
+	5 & 4 & 3 & 2 & 1
+	\end{pmatrix}.$$
+\end{example}
+
+\begin{definition}[sign of a permutation]\cite[278]{banerjee2014linear}\hfill
+	\begin{itemize}
+		\item A \textbf{permutation} is \textbf{even permutation} if it requires even number of swap to restore its original order. 
+		\item A \textbf{permutation} is \textbf{odd permutation} if it requires odd number of swap to restore its original order. 
+		\item The \textbf{sign of a permutation} is defined by
+		$$sign(\sigma) = \begin{cases*}
+		+1, if~ \sigma~ is~ even\\
+		-1, if~ \sigma~ is~ even
+		\end{cases*}$$ 
+	\end{itemize}		
+\end{definition}
+
+
+\begin{definition}[permutation groups]
+	\cite[26]{krim2015geometric}Let $X$ be a non-empty set. A permutation group $S_X$ is set of all permutations $\sigma:X\to X$ with the binary operation of composition of functions.
+\end{definition}
+
+
+\begin{definition}[permutation matrices]
+	A permutation $\sigma \in S_n$ can be represented by a permutation matrix $P_{\sigma} \in \R^{n\times n}$, where the $i$th column $\sigma(i)$ row is 1, others are 0. 
+\end{definition}
+
+\begin{remark}
+	All the corresponding permutation matrix form a group; and this group is isomorphic to the $S_n$.
+\end{remark}
+
+\iffalse
+\subsection{Coset}
+\begin{definition}[coset]
+Given a subgroup $H <= G$, and any element $g \in G$, the \emph{left coset} $gH$ is defined as $$gH=\{g\circ h | h \in H\}.$$ Similarly, the right coset $Hg$ is defined as $$Hg=\{h\circ g|h\in H\}.$$
+\end{definition}
+
+
+
+
+
+
+\subsection{Group action}
+\begin{definition}
+Let $M$ be a manifold and let $(G,\circ)$ be a group. A \textbf{left action of} $G$ on $M$ is a map $\Phi:G\times M \rightarrow M$ satisfying: $$\Phi(e,x)=x,\Phi(g_1,\Phi(g_2,x))=\Phi(g_1\circ g_2,x)$$ for all $x\in M$. Similarly we can define A \textbf{right action of} $G$ on $M$ is a map $\Phi:M\times G \rightarrow M$ satisfying: $$\Phi(x,e)=x,\Phi(\Phi(x,g_2),g_1)=\Phi(x,g_2\circ g_1)$$ for all $x\in M$.	
+\end{definition}
+
+
+
+\subsection{Direct product of groups}
+\begin{definition}
+If $G,H$ are any two groups, direct direct product is new group, denoted by $G\times H$, and defined as $$\{(x,y)|x\in G, y \in H\}.$$	
+\end{definition}
+
+
+
+\subsection{Conjugation}
+\begin{definition}
+We define
+$$h_g = g \circ h \circ g^{-1} \text{and} h^g = g^{-1}\circ h \circ g$$
+as the conjugation of the element $h$ by $g$. For groups that are Abelian, conjugation leaves an element unchanged. 	
+\end{definition}
+
+
+\subsection{Normal subgroup}
+\begin{definition}
+A subgroup $N$ of a group is called a normal subgroup if it is invariant under conjugation; that is, for each element $n$ in $N$ and each $g \in G$, the element $gng^{-1}$ is still in $N$. We write:
+$$N \triangleleft G \Leftrightarrow \forall n \in N, \forall g \in G, gng^{-1} \in N$$	
+\end{definition}
+
+\begin{remark}
+All subgroups $N$ of an abelian group $G$ are normal since $gN=Ng$.	
+\end{remark}
+
+
+\subsection{Transformation group}
+A transformation group $(G,\circ)$ is a group that acts on a set $S$ in such a way that $g\cdot x \in S$ is defined for all $x \in S$ and $g \in G$ and has the properties
+$$e\cdot x =x , (g_1 \circ g_2)\cdot x = g_1 \cdot (g_2 \cdot x) \in S$$ The operation $\cdot$ defines the action of $G$ on $S$.
+If any two elements of $x_1,x_2 \in S$ can be related as $x_2 = g \cdot x_1$ for some $g\in G$, then $G$ is said to act transitively on $S$. An action is called free if whenever $g\cdot x =x$ for at least one $x \in X$, this means that $g$ must be $e$.
+
+\subsection{Orbits}
+\begin{definition}
+If $S$ is a set and $G$ is a group that acts on it, the notation $S/G$ is used to denote the set of equivalence classes of $S$ under the action of $G$. In other words, if $G$ does not act transitively on $S$, then it divides it into disjoint equivalence classes.	
+\end{definition}
+
+
+\begin{remark}
+The quintessential example of this is $SO(n)/\mathbb{R}^n$ in which rotations divide $\mathbb{R^n}$ into an infinite number of concentric spheres.	
+\end{remark}
+
+\begin{remark}[Equivalence class due to mapping]
+The mapping $g:S\rightarrow G$ can be viewed as having establish equivalence classes where $s_i \sim s_j $ if $g(s_i) = g(s_j)$. Each equivalence class is a subset of the original set. 	
+\end{remark}
+
+
+
+
+
+
+\subsection{Class}
+\begin{definition}
+The class of element $x$ in group $G$ is the set of elements generated by $m \circ x \circ m^{-1}$ as $m$ runs over all the elements of group $G$. $$C[x] = \{m \circ x \circ m^{-1} \forall m \in G  \}$$	
+\end{definition}
+
+
+\begin{remark}[Some facts]\hfill
+\begin{enumerate}
+\item For an Abelian group, every element form a class itself.
+\item In every group, the unit element $E$ forms a class itself.
+\item Every elements belongs to the class it generates, and every element can only belong to one class.
+\item Classes are invariant under similarity transforms.
+\item Every matrix in a class has the same trace and same eigenvalues.
+\end{enumerate}
+\end{remark}
+
+
+\subsection{Quotient group}
+\begin{remark}
+A quotient group is a group obtained by aggregating similar elements of a larger group using an equivalence relation that preserves the group structure. For example, the cyclic group of addition modulo $n$ can be obtained from the integers by identifying elements that differ by a multiple of $n$. Let $N$ be a normal subgroup of a group $G$. We define the set $G/N$ to be the set of all the left cosets of $N$ in $G$, i.e., $G/N=\{aN:a\in G\}$. Note that $G/N$ is a set of sets.  \\
+For example, consider the group with addition modulo 6: $G = \{0, 1, 2, 3, 4, 5\}$. Consider the subgroup $N = \{0, 3\}$, which is normal because G is abelian. Then the set of (left) cosets is of size three:$$
+G/N = \{ aN : a \in G \} = \{ \{0, 3\}, \{1, 4\}, \{2, 5\} \} = \{ 0+N , 1+N, 2+N \}.
+$$	
+\end{remark}
+
+
+
+
+\section{Lie group}
+\begin{definition}[Lie group]
+A Lie group is a group that is also a finite-dimensional smooth manifold, in which the group operations of multiplication and inversion are smooth maps. 
+\end{definition}
+
+\begin{definition}[matrix Lie group]
+A matrix lie group $(G,\circ)$ is a Lie group where $G$ is a set of square matrices and the group operation is matrix multiplication.
+\end{definition}
+
+Given a matrix Lie group, elements sufficiently close to the identity are written as $g(t) = e^{tX}$ for some $X \in \mathcal{G}$ , and $t$ is near 0. The set $\mathcal{G}$ is called the matrix \emph{Lie algebra} of $G$ can be obtained by taking the matrix logarithm of elements of $G$.For example, the Lie algebra of groups $SO(N),SE(N)$ are denoted as $\mathfrak{so}(N),\mathfrak{se}(N)$.
+
+\begin{definition}[Lie algebra]
+A Lie algebra is a vector space endowed with a bi-linear operation,called bracket, $[\cdot,\cdot]: V\times V \rightarrow V$ satisfies the properties $$[x,y] = -[y,x]$$, $$[x,[y,z]] + [y,[z,x]]$$
+\end{definition}
+
+
+\begin{definition}
+a \textbf{Lie matrix algebra} is subspace of $\mathbf{R}^{n\times n}$ closed under the operation matrix commutator $[A,B]=AB-BA$.
+\end{definition}
+The set of the all matrices $X$ such that $e^(tX)$ is in Lie matrix group $G$ for all real number $t$ is the Lie algebra $\mathfrak{g}$ of $G$. 
+Examples are 
+\begin{enumerate}
+\item $\mathcal{R}^3$ with the operation of vector cross-product is a Lie algebra
+\item The matrix commutator satisfies the Jacobian identity, therefore every matrix Lie algebra is a Lie algebra.
+\end{enumerate}
+
+There exist a neighborhood $v$ about zeros in $\mathfrak{g}$ and a neighborhood $V$ of \textbf{I} in $G$ such that $exp:v \rightarrow V$ is smooth and one-to-one 
+onto with smooth inverse.
+
+\subsection{The exponential map on $(\mathbb{R}^n,+)$}
+The integral curve of vector field $X(x) = v$ is given by $\phi_v(t) = vt.$ Thus, $\exp(vt)\circ x = vt+x$ and the $\exp: \mathbb{R}^n \rightarrow \mathbb{R}^n$ is the identity.
+
+
+\begin{definition}[Unimodular Lie Group]
+A Lie group is called a unimodular Lie group when it has a Haar measure that is both left and right invariant. For a unimodular Lie group, we have the following properties:
+$$\int_G f(g)dg =  \int_G f(g_0 \circ g) dg = \int_G f(g\circ g_0)dg = \int_G f(g^{-1}) dg$$
+\end{definition}
+
+
+
+\begin{definition}[Left and right Lie derivative]
+Let $X \in \mathcal{G}$, the Lie algebra of the group $G$, and let $f: G \rightarrow \mathbb{R}$ be an analytic function. Two kinds of directional derivatives can be defined:$$X^rf(g) = \frac{d}{dt}f(g\circ \exp(tX)) = \lim_{t\rightarrow 0}\frac{f(g\circ \exp(tX)) - f(g)}{t}$$ and $$X^lf(g) = \frac{d}{dt}f(\exp(-tX) \circ g) = \lim_{t\rightarrow 0}\frac{f(\exp(-tX) \circ g) - f(g)}{t}$$
+\end{definition}
+
+
+\subsection{Lie group parameterization}
+Every element in the neighborhood of the identity of a connected matrix Lie group $G$ can be described with the exponential parameterization:
+$$g=g(x_1,x_2,...,x_n) = \exp(\sum x_iE_i)$$
+where $n$ is the dimension of the group and $\{E_i\}$ is a basis for $\mathcal{G}$ which is orthonormal with respect to given inner product. \textbf{For some Lie groups, the exponential parameterization extends over the whole group.}
+
+\begin{mdframed}
+\textbf{The $\vee$ operator}\\
+For any Lie algebra, the $\vee$ operator is defined such that 
+$$(\sum x_i E_i)^{\vee} = (x_1,x_2,...,x_n)^T$$
+\end{mdframed}
+
+
+
+\subsection{Left and right invariant vector field on Lie group }
+A vector field $X$ on $G$ is called left-invariant if
+$$\forall g, h \in G, D_hL_g X_h = X_{gh}$$
+The main property of a left-invariant vector field $X$ is that the value of $X$ at any point $g\in G$ can be recovered from the the value $X_e$ of $X$ at $e$ by $D_eL_gX_e = X_g$. ($D_eL_g$ is a operator that locates at $e$, and left acts on $X$ with $g$.)This shows that the vector space of all left- or right-invariant vector fields on $G$ is isomorphic to the tangent space $T_eG = \mathfrak{g}$.
+Consider the 1-parameter subgroup curve in $G$, $g:t\rightarrow g(t)$ starting at $e$ at time $t=0$, with initial tangent vector $X$, and $g(t+s) = g(t)g(s)$. 
+This condition implies that the tangent vector $g'(t)$ at each time is the left- and right-tranlated of the initial vector $X = g'(0)$, that is
+$$\forall t, g'(t) = D_eL_{g(t)}X = D_eR_{g(t)}X$$
+Then such a curve exists and is unique. It is called the exponential map and it is denoted by $g(t)=\exp(tX)$.
+
+\subsection{bi-invariant metric of Lie group}
+$<A,B> = <XA,XB> = <AX,BX>$ for any $A,B \in so(n), X\in SO(n)$, where the inner product is defined as $<A,B>=Tr(B^T A)$. In words, the inner product between two velocity vectors at the identity element of the Lie group is equal to the inner product between the same two velocity vectors shifted by left or right multiplication. On a compact Lie group, a bi-invariant metric can always be found. Different bi-invariant metrics lead to the same geodesics(changing the inner product alters the distance between two points, but the shortest curve, hence a geodesic will not change).\cite{Manton2013}
+
+\subsection{Topic: Geodesics on $SO(n)$}
+Recall that a geodesic will have zero acceleration in the tangent space. A curve $\gamma(t) = \exp(tA)$ will be a geodesic in the Lie group if $A \in so(n)$. The acceleration in Euclidean space is $\gamma''(t)=\exp(tA)A^2$, which can be calculated by using the definition of exponential map. \\
+Fix $t$ and let $Z=\gamma(t) = \exp(tA)$. The tangent space at $Z=SO(n)$ in the vector space $ZC, C\in so(n)$. This means that the group multiplication moves the tangent space at the identity element to any other point on the manifold. Then $$<\gamma''(t),ZC>=<ZA^2,ZC> = <A^2,C>=0$$ Note that we use the property of left-invariant metric, $A^2$ is symmetric, $A,C$ are skew-symmetric.\\
+All geodesics starting at $X \in SO(n)$ are of the form $t\rightarrow X\exp(tA)$. If $\gamma(t) = X\exp(tA)$ then $\gamma'(0)=XA$, then the Riemannian expontial map is given by
+$$\exp_X(XA) = X\exp(A),X\in SO(n), A\in so(n), XA\in T_XM,$$ which satisfies the definition of Riemannian expontial map $\exp_X(XA)=\gamma(1)$.  \cite{Manton2013}
+
+
+
+
+
+\section{One parameter subgroup}
+\begin{definition}
+For every element $X$ in $\mathfrak{g}$, there is a unique homomorphism $\phi : \mathbb{R}\rightarrow G$, called one parameter subgroup of $G$ generated by $X$, such that $\dot{\phi}(0)=X$. Define the exponential map $exp:\mathfrak{g}\rightarrow G$ by setting $\exp(X)=\phi(1)$. The one-parameter subgroup $t\rightarrow \phi(t)$ generated by $X$ is denoted by $\exp(t X)$. 
+\end{definition}
+
+
+
+\subsection{Calculating Jacobian}
+Let $q = (q_1,q_2,...,q_n)^T $ be a column vector of local coordinates. Then $g(t) = g(q(t))$ is a curve in $G$, where $g:\mathbb{R}^n \rightarrow G$ is local parameterization of the Lie group. The right Jacobian matrix relates rates of changing $\dot{\mathbf{q}}$ to $g^{-1}\dot{g}$ and likewise for left Jacobian matrix. Specifically, 
+$$g^{-1}\dot{g} = \sum \omega_j^rE_j, w^r = J_r(q)\dot{q}$$
+and
+$$\dot{g}g^{-1} = \sum \omega_j^lE_j, w^l = J_l(q)\dot{q}$$
+where $g^{-1}\dot{g}$ and $\dot{g}g^{-1}$ are in the Lie algebra, representing the 'velocity' vector of the curve. Using $vee$ operator, we have $((\dot{g}g^{-1})^{\vee} = w^l)$ and $((g^{-1})^{\vee}\dot{g} = w^r)$.
+Moreover, we have
+$$(g^{-1}\frac{\partial g}{\partial q_j})^{\vee} = J_r(q)e_j$$
+and $$(\frac{\partial g}{\partial q_j})^{\vee} g^{-1} = J_l(q)e_j$$
+
+\section{Topic: estimation geodesic distance between elements in matrix Lie group}
+Given $M_1,M_2 \in G$ and $m_1,m_2 \in \mathcal{G}$ (Lie algebra), we have\cite{Xu2012}
+\begin{align*}
+ \rho(M_1,M_2) &= |log[M_1^{-1}M_2]|\\
+                & = |log[exp(-m_1)exp(m2)]|\\
+                & = log[exp(m_2-m_1+o(|(m_1,m_2)|))]\\
+                & \approx |m_2 - m_1|
+\end{align*}
+
+
+\section{Topic: Gaussian Distribution on Lie matrix group}
+\cite{long2012banana}\cite{Fletcher}
+
+\section{Basic representation theory}
+\begin{definition}[representation]
+A representation of a group $G$ on a complex vector space $V$, denoted $(\rho, V)$, is a map that sends every element in $G$ to an invertible linear transformation on $V$, satisfying: $$\rho(g\circ h) = \rho(g)\cdot \rho(h),\forall g,h \in G.$$
+\end{definition}
+
+
+\begin{remark}
+Note that here the representation preserves the group structure, therefore the representation is a homomorphism of the $G$ to the group of automorphism of $V$.
+\end{remark}
+
+
+\begin{definition}[character]
+A character $\chi: G \rightarrow \mathbb{C}$ of a group $G$ is a continuous homomorphism from $(G,+)$ to $(\mathbb{C},\cdot)$, such that $\forall x,y \in G$
+$$\chi(x+y)=\chi(x)\cdot \chi(y)$$
+\end{definition}
+
+
+\begin{theorem}
+Properties of character
+\begin{enumerate}
+\item The range of $\chi$ is the unit circle on the complex plane. Hence $\chi$ maps elements to unit magnitude complex numbers, namely the points of the regular n-gon inscribed in the unit circle with 1 being one of its points.
+\item (Trivial character) the neutral element for $(\mathbb{C},\circ)$, namely $\chi=1$, is a character, called trivial character.
+\item If $\chi$ is a character, then $(\chi)^{-1}=\bar{\chi}$ is also a character.
+\item (Closure) If $\chi,\phi$ are characters, then so is $\chi \cdot \phi$.
+\item It is clear that the set of characters form a group under point-wise multiplication. This group $\hat{G}$ is called dual group of $G$
+\end{enumerate}
+
+\end{theorem}
+
+
+\begin{definition}[Unitary Representation]
+For a inner product space $V$, the presentation preserves that inner product $$<v,w>=<\rho(g)v,\rho(g)w>,\forall v,w\in W, g in G$$
+Then the representation is called unitary. 
+\end{definition}
+
+
+
+\begin{definition}[G-linear map]
+Let $$\rho_1:G \rightarrow GL(V)$$
+$$\rho_2:G \rightarrow GL(W)$$ be two representations of $G$ on vector spaces $V$ and $W$. A G-linear map between $\rho_1$ and $\rho_2$ is linear map $f:V\rightarrow W$ such that
+$$f\circ \rho_1(g)= \rho_2(g) \circ f, \forall g\in G$$
+If $f$ is isomorphism and then the representation $\rho_1,\rho_2$ are isomorphic.
+\end{definition}
+
+
+
+\begin{definition}[regular representation]
+Every group is isomorphic to a group $G^*$ of permutations of $G$. The regular representation is such a map that it maps $g\in G$ to a permutation matrix that will do the same permutation as $g\circ x, \forall x \in G$. Therefore, any group of size $n$ is automatically have a $n$-dimensional regular representation.
+\end{definition}
+
+
+
+\begin{definition}[Sub-representation]
+A sub-representation of a representation $$\rho:G\rightarrow GL(V)$$ is a vector subspace $W\subset V$ such that $$\rho(g)(x)\in W, \forall g \in G, x \in W$$
+This means that every $\rho(g)$ defines a linear map from $W$ to $W$, i.e., we have a representation $G$ on the subspace $W$.
+\end{definition}
+
+\begin{definition}[irreducible representation]
+If $\rho: G \rightarrow GL(V)$ is a representation with no sub-representations(apart from the trivial sub-representations $0\subset V$ and $V \subseteq V$) and then we call it an irreducible representation.
+\end{definition}
+
+
+\begin{theorem}
+Let $\rho: G\rightarrow GL_n(C)$ be a matrix representation. Then there exists a basis of $\mathbb{C}^n$ in which every matrix $\rho(g)$ is diagonal if and only if $\rho$ is a direct sum of 1-dimensional irreducible representation.
+\end{theorem}
+
+\fi
+
+\section{Ring and field}
+\subsection{Ring}
+\begin{definition}[monoid]\index{monoid}
+Let $S$ be a set and $\cdot$ is a binary operator $S\times S\to S$. Then $S$ with $\cdot$ is a monoid if it satisfies
+\begin{itemize}
+	\item For all $a,b,c\in S$, the equation 
+	$$(a\cdot b)\cdot c = a\cdot (b\cdot c).$$
+	\item There exists an \textbf{identity element} $e\in S$ such that for every $a\in S$, the equation
+	$$e\cdot a = a\cdot e = a.$$
+\end{itemize}	
+\end{definition}
+
+
+\begin{definition}[ring]
+A \textbf{ring} is a set $R$ equipped with two binary operations $+$ and $\cdot$ satisfying the following \textbf{ring axioms}:
+\begin{itemize}
+	\item $R$ is an \textbf{abelian group} under addition, that is
+	\begin{itemize}
+		\item (addition is associative) $$(a+b)+c = a + (b+c),\forall a,b,c\in R.$$
+		\item (addition is commutative) 
+		$$a+b = b+a,\forall a,b\in R.$$
+		\item (existence of additive identity) There exists an element 0, called additive identity, such that
+		$$a+ 0=0+a = a \forall a\in R.$$
+		\item (existence of additive inverse) For every element $a\in R$, there exists an element $-a \in R$,called additive inverse,  such that
+		$$a + (-a) = 0.$$
+	\end{itemize}
+	\item $R$ is a monoid under multiplication, meaning that:
+	\begin{itemize}
+		\item (associative multiplication) $$(a\cdot b) \cdot c = a \cdot (b \cdot c) \forall a, b, c \in R.$$
+		\item (existence of multiplicative identity) There exists an element $1 \in R$ such that a · 1 = a and 1 · a = a for all a in R   (that is, 1 is the multiplicative identity).
+	\end{itemize}
+\item Multiplication is distributive with respect to addition:
+\begin{itemize}
+	\item (left distributivity)
+	$$a\cdot (b + c) = (a \cdot  b) + (a \cdot c) \forall a, b, c in R.$$
+	\item (right distributivity)
+	$$(b + c)\cdot a = (b \cdot a) + (c \cdot a) \forall a, b, c \in R.$$  
+\end{itemize}
+\end{itemize}	
+\end{definition}
+
+\subsection{Field}
+\begin{definition}[field]\index{field}
+A field is a set $F$ together with two operations called addition and multiplication.	These operations are required to satisfy the following properties, referred to as \textbf{field axioms}.Let $a,b,c \in F$.
+\begin{itemize}
+	\item \textbf{Closure under addition}: for all $x,y\in F$, $x+y\in F$.
+	\item \textbf{Closure under multiplication}: for all $x,y\in F$, the product $x\cdot y\in F$.
+	\item \textbf{Associativity of addition and multiplication}:
+	$$a + (b+c) = (a+b) + c.$$
+	\item \textbf{Commutativity of addition and multiplication}: 
+	$$a+b = b+a, a\cdot b = b\cdot a.$$
+	\item \textbf{Additive and multiplicative identity}: there exist two different elements 0 and 1 in $F$ such that 
+	$$a + 0 = a, a\cdot 1 = a.$$
+	\item \textbf{Additive inverses}: for every $a\in F$, there exists an element in $F$, denoted $−a$, called \textbf{additive inverse} of $a$, such that $a + (-a) = 0$.
+	\item \textbf{Multiplicative inverses}: for every $a\neq 0 \in F$, there exists an element in $F$, denoted by $a^{-1}$, called the \textbf{multiplicative inverse} of $a$, such that $$a\cdot a^{-1} = 1.$$
+	\item \textbf{Distributivity of multiplication over addition}: 
+	$$a\cdot (b+c) = (a\cdot b)+(a\cdot c).$$
+	\item \textbf{Distinct additive and multiplicative identities}: $$1\neq 0.$$
+\end{itemize}
+\end{definition}
+
+\begin{example}
+With the addition and multiplication be the usual addition and multiplication, we have 
+\begin{itemize}
+	\item Integers $\Z$ is a field.
+	\item Rational numbers $\Q$ is a field.
+	\item Real numbers $\R$ is a field.
+	\item Complex numbers $\C$ is a field.
+	\item Nonnegative reals $\R^+$ is not a field because for any $a$, there exists no additive inverse.
+	\item The set of irrational number is not a field with the common addition and multiplication, since $\sqrt{2}\times \sqrt{2}$ is not irrational. 
+\end{itemize}		
+\end{example}
+
+
+
+
+\begin{lemma}[basic properties of a field]
+Let $F$ be a field.
+\begin{itemize}
+	\item (uniqueness of identity elements)
+	\begin{itemize}
+		\item If $0$ and $0'$ both satisfies 
+		$$0+x=x+0 = x, 0'+x=x+0'=x,\forall x \in F,$$
+		then
+		$$0=0'.$$
+		\item If $1$ and $1'$ both satisfies 
+		$$1\cdot x=x\cdot 1 = x, 1'\cdot x=x\cdot 1' = x,\forall x \in F,$$
+		then
+		$$1=1'.$$
+	\end{itemize}
+	\item If $x\in F$, then $-(-x) = x$.
+	\item If $x\in F$, then $(x^{-1})^{-1}=x.$
+	\item (addition cancellation rule)Let $a,b,c\in F$. If $a+b = a+c$, then $b=c$.
+	\item (multiplication cancellation rule)Let $a,b,c\in F$. If $a\cdot b = a\cdot c$ and $a\neq 0$, then 
+	$b=c$.
+	\item If $a\in F$, then $a\cdot 0 = 0.$
+	\item If $a\cdot b = 0,$ then $a = 0$ or $b = 0$.
+\end{itemize}	
+\end{lemma}
+\begin{proof}
+(1)
+$$x + (-x) = 0 \implies -(-x) = x .$$
+(2) 
+$$x\cdot x^{-1} = 1\implies (x^{-1})^{-1}=x. $$
+(3)
+Add $-a$ to both sides, we have
+$$-a +a +b = -a + a + c\implies b = c.$$
+(4)
+For $a\neq 0$, there exists a multiplicative inverse $a^{-1}$. 
+Multiply both sides by $a^{-1}$, we have
+$$a^{-1}\cdot a\cdot b =a^{-1}\cdot a\cdot c \implies b = c.$$
+(5)
+$$a\cdot(b + (-b)) = a$$
+\end{proof}
+
+
+\begin{definition}[subfield]\index{subfield}
+Let $F$ be a field. A subset $F'\subseteq F$ is called a \textbf{subfield} if whenever $a,b\in \F'$, we have $$a+b \in F', ab\in F', $$
+and with respect to the addition and multiplication that $F$ is equipped with, $F'$ satisfies the axioms for a field.
+\end{definition}
+
+\begin{lemma}[criteria for subfield]\href{https://math.stackexchange.com/questions/95264/necessary-and-sufficient-condition-for-a-sub-field}{link}
+Let  $F$ be a field and	$H\subseteq F$. Then $H$ is a subfield of $F$ if and only if
+\begin{itemize}
+	\item $H \neq \emptyset, H\neq \{0\}$.
+	\item if $\forall a,b \in H$, then $a -b \in H$.
+	\item if $a,b\in H, a\neq 0, b\neq 0$, then $ab^{-1} \in H$.
+\end{itemize}
+\end{lemma}
+
+
+\section{Polynomials}
+\subsection{Polynomials: Basics}\index{polynomial}
+\begin{mdframed}
+\textbf{Notation}
+$\F$ denotes $\C$ or $\R$
+\end{mdframed}
+\begin{mdframed}
+\cite[118]{axler2015linear}\textbf{useful properties of complex numbers}
+\begin{itemize}
+    \item $\abs{\Re z} \leq \abs{z}, \abs{\Im z} \leq \abs{z}$
+    \item $\abs{\bar{z}} = \abs{z}$
+    \item $\abs{ab} = \abs{a}\abs{b}$
+    \item Triangle inequality $\abs{x+y}\leq \abs{x} + \abs{y}$
+\end{itemize}
+The triangle inequality needs (1) to prove. 
+\end{mdframed}
+
+\begin{definition}[polynomials]\index{polynomial}
+\cite[31]{axler2015linear}
+\begin{itemize}
+    \item A function $p:\F\to\F$ is called a \textbf{polynomial} with coefficients in $\F$ if there exist $a_0,a_1,...,a_m \in \F$ such that 
+    $$p(z) = a_0 + a_1 z + a_2 z^2 + ... + a_m z^m$$
+    for all $z\in \F$.
+    \item $\cP(\F)$ is the set of all polynomials with coefficients in $\cF$.
+\end{itemize}
+\end{definition}
+
+\begin{definition}
+$\cP(\R)$ is the set of all polynomials with coefficients in $\R$ and domains in $\R$.
+$\cP(\C)$ is the set of all polynomials with coefficients in $\C$ and domains in $\C$.
+\end{definition}
+
+\begin{definition}[degrees of polynomial]\index{polynomial degree}
+A polynomial $p\in \cP(\F)$ is said to have degree $m$ if it is written as
+    $p(z) = a_0 + a_1 z + ... + a_m z^m$
+    with $a_m \neq 0$.
+    We use $\cP_m(\F)$ to denote the set of all polynomials with coefficients in $\F$ and degree \textbf{at most m}.
+\end{definition}
+
+
+\begin{lemma}[Polynomials as vector spaces]
+$\cP_m(\F)$ is vector space that has dimensionality of $m+1$ since there are $1,z,z^2,z^3,...,z^m$ basis of length $m+1$.
+\end{lemma}
+
+\begin{theorem}[uniqueness for zero polynomial]
+\cite[120]{axler2015linear}
+Suppose $a_0,a_1,...,a_m \in \F$. If 
+$$a_0 + a_1 z + a_2 z^2 + ... + a_m z^m = 0$$
+for every $z\in \F$, then $a_0=a_1 = ... = a_m$.
+\end{theorem}
+Proof: directly from the linearly independence of polynomials basis $\{1,z,z^2,...,z^m\}$
+
+\begin{theorem}[uniqueness]
+If 
+$$a_0 + a_1 z + ... + a_m z^m = b_0 + b_1 z + ... + b_m z^m$$
+for every $z \in \F$, then $a_0=b_0,a_1=b_1,...,a_m = b_m$.
+\end{theorem}
+Proof: rearrange terms and use uniqueness of zero polynomials.
+
+
+\begin{theorem}[division algorithm for polynomial]
+Suppose $p,s\in \cP(\F)$, with $s\neq 0$, then there exist an \textbf{unique} $q,r \in \cP(\F)$, with $deg(r) < deg(s)$, such that 
+$$p = qs + r$$
+\end{theorem}
+Proof: (1) Let $n=deg(p),m=deg(s)$, if $m > n$, then let $q=0, r = p$. This division is unique(suppose $q\neq 0$, then the degree of right handside is greater than left handside, and the equality cannot be estabilish. Therefore, $q=0$, and then $r$ has to uniquely equals $p$ by uniqueness property);(2)
+
+\begin{definition}
+A number $\lambda \in \F$ is called a root of a polynomial $p\in \cP(\F)$ if
+$$p(\lambda) = 0$$
+\end{definition}
+
+\begin{definition}[factor]\index{polynomial factor}
+A polynomial $s\in \cP(\F)$ is called a factor of $p\in \cP(\F)$ if there exists a polynomial $q\in \cP(\F)$ such that $p = sq$
+\end{definition}
+
+\begin{theorem}[existence of root is equivalent existence of factor]
+\cite[122]{axler2015linear}Suppose $p\in \cP(\F)$ and $\lambda \in \F$. Then $p(\lambda) = 0$ if and only if there exist a polynomial $q\in \cP(\F)$ such that $$p(z) = (z-\lambda)q(z)$$
+for every $z\in \F$
+\end{theorem}
+Proof:(1) the forward direction is easy; (2) Use the division algorithm, we have $$p(z)=(z-\lambda)q(z) + r(z)$$
+plug in $p(\lambda) = 0 \Rightarrow r(z) = 0$.
+
+\begin{theorem}[bounds on the number of roots]
+\cite[123]{axler2015linear}Suppose $p\in \cP(\F)$ is a polynomial with degree $m \geq 0$. Then $p$ has at most $m$ roots.
+\end{theorem}
+Proof: use induction. $m=1$, $p$ has exactly one root. Now suppose $m>1$, assuming $p$ with degree $m-1$ has at most $m-1$ roots. Now consider $p$ with $m$ degree, if $p$ has no root, then we are done. If $p$ has a root $\lambda$, then we can factor it as
+$$p(z)=(z-\lambda)q(z)$$ where $q(z)$ is of degree $m-1$ with at most $m-1$ roots by assumption. Therefore, $p(z)$ has at most $m$ roots. 
+
+\begin{remark}
+If a function is not a polynomial, such as $cos(x)$, can have infinitely many roots. 
+\end{remark}
+
+\subsection{Factorization of polynomial over $\C$}
+\begin{theorem}[\textbf{fundamental theorem of algebra}]\index{fundamental theorem of algebra}\label{ch:topics-in-abstract-algebra:th:fundamentalthalgebra}
+\cite[124]{axler2015linear}Every non-constant polynomial $p\in \cP(\C)$ with complex coefficients has a complex root. 
+\end{theorem}
+
+\begin{remark}
+Every non-constant polynomial $p\in \cP(\C)$ with real coefficients will also have a root in $\C$, which is just a degenerate case of the above. 
+\end{remark}
+
+\begin{theorem}[polynomial factorization]\index{polynomial factorization}
+\cite[125]{axler2015linear}
+If $p\in \cP(\C)$ is  non-constant polynomial with degree $m$, then $p$ has a unique factorization of the form
+$$p(z) = c(z-\lambda_1)...(z-\lambda_m)$$
+where $c,\lambda_1,...,\lambda_m \in \C$. That is polynomial of degree $m$ over $\C$ has $m$ roots counting multiplicity.
+\end{theorem}
+Proof: From fundamental theorem, we always have one root, therefore, we can factor as
+$$p(z) = (z-\lambda_1)q(z)$$
+then $q(z)$ is also a polynomial and therefore will have at least one root,which enables us to continue the factorization. See ref for the uniqueness of the factorization.
+
+
+\begin{theorem}[paired complex roots]\label{ch:topics-in-abstract-algebra:th:PairedComplexRootsForRealCoefficientPolynomials}
+Suppose $p\in \cP(\C)$ is a polynomial with real coefficients. If $\lambda \in \C$ is a root of $p$, then so is $\bar{\lambda}$
+\end{theorem}
+\begin{proof}
+Note that	
+ $$p(\lambda) = 0 = \conj{p(\lambda)} = p(\conj{\lambda}).$$	
+\end{proof}
+
+
+\begin{corollary}
+Suppose $p\in \cP(\C)$ is a polynomial with real coefficients.If the degree of $p$ is odd, then it at least has one real root.
+\end{corollary}
+Proof: from fundamental theorem, $p$ has odd roots counting multiplicity. If $p$ only has complex roots, then the number of roots will be even, which is a contradiction.
+
+
+\subsection{Factorization of polynomial over $\R$}
+\begin{theorem}
+Suppose $p\in \cP(\R)$ is a non-constant polynomial with \textbf{real} coefficients. Then $p$ has a unique factorization of the form
+$$p(x) = c(x-\lambda_1)...(x-\lambda_m)(x^2 + b_1 x + c_1)...(x^2 + b_M x + c_M)$$
+where $c,\lambda_1,...,\lambda_m,b_1,...,b_M,c_1,...,c_M \in \R$, with $b_j^2 < 4c_j$ for each $j$.
+\end{theorem}
+Proof: Because $p\in \cP(\R) \subset \cP(\C)$, therefore, 
+$$p(z) = c(z-\lambda_1)...(z-\lambda_m)$$
+where $c\in \R$, and $\lambda_1,...,\lambda_m \in \C$. If all roots are real, then we are done. Suppose there exist a root $\lambda_i \in \C, \lambda_i \notin \R$, then we know it must has a conjugate root $\conj{\lambda}_i$. Then we can write $p$ as
+$$p(x) = (x^2 - 2\Re \lambda_i x + \abs{\lambda_i}^2) q(x)$$
+If $q(x)$ has real coefficients, we will be able to use this approach to continue eliminating complex root by expanding to quadratic forms. To show $q(x)$ has real coefficients, we know that
+$$q(x) = p(x)/(x^2 - 2\Re \lambda_i x + \abs{\lambda_i}^2)$$
+where the divisor will greater than 0 for $x\in \R$.
+
+
+\section{Notes on bibliography}
+
+For treatment in groups, see\cite{armstrong2013groups}
+
+For introduction to polynomials, see \cite{axler2015linear}.
+
+Abstract Algebra: Theory and Applications
+
+
+\cite{Beachy2006abstract}.
+
+\printbibliography
+\end{refsection}

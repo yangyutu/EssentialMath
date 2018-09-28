@@ -1,0 +1,151 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>plotlinear</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2011-11-02"><meta name="DC.source" content="plotlinear.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Plotlinear.m</a></li><li><a href="#2">Define two points for the x-axis</a></li><li><a href="#3">Define the different intercepts and gradients to plot</a></li><li><a href="#4">Plot all of the lines</a></li><li><a href="#5">Request user input</a></li></ul></div><h2>Plotlinear.m<a name="1"></a></h2><p>From A First Course in Machine Learning, Chapter 1. Simon Rogers, 31/10/11 [simon.rogers@glasgow.ac.uk]</p><pre class="codeinput">clear <span class="string">all</span>;close <span class="string">all</span>;
+</pre><h2>Define two points for the x-axis<a name="2"></a></h2><pre class="codeinput">x = [-5 5];
+</pre><h2>Define the different intercepts and gradients to plot<a name="3"></a></h2><pre class="codeinput">w0 = [0:1:20];
+w1 = [0:0.4:8];
+</pre><h2>Plot all of the lines<a name="4"></a></h2><pre class="codeinput">figure(1);
+hold <span class="string">off</span>
+
+<span class="keyword">for</span> i = 1:length(w0)
+    plot(x,w0(i)+w1(i).*x);
+    hold <span class="string">all</span>
+    fprintf(<span class="string">'\ny = %g + %g x'</span>,w0(i),w1(i));
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">
+y = 0 + 0 x
+y = 1 + 0.4 x
+y = 2 + 0.8 x
+y = 3 + 1.2 x
+y = 4 + 1.6 x
+y = 5 + 2 x
+y = 6 + 2.4 x
+y = 7 + 2.8 x
+y = 8 + 3.2 x
+y = 9 + 3.6 x
+y = 10 + 4 x
+y = 11 + 4.4 x
+y = 12 + 4.8 x
+y = 13 + 5.2 x
+y = 14 + 5.6 x
+y = 15 + 6 x
+y = 16 + 6.4 x
+y = 17 + 6.8 x
+y = 18 + 7.2 x
+y = 19 + 7.6 x
+y = 20 + 8 x</pre><img vspace="5" hspace="5" src="plotlinear_01.png" alt=""> <h2>Request user input<a name="5"></a></h2><pre class="codeinput">close <span class="string">all</span>;
+figure(1);hold <span class="string">off</span>
+fprintf(<span class="string">'\nKeeps plotting lines on the current plot until you quit (ctrl-c)\n'</span>);
+<span class="keyword">while</span> 1
+    intercept = str2num(input(<span class="string">'Enter intercept:'</span>,<span class="string">'s'</span>));
+    gradient = str2num(input(<span class="string">'Enter gradient:'</span>,<span class="string">'s'</span>));
+    plot(x,intercept + gradient.*x);hold <span class="string">all</span>
+    fprintf(<span class="string">'\n y = %g + %g x\n\n'</span>,intercept,gradient);
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">
+Keeps plotting lines on the current plot until you quit (ctrl-c)
+</pre><pre class="codeoutput">Error using ==&gt; input
+Cannot call INPUT from EVALC.
+
+Error in ==&gt; plotlinear at 29
+    intercept = str2num(input('Enter intercept:','s'));
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% Plotlinear.m
+% From A First Course in Machine Learning, Chapter 1.
+% Simon Rogers, 31/10/11 [simon.rogers@glasgow.ac.uk]
+clear all;close all;
+
+%% Define two points for the x-axis
+x = [-5 5];
+
+%% Define the different intercepts and gradients to plot
+w0 = [0:1:20];
+w1 = [0:0.4:8];
+
+%% Plot all of the lines
+
+figure(1);
+hold off
+
+for i = 1:length(w0)
+    plot(x,w0(i)+w1(i).*x);
+    hold all
+    fprintf('\ny = %g + %g x',w0(i),w1(i));
+end
+
+%% Request user input
+close all;
+figure(1);hold off
+fprintf('\nKeeps plotting lines on the current plot until you quit (ctrl-c)\n');
+while 1
+    intercept = str2num(input('Enter intercept:','s'));
+    gradient = str2num(input('Enter gradient:','s'));
+    plot(x,intercept + gradient.*x);hold all
+    fprintf('\n y = %g + %g x\n\n',intercept,gradient);
+end
+##### SOURCE END #####
+--></body></html>

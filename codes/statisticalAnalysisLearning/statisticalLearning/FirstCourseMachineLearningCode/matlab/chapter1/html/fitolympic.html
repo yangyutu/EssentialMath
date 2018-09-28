@@ -1,0 +1,141 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>fitolympic</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2011-10-31"><meta name="DC.source" content="fitolympic.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">fitolympic.m</a></li><li><a href="#2">Load the Olympic data</a></li><li><a href="#3">Extract the male 100m data</a></li><li><a href="#4">Compute the various averages required</a></li><li><a href="#8">Compute w1 (gradient) (Equation 1.10)</a></li><li><a href="#9">Compute w0 (intercept) (Equation 1.8)</a></li><li><a href="#10">Plot the data and linear fit</a></li></ul></div><h2>fitolympic.m<a name="1"></a></h2><p>From A First Course in Machine Learning, Chapter 1. Simon Rogers, 31/10/11 [simon.rogers@glasgow.ac.uk]</p><pre class="codeinput">clear <span class="string">all</span>;close <span class="string">all</span>;
+</pre><h2>Load the Olympic data<a name="2"></a></h2><pre class="codeinput">load <span class="string">../data/olympics</span>
+</pre><h2>Extract the male 100m data<a name="3"></a></h2><pre class="codeinput">x = male100(:,1); <span class="comment">% Olympic years</span>
+t = male100(:,2); <span class="comment">% Winning times</span>
+
+<span class="comment">% Change the preceeding lines for different data.  e.g.</span>
+<span class="comment">% x = male400(:,1); % Olympic years</span>
+<span class="comment">% t = male400(:,2); % Winning times</span>
+<span class="comment">% for the mens 400m event.</span>
+
+N = length(x); <span class="comment">% 27</span>
+</pre><h2>Compute the various averages required<a name="4"></a></h2><p><img src="fitolympic_eq15480.png" alt="$\frac{1}{N}\sum_n x_n$"></p><pre class="codeinput">m_x = sum(x)/N;
+</pre><p><img src="fitolympic_eq15801.png" alt="$$\frac{1}{N}\sum_n t_n$$"></p><pre class="codeinput">m_t = sum(t)/N;
+</pre><p><img src="fitolympic_eq76604.png" alt="$\frac{1}{N}\sum_n t_n x_n$"></p><pre class="codeinput">m_xt = sum(t.*x)/N;
+</pre><p><img src="fitolympic_eq98982.png" alt="$\frac{1}{N}\sum_n x_n^2$"></p><pre class="codeinput">m_xx = sum(x.*x)/N;
+</pre><h2>Compute w1 (gradient) (Equation 1.10)<a name="8"></a></h2><pre class="codeinput">w_1 = (m_xt - m_x*m_t)/(m_xx - m_x^2);
+</pre><h2>Compute w0 (intercept) (Equation 1.8)<a name="9"></a></h2><pre class="codeinput">w_0 = m_t - w_1*m_x;
+</pre><h2>Plot the data and linear fit<a name="10"></a></h2><pre class="codeinput">figure(1);hold <span class="string">off</span>
+plot(x,t,<span class="string">'bo'</span>,<span class="string">'markersize'</span>,10,<span class="string">'linewidth'</span>,2)
+xplot = [min(x)-4 max(x)+4];
+xlim(xplot);
+hold <span class="string">on</span>
+plot(xplot,w_0+w_1*xplot,<span class="string">'r'</span>,<span class="string">'linewidth'</span>,2)
+xlabel(<span class="string">'Olympic year'</span>);
+ylabel(<span class="string">'Winning time'</span>);
+</pre><img vspace="5" hspace="5" src="fitolympic_01.png" alt=""> <p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% fitolympic.m
+% From A First Course in Machine Learning, Chapter 1.
+% Simon Rogers, 31/10/11 [simon.rogers@glasgow.ac.uk]
+clear all;close all;
+
+%% Load the Olympic data
+load ../data/olympics
+
+%% Extract the male 100m data
+x = male100(:,1); % Olympic years
+t = male100(:,2); % Winning times
+
+% Change the preceeding lines for different data.  e.g.
+% x = male400(:,1); % Olympic years
+% t = male400(:,2); % Winning times
+% for the mens 400m event.
+
+N = length(x); % 27
+%% Compute the various averages required
+% $\frac{1}{N}\sum_n x_n$
+m_x = sum(x)/N;
+%%
+% $$\frac{1}{N}\sum_n t_n$$
+%
+m_t = sum(t)/N;
+%%
+% $\frac{1}{N}\sum_n t_n x_n$
+m_xt = sum(t.*x)/N;
+%%
+% $\frac{1}{N}\sum_n x_n^2$
+m_xx = sum(x.*x)/N;
+
+
+%% Compute w1 (gradient) (Equation 1.10)
+w_1 = (m_xt - m_x*m_t)/(m_xx - m_x^2);
+%% Compute w0 (intercept) (Equation 1.8)
+w_0 = m_t - w_1*m_x;
+
+%% Plot the data and linear fit
+figure(1);hold off
+plot(x,t,'bo','markersize',10,'linewidth',2)
+xplot = [min(x)-4 max(x)+4];
+xlim(xplot);
+hold on
+plot(xplot,w_0+w_1*xplot,'r','linewidth',2)
+xlabel('Olympic year');
+ylabel('Winning time');
+##### SOURCE END #####
+--></body></html>

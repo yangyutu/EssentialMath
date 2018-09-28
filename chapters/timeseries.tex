@@ -1,0 +1,2727 @@
+\startcontents[chapters]
+\chapter{Time Series Analysis}\label{ch:time-series-analysis}
+	
+\printcontents[chapters]{}{1}{}
+\section{Overview of time series analysis}
+\subsection{Types of variations}
+The source of variations can be classified as: \cite[10]{chatfield2003analysis}
+\begin{itemize}
+    \item \textbf{seasonal effect}:\cite{wiki:seasonality} When there are patterns that repeat over \textbf{known, fixed periods} of time within the data set it is considered to be seasonality, seasonal variation, periodic variation, or periodic fluctuations. 
+    \item \textbf{trend}: long term change in the mean. The 'long' here can be quite surjective.
+    \item \textbf{irregular fluctuations}.
+\end{itemize}
+
+
+\subsection{General strategies to transform data for stationarity}
+\begin{mdframed}
+\begin{enumerate}
+\item Transform data so that the residuals are \textbf{stationary}
+\begin{itemize}
+    \item estimate and subtract trend and seasonal effect. A general trend and seasonal model can be represented as
+    $$X_t = T_t + S_t + E_t = \beta_0 + \beta_1 t + \sum_i (m \cos(\lambda_i t) + \gamma_i \sin(\lambda_i t)) + E_t$$
+    \item differencing
+    \item nonlinear transformation
+\end{itemize}
+\item Fit model to residuals.
+\end{enumerate}
+\end{mdframed}
+
+
+\begin{example} [Use backshifting/differencing to remove trend]
+\begin{itemize}
+    \item If $X_t = \beta_0 + \beta_1 t + E_t$, then
+    $$\nabla X_t = \beta_1 + \nabla E_t$$
+    \item If $X_t = \sum_{i=0}\beta_i t^i + E_t$, then
+    $$\nabla^k X_t = k! \beta_k + \nabla^k E_t$$
+\end{itemize}
+\end{example}
+
+\section{Foundations}
+\subsection{Time series and its statistics}
+\begin{definition}[time series]
+\cite[1]{brockwell2002introduction}
+A time series is a set of observations, $x_t$, each one being recorded at a specific time. A \textbf{discrete time series} is one in which the indexing set is a discrete set. A \textbf{continuous time series} is one in which the indexing set is an interval on the real line. 
+\end{definition}
+
+\begin{definition}[time series model]
+\cite[7]{brockwell2002introduction} A time series model for the observed data $\{x_t\}$ is a specification of the joint distributions(or possibly only the means and covariance) of a sequence of random variables $\{X_t\}$ of which $\{x_t\}$ is postulated to be a realization.
+\end{definition}
+
+\begin{remark}
+A complete model is proposing a parametric form of 
+$$P(X_1\leq x_1,...,X_n\leq x_n)$$
+which however,contains far too many parameters to estimated; Therefore, we usually only specify lower order moments of the joint distribution, such as $E[X_t],E[X_tX_{t+h}]$.
+\end{remark}
+
+\begin{definition}[mean and covariance function]
+Let $\{X_t\}$ be a discrete time series with $E[X_t^2] < \infty$. The mean function of $\{X_t\}$ is $$\mu_X(t) = E[X_t]$$
+The covariance function of $\{X_t\}$ is
+$$\gamma_X(r,s) = Cov(X_r,X_s) = E[(X_r-\mu_X(r))(X_s-\mu_X(s))]$$
+for all integer $r,s$.
+\end{definition}
+
+
+\begin{lemma}[Basic property of $\gamma(h)$]
+\cite[47]{brockwell2002introduction}For a stationary $\{X_t\}$, its autocovariance function
+\begin{itemize}
+    \item $\gamma(0) \geq 0$
+    \item $\abs{\gamma(h)}\leq \gamma(0),\forall h$
+    \item $\gamma(h)$  is even, i.e., $\gamma(h) = \gamma(-h), \forall h$.
+\end{itemize}
+\end{lemma}
+\begin{proof}
+	(1) It is variance. (2) From Cauchy inequality(\autoref{ch:theory-of-probability:th:Cauchy-SchwarzInequalityBoundsOnCorrelations}). (3) $\gamma(h) = Cov(X_t,X_{t+h}) = Cov(X_{t+h},X_t) = \gamma(-h)$.
+\end{proof}
+
+
+
+
+
+\begin{definition}[non-negative definite function]
+\cite[46]{brockwell2002introduction}
+A real-valued function $k$ defined on integers is non-negative definite if
+$$\sum_{i,j=1}^n a_i k(i-j)a_j \geq 0$$
+for all positive integers $n$ and vectors $a=(a_1,a_2,...,a_n)$.
+\end{definition}
+
+
+\begin{theorem}[non-negative of covariance matrix]
+\cite[47]{brockwell2002introduction}A real-valued function defined on the integers is the autocovariance function of a stationary time series if and only if it is even and non-negative definite.
+\end{theorem}
+Proof: (1) Let $a$ be any vector of size $n$, let $X=(X_1,X_2,...,X_n)^T$ The covariance matrix of random variable $a^TX$ is $a^TCov(X)a = Var(a^TX) = \sum_{i,j=1}^n a_i \gamma(i-j)a_j \geq 0$, where we have use the facts (1) $Cov(X)_{i,j} = \gamma(i-j)$; (2) The transformation rule for covariance matrix transformation for multi-dimensional random vectors. (2) The other direction see reference. 
+
+
+\begin{lemma}[demean operation for stationary process]
+Given a stationary process $X_t$ with mean $\mu$ and autocovariance function $\gamma_X$, then the process
+	$$Y_t = X_t-\mu$$ has mean zero and same autocovariance function.
+\end{lemma}
+\begin{proof}
+	Straight forward.
+\end{proof}
+\subsection{Stationarity}
+
+\begin{definition}[weakly stationary]
+	\cite[15]{brockwell2002introduction}$\{X_t\}$ is weakly stationary if 
+	\begin{itemize}
+		\item $\mu_X(t)$ is independent of $t$.
+		\item $\gamma_X(t+h,t)$ is independent of $t$ for each $h$.
+	\end{itemize}
+\end{definition}
+
+
+
+\begin{remark}
+	A stationary process will not contain periodic/seasonal change and trends.
+\end{remark}
+
+\begin{definition}[strictly stationary]
+	\cite[49]{brockwell2002introduction} $\{X_t\}$ is a strictly stationary time series if the joint distributions of $(X_1,...,X_n)$ and joint distribution of $(X_{1+h},...,X_{n+h})$ are equal for all integers $h$ and $n \geq 1$. Or we write
+	$$P(X_1,...,X_n) = P(X_{1+h},...,X_{n+h})$$
+\end{definition}
+
+\begin{lemma}[properties of strictly stationary process]
+	\cite[49]{brockwell2002introduction} Let $\{X_t\}$ be a strictly stationary time series, then we have
+	\begin{enumerate}
+		\item The random variable $X_t$ are identically distributed;
+		\item $P(X_t,X_{t+h}) = P(X_1,X_{1+h}$ for all integers $t$ and $h$;
+		\item $\{X_t\}$ is weakly stationary if $E[X_t^2] < \infty $ for all $t$;
+		\item Weak stationarity does not imply strict stationarity
+		\item All iid sequence is strictly stationary.
+	\end{enumerate}
+\end{lemma}
+Proof: (1)(2)(3) Directly from definition, joint distribution equal implies marginal distribution equal.
+
+\begin{remark}
+	A stationary process will not contain trends and periodic trends.
+\end{remark}
+
+
+\begin{definition}
+	Let $\{X_t\}$ be a stationary time series. The autocovariance function of $\{X_t\}$ at lag $h$ is
+	$$\gamma_X(h) = Cov(X_{t+h},X_t)$$
+	The autocorrelation function of $\{X_t\}$ at lag $h$ is
+	$$\rho_X(h) = \frac{Cov(X(h),X(0)}{\sqrt{Cov(X(h),X(h)}\sqrt{Cov(X(0),X(0))}} =  \frac{\gamma_X(h)}{\gamma_X(0)} = Cor(X_{t+h},X_t)$$
+\end{definition}
+
+
+\subsection{Partial autocorrelation function}\label{ch:time-series-analysis:sec:PartialAutocorrelationFunction}
+
+
+
+\begin{definition}[partial autocorrelation function, PACF]\cite[100]{subbaRao2017timeSeries}
+Let $\{X_t\}$ be a zero mean stationary process. The partial autocorrelation at lag $h$ for $h\geq 1$, denoted by $\pi_X(h)$, is defined as the direct correlation between $X_t$ and $X_{t+h}$ with the \textbf{linear dependence} between the intermediate variables $X_s, t<s<t+h$ removed. Specifically, we have  
+	$$PACH(X_t,X_{t+h}) = Cov(X_t - Var[Y]^{-1}E[YX_i]Y,X_{t+h}-Var[Y]^{-1}E[YX_{t+h}]]Y),$$
+where $Y = (X_{t+1},X_{t+2},...,X_{t+h-1}).$	
+\end{definition}
+
+
+
+
+\begin{theorem}[computation of PACF]\label{ch:time-series-analysis:th:ComputePACFViaLinearRegression}
+	Let $\{X_t\}$ be a zero-mean stationary process.
+\begin{itemize}
+	\item The partial autocorrelation at lag $h$ for $h\geq 2$, denoted by $\pi_X(h)$, is equal to the coefficient $a_h$ from the optimal linear prediction of $X_{t+h}$ on the observations $X_{t}, X_{t+1},...,X_{t+h-1}$ given by
+	$$X_{t+h} = a_h X_t + \beta_1 X_{t+1} + ... + \beta_{h-1} X_{t+h-1}.$$
+	For $h=0$, $\pi_X(0) = 1$;$h = 1$, $\pi_X(1) = \rho_X(1)$.
+	\item The partial autocorrelation at lag $h$ for $h\geq 2$, denoted by $\pi_X(h)$, is given by the partial correlation conditioned on $(X_{t+1},X_{t+2},...,X_{t+h-1})$,i.e.,
+	\begin{align*}
+	\pi_X(h) &= corr(X_{t+h} - P_Y(X_{t+h}),X_t - P_Y(X_{t})) \\
+	&= \frac{Cov(X_{t+h} - P_Y(X_{t+h}),X_t - P_Y(X_{t}))}{\sqrt{Var[(X_{t+h} - P_Y(X_{t+h}))]}\sqrt{Var[X_t - P_Y(X_{t})]}}
+	\end{align*}
+where $Y = (X_{t+1},X_{t+2},...,X_{t+h-1})$, and $P_Y(X_{t+h})$ is the projection of $X_{t+h}$ onto the subspace spanned by $(X_{t+1},X_{t+2},...,X_{t+h-1})$.	
+\end{itemize}	
+\end{theorem}
+\begin{proof}
+From the Hilbert space approximation theory(\autoref{ch:functional-analysis:th:normalequation}) and best linear predictor theory(\autoref{}), we know that the coefficient $a_h$ is given by
+$$\pi_X(h) = \frac{Cov(X_{t+h} - P_Y(X_{t+h}),X_t - P_Y(X_{t}))}{\sqrt{Var[(X_{t} - P_Y(X_{t}))]}\sqrt{Var[X_t - P_Y(X_{t})]}}.$$
+From the definition partial correlation coefficient(\autoref{}), we have
+$$	\pi_X(h) = \frac{Cov(X_{t+h} - P_Y(X_{t+h}),X_t - P_Y(X_{t}))}{\sqrt{Var[(X_{t+h} - P_Y(X_{t+h}))]}\sqrt{Var[X_t - P_Y(X_{t})]}}.$$
+
+To show these two are equivalent, our goal is to show
+$Var[(X_{t} - P_Y(X_{t}))]$
+and $Var[(X_{t+h} - P_Y(X_{t+h}))]$
+are equivalent. We note that (\autoref{}) $Var[(X_{t} - P_Y(X_{t}))]$ is fully determined by $Var[X(t)]$, the covariance structure $Cov[Y]$, and the covariance structure of $Cov[Y,X(t)]$. Due to the weak stationarity, $Var[X(t)] = Var[X(t+h)]$, the $Cov[Y,X(t)], Cov[Y,X(t+h)]$ only differ at the labeling. 
+\end{proof}
+
+
+\begin{note}[caution on calculating PACF and its application]\hfill
+\begin{itemize}
+	\item Suppose we have stationary time series given by
+	$$X_{t+1} = \beta_0 X_t + \beta_1 X_{t-1} + \beta_2 X_{t-2} + ... + \beta_q X_{t-q} Z_t,$$
+	when we use linear regression model	to compute 
+	$$X_{t+h} = a_h X_t + a_1 X_{t+1} + ... + a_{h-1} X_{t+h-1}.$$
+	where $1<h \leq q$, only when $h = q$, the coefficient $\pi(h) = a_h = \beta_q$; when $h > q$, $a_h = 0$, when $h < q$,  $a_h$ is not equivalent to $\beta_h$.
+	\item Therefore, PACF $\pi(h)$ is the method to estimate the order of AR process; it cannot be used to estimate the coefficient in the AR model; The estimation of the coefficient usually rely on maximum likelihood or least square.  
+\end{itemize}	
+	
+ 
+\end{note}
+
+
+
+
+\begin{lemma}[bounded variance of sample partial autocorrelation function]\cite[66]{box2015time}\hfill
+\begin{itemize}
+	\item The partial autocorrelation function of leg $h$, denoted by $\hat{\pi}(h)$, with for a single random sample,  can be viewed as a random variable with support $[-1,1]$ and bounded variance of $Var[\hat{\pi}] \leq 1$. 
+	\item If $n$ is the number of samples used in the calculation of PACF $\hat{\pi}$, then   $Var[\hat{\pi}] \leq 1/n$.
+\end{itemize}	
+	
+\end{lemma}
+\begin{proof}
+	(1) $\abs{\hat{\rho}} \leq 1$ is showed in Cauchy inequality(\autoref{ch:theory-of-probability:th:Cauchy-SchwarzInequalityBoundsOnCorrelations}).
+	(2) The boundedness the variance is at
+	\autoref{ch:theory-of-probability:th:PopoviciuUpperBoundForVariance}.
+\end{proof}
+
+
+\begin{remark}[interpretation of PACF as conditional correlation]\hfill
+	\begin{itemize}
+		\item Consider a regression context in which $y$ is the response variable and $x_1,x_2,x_3$ as predictor variables. The partial correlation between $y$ and $x_3$ is given by
+		$$\frac{Cov(y,x_3|x_1,x_2)}{\sqrt{Var(y|x_1,x_2)}\sqrt{Var(x_3|x_1,x_2)}}.$$
+		\item We can find out the partial correlation between $y$ and $x_3$ by constructing an optimal linear regression
+		$$y = \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_3,$$
+		and take $\beta_3$ as the PCAF.
+	\end{itemize}	
+\end{remark}
+
+
+\begin{lemma}[PACF for AR and MA process]\label{ch:time-series-analysis:th:PACFforARandMA}\hfill
+\begin{itemize}
+	\item Consider a AR(p) process given by
+	$$X_t = a_1 X_{t-1} + a_2 X_{t-2} + ... + a_p X_{t-p} + Z_t, Z_t \sim WN(0, \sigma^2),$$
+	then
+	$$\pi_X(h) = \begin{cases*}
+	a_h, h = 1,2,..,p \\
+	0, otherwise
+	\end{cases*}.$$
+	\item Consider a MA(1) process given by
+	$$X_t = Z_t + \theta_1 Z_{t-1}, Z_t \sim WN(0, \sigma^2),$$
+	then
+	$$\pi_X(h) = \begin{cases*}
+	a_h, h = 1,2,..,p \\
+	0, otherwise
+	\end{cases*}.$$
+	
+\end{itemize}	
+	
+\end{lemma}
+\begin{proof}
+(1)From \autoref{ch:time-series-analysis:th:ARRerepresentationMA(1)Process} directly.
+(2)\autoref{ch:time-series-analysis:th:ARRerepresentationMA(1)Process}
+\end{proof}
+
+\begin{note}[ACF vs. PACF for application in order identification]\hfill
+\begin{itemize}
+	\item PACF is useful in identifying the order of AR process; however, ACF has nonzero coefficient for all lags.
+	\item ACF is useful in identifying the order of MA process; however, PACF has nonzero coefficient for all lags.
+\end{itemize}	
+\end{note}
+
+
+\subsection{Statistical tests}
+\subsubsection{Common statistics}
+\begin{definition}
+	\cite[19]{brockwell2002introduction} Let $x_1,...,x_n$ be observations of a time series. The \textbf{sample mean} is
+	$$\bar{x} = \frac{1}{n}\sum_{i=1}^nx_i$$
+	The \textbf{sample autovariance function} is
+	$$\hat{\gamma}(h) = \frac{1}{n}\sum_{i=1}^n(x_i-\bar{x})( x_{i+h} - \bar{x})$$
+	The \textbf{sample autocorrelation function} is
+	$$\hat{\rho}(h)=\hat{\gamma}(h)/\hat{\gamma}(0)$$
+\end{definition}
+
+\begin{remark}
+	Note that the divisor in the covariance is 1/n.
+\end{remark}
+
+
+\begin{lemma}[bounded variance of sample autocorrelation function]\label{ch:time-series-analysis:th:BoundedVarianceOfSampleAutocorrelationFunction}\hfill
+\begin{itemize}
+	\item The sample autocorrelation function of leg $h$ defined by $\hat{\rho}(h)=\hat{\gamma}(h)/\hat{\gamma}(0)$ is random variable with support $[-1,1]$ and bounded variance of $Var[\hat{\rho}] \leq 1$.
+	\item If $n$ is the number of samples used in the calculation of ACF $\hat{\rho}$, then   $Var[\hat{\rho}] \leq 1/n$. 
+\end{itemize}	
+	
+\end{lemma}
+\begin{proof}
+(1) $\abs{\hat{\rho}} \leq 1$ is showed in Cauchy inequality(\autoref{ch:theory-of-probability:th:Cauchy-SchwarzInequalityBoundsOnCorrelations}).
+(2) The boundedness the variance is at
+\autoref{ch:theory-of-probability:th:PopoviciuUpperBoundForVariance}.
+\end{proof}
+
+
+\subsubsection{Rolling analysis}
+
+\begin{remark}[motivation for rolling analysis]
+	Consider the analysis of a univariate time series $y_t$ over a sample from $t = 1,...,T$. We want to assess \textbf{parameter(mean, variance) constancy over the entire sample} let $n$ denote the 	
+\end{remark}
+
+\begin{definition}
+	Consider the analysis of a univariate time series $y_t$ over a sample from $t=1,2,...,T$. Let $n$ denote the width of a sub-sample or window and defien the \textbf{rolling} sample means, variances and standard deviation 
+	\begin{align*}
+	\hat{\mu}_t(n) &=\frac{1}{n}\sum_{i=0}^{n-1} y_{t-i}\\
+	\hat{\sigma}^2_t(n) &=\frac{1}{n}\sum_{i=0}^{n-1} (y_{t-i} - \hat{\mu}_t(n))^2\\
+	\hat{\sigma}_t(n) &=\sqrt{\hat{\sigma}^2_t(n)}
+	\end{align*}	
+\end{definition}
+
+
+\begin{definition}[exponentially weighted moving averages(EWMA)]\index{exponentially weighted moving averages} An $n$ period EWMA of a time series $y_t$ is defined as
+	$$\hat{\mu}_t(n) =\sum_{i=0}^{n-1} w_i y_{t-i}, w_i = \frac{\lambda^{i-1}}{\sum_{i=0}^{n-1}\lambda^{i-1}},$$
+	where $0<\lambda < 1$ is the decay parameter.	
+\end{definition}
+
+\begin{remark}
+	In the EWMA, we put more weight on the most recent observations.
+\end{remark}
+
+\subsubsection{Test for correlation}
+\begin{definition}[Ljung and Box serial correlation test]\cite[32]{tsay2005analysis}\label{ch:time-series-analysis:def:LjungBoxSerialCorrelationTest}
+Let $\rho_i$ be the autocorrelation function of a time series $\{X_t\}$. Consider the null hypothesis and alternative hypothesis
+\begin{itemize}
+	\item null hypothesis $H_0: \rho_1 = \cdots = \rho_m = 0.$
+	\item alternative hypothesis $H_1: \rho_i\neq 0, for~some~ i\in \{1,2,...,m\}$.
+\end{itemize}
+ The test statistic for the hypothesis is given by	
+	$$Q(m) = T(T+2)\sum_{i=1}^m \frac{\hat{\rho}_l^2}{T-l}.$$
+
+The decision rule is to reject $H_0$ if $Q(m) > \chi^2_\alpha$(where $\chi^2_\alpha$ denote the $\alpha$ percentile of a chi-squared distribution). 	
+\end{definition}
+
+\begin{remark}[interpretation]
+If there exists correlation, $Q(m)$ tends to be large.	
+\end{remark}
+
+
+\subsection{Best linear predictor}
+\begin{definition}[linear predictor]
+	The linear predictor for $X_{n+h}$ given $X_1,X_2,...,X_n$ is given as
+	$$P_nX_{n+h} = a_0 + a_1X_1 + ... + a_nX_n$$
+\end{definition}
+
+\begin{mdframed}
+	\textbf{Determine coefficients for linear predictor} with known $\mu$ and $\gamma$ for stationary process $X_t$ \cite[62]{brockwell2002introduction}\\
+	\begin{itemize}
+		\item Our goal is to find
+		$$a = \arg\min E[(X_{n+h} - P_nX_{n+h})^2]$$
+		\item Solve this optimization problem, we have: 
+		$$a_0 = \mu(1 - \sum_{i=1}^n a_i)$$
+		$$ a = \Gamma^{-1} \gamma_n(h)$$
+		where $a=(a_1,a_2,...,a_n)^T$, $\Gamma$ is the matrix with $\Gamma_{i,j} = \gamma(i-j)$, $\gamma_n(h) = (\gamma(h), \gamma(h+1),...,\gamma(n+h-1))$
+	\end{itemize}
+\end{mdframed}
+
+\begin{lemma}[properties of best linear predictor]
+	The predictor $P_nX_{n+h}$ will satisfy:
+	\begin{itemize}
+		\item $P_nX_{n+h} = \mu + \sum_{i=1}^n a_i(X_i - \mu)$
+		\item $E[(X_{n+h}-P_nX_{n+h})^2] = \gamma(0)-a^T\gamma_n(h)$
+		\item $E[X_{n+h} - P_nX_{n+h}] = 0$
+		\item $E[(X_{n+h} - P_nX_{n+h})X_j] = 0, j=1,2,...,n$
+	\end{itemize}
+\end{lemma}
+\begin{proof}
+
+\end{proof}
+
+
+\begin{remark}[interpretation]\hfill
+	\begin{itemize}
+		\item The variance reduction is important, because $a^T\gamma_n(h)$ is non-negative, which suggest that if more previous data (correlated) $X_i$ are use, the more uncertainty is reduced. 
+		\item If $\gamma(h) = 0,\forall h>0$, then the best prediction is $\mu$, with variance $\gamma(0)$; that is, no previous information can be exploited. For example, we cannot predict white noise.
+	\end{itemize}
+\end{remark}
+
+\section{The lag operator and polynomial}
+\begin{definition}[lag operator and lag polynomial]\index{lag operator}\index{lag polynomial}
+A lag operator is defined as $Lx_t = x_{t-1}$. A lag polynomial is defined as
+$$P(L) = a_0 + a_1L + a_2L^2 + ... + a_pL^p.$$
+An inverse of a lag polynomial is defined as as$$P^{-1}(L)P(L)=P(L)P^{-1}(L)=1.$$
+\end{definition}
+
+\begin{remark}\hfill
+\begin{itemize}
+    \item The lag operator can operate(addition,subtraction,multiplication, division) like integers.
+\end{itemize}
+\end{remark}
+
+\begin{lemma}[inverse of factor]\label{ch:time-series-analysis:th:inverselagpolynomialfactor}
+The inverse of $P(L)=1-aL,a\in \C$ exists when $\abs{a}< 1$and the inverse is given as
+$$ P^{-1}(L) = 1 + aL +a^2L^2 + a^3L^3 + ... $$
+\end{lemma}
+\begin{proof}
+	directly use the definition to verify $P(L)P^{-1}(L)=1$ based on the fact of $a^\infty = 0$.
+\end{proof}
+
+\begin{lemma}[factoring lag polynomial]
+Any lag polynomial of degree $q$ can be written as
+$$P(L) = (1-\beta_1 L)(1-\beta_2 L)...(1-\beta_q L)$$
+where $\beta_1,\beta_2,...,\beta_q \in \C$ are the $q$ roots of $P(x)=0$.
+\end{lemma}
+\begin{proof}
+Directly from fundamental theorem of algebra \autoref{ch:topics-in-abstract-algebra:th:fundamentalthalgebra}
+\end{proof}
+
+
+\begin{lemma}[inverse of general lag polynomial]\label{ch:time-series-analysis:th:inverselagpolynomial}
+A lag polynomial $P(L)$ of degree $q$ has its inverse if all its roots $\beta_i\in \C$ satisfying 
+$$\abs{\beta_i} < 1,i=1,...,q$$
+and the inverse is given as:
+ $$P^{-1}(L)=(1-\beta_1 L)^{-1}...(1-\beta_q L)^{-1}$$
+where $\beta_1,\beta_2,...,\beta_q$ are the $q$ roots of $P(x)=0$.
+\end{lemma}
+\begin{proof}
+	Based on the assumption, each factor exists and can be inverted(
+ \autoref{ch:time-series-analysis:th:inverselagpolynomialfactor})). Then the finite product of these factor will exist.
+\end{proof}
+
+
+\begin{definition}[difference operator]
+The difference operator $\Delta$ is $1-L$, i.e., $\Delta x_t = x_t - x_{t-1}$. $\Delta^2 = (1-L)^2 = 1-2L+L^2$,i.e., $\Delta^2 x_t = x_t - 2x_{t-1} + x_{t-2}$
+\end{definition}
+
+\begin{example}
+Let $y_t = \nabla x_t = (1-L)x_t$, we can solve $x_t = (1-L)^{-1}y_t = \sum_{-\infty}^t y_{i}$, or $x_t - x_0 = \sum_{i=1}^t y_{i}$
+\end{example}
+
+\section{Linear stationary process}
+\subsection{Linear process}
+\begin{definition}[linear process]
+\cite[51]{brockwell2002introduction} The time series $\{X_t\}$ is a linear process if it has the representation 
+$$X_t = \mu + \sum_{j=-\infty}^\infty \phi_j Z_{t-j}$$
+for all $t$, where $\{Z_t\}~WN(0,\sigma^2)$ and $\{\phi_j\}$ is a sequence of constants with absolute summability $\sum_{j=-\infty}^\infty \abs{\phi_j} < \infty$.
+\end{definition}
+
+\begin{lemma}[basic property of linear process, stationarity]\label{ch:time-series-analysis:th:BasicPropertyOfLinearProcess}
+A linear process $$X_t = \mu + \sum_{j=-\infty}^\infty \phi_j Z_{t-j}$$
+with  $\sum_{j=-\infty}^\infty \abs{\phi_j} < \infty$ has the following properties:	
+\begin{itemize}
+	\item $E[X_t] = \mu$.
+	\item stationary covariance $$Cov[X_t,X_{t+\tau}] = \sigma^2\sum_{i = -\infty}^{\infty} \phi_i\phi_{i-\tau}.$$
+\end{itemize}
+
+That is, a linear process is weakly stationary.
+\end{lemma}
+\begin{proof}
+(1) We are able to exchange the summation and the integral due to \autoref{ch:calculus:th:ExchangeSumAndLebesgueIntegral}. To apply this theorem, note that $E[\abs{Z_t}] = \sigma\sqrt{2/\pi}$ and  $\sum_{j=-\infty}^\infty \sigma\sqrt{2/\pi}\abs{\phi_j} < \infty.$
+(2)The convergence of $\sum_{i = -\infty}^{\infty} \phi_i\phi_{i-\tau}$ is discussed in \autoref{ch:sequences-series:th:importantseriesconvergenceresult}
+\end{proof}
+
+\begin{definition}[causality]
+A linear process $\{X_t\}$ is causal(strictly, a causal function of $\{W_t\}$) if there exists a 
+$$\phi(B) = \phi_0 + \phi_1 B + \phi_2 B^2 + ...$$
+with $\sum_{i=1}^\infty \abs{\phi_i} < \infty$ and $X_t = \phi(B)W_t$, where $B$ is the lag operator.
+\end{definition}
+
+\begin{definition}[invertibility]\label{ch:time-series-analysis:def:invertibility}
+A linear process $\{X_t\}$ is invertible(strictly, an invertible function of $\{W_t\}$) if there exists a $$\pi(B) = \pi_0 + \pi_1 B + \pi_2 B^2 + ...$$
+with $\sum_{i=1}^\infty \abs{\phi_i} < \infty$ and $W_t = \phi(B)X_t$, where $B$ is the lag operator.
+\end{definition}
+
+
+
+
+
+\begin{theorem}[linear combination of stationary process is stationary]\label{ch:time-series-analysis:th:linearcombinationstationary}\cite[52]{brockwell2002introduction}
+Let $Y_t$ be a stationary time series with mean 0 and covariance function $\gamma_Y$. If $\sum_{j=-\infty}^\infty \abs{\psi_j} < \infty$, then the time series
+$$X_t = \sum_{j=-\infty}^\infty \psi_j Y_{t-j} = \psi(L)Y_t$$
+is stationary with mean 0 and autocovariance function
+$$\gamma_X(h) = \sum_{j=-\infty}^\infty\sum_{k=-\infty}^\infty \psi_j\psi_k\gamma_Y(h+k-j)$$
+In particular, if $Y(t)$ is the white noise process, then
+$$\gamma_X(h) = \sum_{j=-\infty}^\infty \psi_j\psi_{j+h}\sigma^2$$
+\end{theorem}
+\begin{proof}
+(1) We are able to exchange the summation and the integral due to \autoref{ch:calculus:th:ExchangeSumAndLebesgueIntegral}. To apply this theorem, note that $E[\abs{Y_t}] = 0$ and  $\sum_{j=-\infty}^\infty \abs{\psi_j} < \infty.$
+(2)
+(3) \autoref{ch:time-series-analysis:th:BasicPropertyOfLinearProcess}.
+\end{proof}
+
+\subsection{MA processes}
+\subsubsection{Basics}
+\begin{definition}[moving average operator of order $q$]
+\cite[10]{box2015time} A moving average operator of order $q$ can be defined as
+$$\theta_q(B) = 1+\theta_1B+\theta_2B+...+\theta_qB^q.$$
+\end{definition}
+
+
+\begin{definition}[MA(q) process]
+\cite[50]{brockwell2002introduction}
+A time series $\{X_t\}$ is a moving-average process of order $q$ if
+$$X_t = Z_t + \theta_1 Z_{t-1} + \theta_2 Z_{t-2} + ... + \theta_q Z_{t-q}$$
+where $\{Z_t\}\sim WN(0,\sigma^2)$, and $\theta_1,\theta_2,...,\theta_q$ are constants.
+\end{definition}
+
+
+
+\begin{theorem}[basic statistics of MA(q)]\cite[33]{chatfield2003analysis}
+Given a MA process of order $q$,
+$$X_t = Z_t + \theta_1 Z_{t-1} + \theta_2 Z_{t-2} + ... + \theta_q Z_{t-q},$$
+ we have 
+$$E[X_t] = 0$$
+$$Var(X_t) = \sigma^2 \sum_{i=0}^q \theta_i^2$$
+and
+$$\gamma(k) = \begin{cases} 
+0,k>q\\
+\sigma^2 \sum_{i=0}^{q-k}\theta_i\theta_{i+k},k=0,1,...,q\\
+\gamma(-k),k<0
+\end{cases},$$
+and
+$$\rho(k) = \begin{cases} 
+1, k=0\\
+0,k>q\\
+\sigma^2 \sum_{i=0}^{q-k}\theta_i\theta_{i+k}/\sum_{i=0}^q \theta_i^2,k=1,...,q\\
+\gamma(-k),k<0
+\end{cases},$$
+where $\theta_0 = 1$ is used.
+\end{theorem}
+\begin{proof}
+(1) 
+$$E[X_t] = E[Z_t + \theta_1 Z_{t-1} + ... + \theta_q Z_{t-q}] = E[Z_t] + \theta_1 E[Z_{t-1}] +  ... + \theta_q E[Z_{t-q}] = 0.$$
+(2) $$Var[X_t] = Var[Z_t] + Var[\theta_1Z_{t-1}] + ... + Var[\theta_q Z_{t-q}] + .cross.terms = \sigma^2+\theta_1\sigma^2 + ... + \theta_q^2\sigma^2.$$
+(3) $$Cov(X_t,X_{t+k}) = Cov(Z_t + \theta_1 Z_{t-1} + ... + \theta_q Z_{t-q},Z_t + \theta_1 Z_{t-1 + k} + ... + \theta_q Z_{t-q + k})$$
+\end{proof}
+
+\begin{corollary}[basic statistics of MA(1)]
+Given a MA process of order $1$,
+$$X_t = Z_t + \theta_1 Z_{t-1},$$
+we have 
+$$E[X_t] = 0$$
+$$Var(X_t) = \sigma^2(1 + \theta_1) $$
+$$\gamma(1) = \sigma^2 \theta_1$$
+$$\rho(1) = \theta_1/(1 + \theta_1^2)$$
+\end{corollary}
+
+
+\begin{theorem}[MA Representation Theorem]\index{MA Representation Theorem}
+\cite[50]{brockwell2002introduction} If $\{X_t\}$ is a stationary $q$ correlated time series with mean $0$, then it can be represented as $MA(q)$ process.
+\end{theorem}
+\begin{proof}
+First, An $MA(q)$ process has exactly $q+1$ unknown parameters ($\sigma,\theta_1,...,\theta_q$), which can be determined from the autocovariance function of the given $q$ correlated time series. 
+Note that we can first uniquely determine $\theta_q$ by matching $\gamma(q)$, and then $\theta_{q-1}$, and so on.  
+\end{proof}
+
+
+\begin{lemma}[sufficient condition for equivalent AR representation]\label{ch:time-series-analysis:th:ARRerepresentationMA(1)Process}
+An $MA(1)$ process $X_t = W_t + \theta W_{t-1}$ can be represented as an AR process of infinite terms: 
+$$X_t = \sum_{j=1}^\infty -(-\theta)^j X_{t-j} + W_t$$
+if $\abs{\theta}<1$.
+\end{lemma}
+\begin{proof}
+$$X_t = W_t + \theta W_{t-1} = (1+\theta B)W_t$$
+then if $\abs{\theta} < 1$, 
+we have
+$$W_t = (1+\theta B)^{-1}X_t = \sum_{j=0}^\infty (-\theta)^j B^j X_t$$
+\end{proof}
+
+
+\subsubsection{Stationarity and invertibility}
+\begin{lemma}[invertibility of MA]
+An $MA(q)$ process given as
+$$X_t = \theta_q(B)W_t$$
+is invertible, if $\theta_q(x) \neq 0, \forall \abs{x} \leq 1$. That is, the polynomial $\theta_q(x)$ having all root lying outside unit circile.
+\end{lemma}
+
+\begin{remark}[invertibility and uniqueness]
+Consider $X_t = W_t + 0.5W_{t-1},W_t \sim WN(0,25)$ and $Y_t = V_t+5V_{t-1},V_t \sim WN(0,1)$
+are the same, but one is invertible, but one is not.
+\end{remark}
+
+
+\begin{lemma}[MA process is always weakly stationary]\label{ch:time-series-analysis:th:MAprocessisstationary}\cite[59]{tsay2005analysis}
+The $MA$ process is stationary for any value of $\theta_1,\theta_2,...,\theta_q$.
+\end{lemma}
+\begin{proof}
+See linear combination of white noise process is still stationary process \autoref{ch:time-series-analysis:th:linearcombinationstationary}. Note that any MA process can be viewed as a linear combination of stationary process $Z_1,Z_2,...$
+\end{proof}
+
+
+\begin{remark}
+For an MA process, we are not concerned with its stationarity property but concerned with its invertibility.
+\end{remark}
+
+\subsubsection{Identification and parameter estimation}
+
+
+\begin{lemma}[order identification for MA processes]
+Suppose we have random sample from the MA time series $\{X_t\},t=1,2,...,n$. The  ACF of order $h$ is zero with 95\% confindence level if
+$$\abs{\hat{\rho}(h)} \leq \frac{2}{\sqrt{n}}.$$		
+\end{lemma}
+\begin{proof}
+Consider the null hypothesis that $\rho(h) = 0$. Note that the calculation $\hat{\rho}$ is given by
+
+$$\hat{\rho}(h)=\hat{\gamma}(h)/\hat{\gamma}(0)$$
+The \textbf{sample autovariance function} is
+ $$\hat{\gamma}(h) = \frac{1}{n}\sum_{i=1}^n(x_i-\bar{x})( x_{i+h} - \bar{x}).$$
+The null hypothesis ensures that each term $(x_i-\bar{x})( x_{i+h} - \bar{x})$ is independent and the Cauchy inequality ensures that it is random variable with support $[-1,1]$, mean 0, and variance $\sigma^2$ bounded by $1$.
+
+From central limit theorem(\autoref{ch:theory-of-probability:centralLimitTheorem}), $\hat{\rho} \sim N(0,\frac{\sigma^2}{n}).$ 
+Take 95\% confidence level, when $$\abs{\hat{\rho}} \geq \frac{2}{\sqrt{n}}\geq \frac{2\sigma}{\sqrt{n}},$$ we reject the null hypothesis. 
+\end{proof}
+
+\begin{remark}[order identification]
+	We cannot use the PACF to identify the order of MA process, because PACF has non-zero value extending to infinity\autoref{ch:time-series-analysis:th:PACFforARandMA}.
+\end{remark}
+
+\begin{definition}[maximum likelihood estimation of the coefficients in invertible MA(q)]Consider an invertible $MA(q)$ 
+	$$X_t = \mu + Z_t + \beta_1 Z_{t-1} + \beta_2Z_{t-2}+\cdots + \beta_q Z_{t-q},$$
+	where $Z_t\sim WN(0, \sigma^2)$.
+	
+	Let $(X_1,X_2,...,X_n)$ be the observations. Then the MLE is given by
+	$$L(\mu, \beta_1,...\beta_q, \sigma^2) = \frac{1}{\sqrt{(2\pi)^n \abs{\Sigma}}} \exp(-\frac{1}{2}(X-\mu)^T\Sigma^{-1}(X-\mu)),$$
+	where  	
+	$$\Sigma_{ij} = Var[X_t]\rho(i-j),\rho(k) = \begin{cases} 
+	1, k=0\\
+	0,k>q\\
+	\sigma^2 \sum_{i=0}^{q-k}\beta_i\beta_{i+k}/\sum_{i=0}^q \beta_i^2,k=1,...,q\\
+	\gamma(-k),k<0
+	\end{cases},$$
+	where $\beta_0 = 1$ is used.
+\end{definition}
+
+
+\begin{example}[MLE for invertible MA(1)]
+Consider an invertible $MA(1)$ 
+$$X_t = \mu + Z_t + \beta_1 Z_{t-1},$$
+where $Z_t\sim WN(0, \sigma^2)$ and $\abs{\beta_1}\leq 1$.
+
+Let $(X_1,X_2,...,X_n)$ be the observations. Then the MLE is given by
+$$L(\mu, \beta_1, \sigma^2) = \frac{1}{\sqrt{(2\pi)^n \abs{\Sigma}}} \exp(-\frac{1}{2}(X-\mu)^T\Sigma^{-1}(X-\mu)),$$
+where  	
+$$\Sigma = \sigma^2(1 + \beta_1^2)\begin{bmatrix}
+1 & \rho & 0 & \cdots & 0\\ 
+\rho & 1 & \rho & \cdots & 0\\ 
+0 & \rho & 1 & \cdots & 0\\ 
+\vdots & \vdots & \vdots & \ddots & \vdots\\ 
+0 & 0 & 0 & \cdots & 1
+\end{bmatrix}, \rho = \frac{\beta_1}{\sigma^2(1 + \beta_1^2)}.$$	
+\end{example}
+
+
+\begin{remark}[model checking]
+	Let $x_t$ be the time series observation and $\hat{x}_t$ be the linear optimal prediction. Let $r_t = x_t - \hat{x}_t$ be the residual. 	
+	We can use the serial correlation(\autoref{ch:time-series-analysis:def:LjungBoxSerialCorrelationTest}) to check whether the residual is correlated or not. If the model we use is proper, then there should be no correlation among the residuals.
+\end{remark}
+
+\subsubsection{Forecasting}
+
+\begin{definition}[best least square forecast]\cite[54]{tsay2005analysis}
+Consider a time series $\{X_t\}$. Suppose we are currently at time index $h$. Let $\hat{X}_{h+l}$ be the forecast of $X_{t+h}$, where the positive integer $l$ is the forecast horizon. Let $\cF_t$ be a $\sigma$ algebra representing all the information upto $t$. 
+We say $\hat{X}_{h+l}$ is the \textbf{best least square forecast} of $X_{h+l}$ if
+$$E[(X_{h+l} - \hat{X}_{h+l})^2|\cF_h] = \min_{g} E[(X_{h+l} - g)^2|\cF_h], $$
+where $g$ is all the random variables measurable with respect to $\cF_h$.   	
+\end{definition}
+
+
+\begin{remark}[interpretation]
+Note that the forecast $\hat{X}_{h+l}$ is random variable instead of a single number. 
+\end{remark}
+
+\begin{lemma}[best least square forecasting for MA(1) with observed shocks]\cite[62]{tsay2005analysis}
+Consider an MA(1) process given by $$X_t = Z_t + \theta_1 Z_{t-1} + c_0, Z_t\sim WN(0,\sigma^2).$$
+Let $\cF_t$ denote the information available upto $t$. It follows that
+\begin{itemize}
+	\item the 1-step ahead best least-square forecast is
+	$$\hat{X}_{t+1}\triangleq E[X_{t+1}|\cF_t] = c_0 + \theta_1Z_t,$$
+	and the error is $E[(X_{t+1} - \hat{X}_{t+1})^2|\cF_t] = \sigma^2.$	
+	\item the 2-step ahead best least-square forecast is
+	$$\hat{X}_{t+2} \triangleq E[X_{t+2}|\cF_t]= c_0,$$
+	and the error is $E[(X_{t+2} - \hat{X}_{t+2})^2|\cF_t] = (1 + \theta_1^2)\sigma^2.$	
+	
+	\item the m-step($m > 2$) ahead best least-square forecast is
+	$$\hat{X}_{t+m} \triangleq E[X_{t+m}|\cF_t] = c_0,$$
+		and the error is $E[(X_{t+m} - \hat{X}_{t+m})^2|\cF_t] = (1 + \theta_1^2)\sigma^2.$
+\end{itemize}
+\end{lemma}
+\begin{proof}
+We use the least-square minimizing property of conditional expectation(\autoref{ch:theory-of-probability:th:leastSquareMinimizingConditionalExpectation}). We have	
+(1) 
+\begin{align*}
+\hat{X}_{t+1} &= E[Z_{t+1} + \theta_1 Z_{t} + c_0|\cF_t] \\
+			 &= E[Z_{t+1}|\cF_t] + E[\theta_1 Z_{t}|\cF_t] + E[c_0|\cF_t] \\
+			 &=0 + \theta_1 Z_{t} + c_0 \\
+			 &=\theta_1 Z_{t} + c_0
+\end{align*}
+where we use the property of taking-out-known of conditional expectation(\autoref{ch:theory-of-probability:th:conditionalexpectationproperty}).
+To get the error, we have
+$$E[(X_{t+1} - \hat{X}_{t+1})^2|\cF_t] = E[Z_{t+1}^2|\cF_t] = \sigma^2.$$
+(2) 
+\begin{align*}
+\hat{X}_{t+2} &= E[Z_{t+2} + \theta_1 Z_{t+1} + c_0|\cF_t] \\
+&= E[Z_{t+2}|\cF_t] + E[\theta_1 Z_{t+1}|\cF_t] + E[c_0|\cF_t] \\
+&=0 + 0 + c_0 \\
+&= c_0
+\end{align*}
+where we use the property of taking-out-known of conditional expectation(\autoref{ch:theory-of-probability:th:conditionalexpectationproperty}).
+To get the error, we have
+$$E[(X_{t+2} - \hat{X}_{t+2})^2|\cF_t] = E[(Z_{t+2} + \theta_1Z_{t+1})^2|\cF_t] = (1 + \theta_1^2)\sigma^2.$$
+(3) same as (1)(2). 
+To get the error, we have
+$$E[(X_{t+m} - \hat{X}_{t+m})^2|\cF_t] = E[Z_{t+m}|\cF_t] = E[(Z_{t+m} + \theta_1 Z_{t+m-1})^2|\cF_t] = (1 + \theta_1^2)\sigma^2.$$
+\end{proof}
+
+
+\begin{lemma}[best least square forecasting for MA(q) with observed shocks]\cite[62]{tsay2005analysis}
+	Consider an MA(q) process given by $$X_t = Z_t + \theta_1 Z_{t-1} + \theta_2 Z_{t-2} + ... + \theta_q Z_{t-q} + c_0, Z_t\sim WN(0,\sigma^2).$$ 
+	Let $\cF_t$ denote the information available upto $t$. It follows that
+	\begin{itemize}
+		\item the 1-step ahead best least-square forecast is
+		$$\hat{X}_{t+1} \triangleq E[X_{t+1}|\cF_t] = c_0 + \theta_1Z_t + ... + \theta_q Z_{t-q+1},$$
+		and the error is $E[(X_{t+1} - \hat{X}_{t+1})^2|\cF_t] = \sigma^2.$	
+		\item the 2-step ahead best least-square forecast is
+		$$\hat{X}_{t+2} \triangleq E[X_{t+2}|\cF_t] = \theta_2 Z_{t} + ... + \theta_q Z_{t-q+2} + c_0,$$
+		and the error is $E[(X_{t+2} - \hat{X}_{t+2})^2|\cF_t] = (1 + \theta_1^2)\sigma^2.$	
+		\item the m-step($3\leq m \leq q$) ahead best least-square forecast is
+		$$\hat{X}_{t+m} \triangleq E[X_{t+m}|\cF_t] = c_0 + \sum_{i=m}^q \theta_i Z_{t-i+m},$$
+		and the error is $E[(X_{t+m} - \hat{X}_{t+m})^2|\cF_t] = \sigma^2(\sum_{i=1}^{m-1} \theta_i^2),\theta_0 = 1.$
+		
+		\item the m-step($m > q$) ahead best least-square forecast is
+		$$\hat{X}_{t+m}\triangleq E[X_{t+m}|\cF_t] = c_0,$$
+		and the error is  $E[(X_{t+m} - \hat{X}_{t+m})^2|\cF_t] = \sigma^2(\sum_{i=1}^{q} \theta_i^2),\theta_0 = 1.$
+	\end{itemize}
+\end{lemma}
+\begin{proof}
+	We use the least-square minimizing property of conditional expectation(\autoref{ch:theory-of-probability:th:leastSquareMinimizingConditionalExpectation}). We have	
+	(1) 
+	\begin{align*}
+	\hat{X}_{t+1} &= E[Z_{t+1} + \theta_1 Z_{t} + ... + \theta_q Z_{t-q+1} + c_0|\cF_t] \\
+	&= E[Z_{t+1}|\cF_t] + E[\theta_1 Z_{t}|\cF_t] + E[\theta_2 Z_{t-1} + ... +\theta_q Z_{t-q+1} + c_0|\cF_t] \\
+	&=0 + \theta_1 Z_{t} + ... + \theta_q Z_{t-q+1} + c_0 \\
+	&=\theta_1 Z_{t} + ... + \theta_q Z_{t-q+1} + c_0
+	\end{align*}
+	where we use the property of taking-out-known of conditional expectation(\autoref{ch:theory-of-probability:th:conditionalexpectationproperty}).
+	To get the error, we have
+	$$E[(X_{t+1} - \hat{X}_{t+1})^2|\cF_t] = E[Z_{t+1}^2|\cF_t] = \sigma^2.$$
+	(2) 
+	\begin{align*}
+\hat{X}_{t+2} &= E[Z_{t+2} + \theta_1 Z_{t+1} + ... + \theta_q Z_{t-q+2} + c_0|\cF_t] \\
+&= E[Z_{t+2} + \theta_1 Z_{t+1}|\cF_t] + E[\theta_2 Z_{t}|\cF_t] + E[(\theta_3 Z_{t-1} + ... +\theta_q Z_{t-q+2} + c_0)^2|\cF_t] \\
+&=0 + \theta_2 Z_{t} + ... + \theta_q Z_{t-q+2} + c_0 \\
+&=\theta_2 Z_{t} + ... + \theta_q Z_{t-q+2} + c_0
+\end{align*}
+	where we use the property of taking-out-known of conditional expectation(\autoref{ch:theory-of-probability:th:conditionalexpectationproperty}).
+	To get the error, we have
+	$$E[(X_{t+1} - \hat{X}_{t+1})^2|\cF_t] = E[Z_{t+2} + \theta_1Z_{t+1}|\cF_t] = (1 + \theta_1^2)\sigma^2.$$
+	(3)
+	(4) same as (1)(2).
+\end{proof}
+
+\begin{lemma}[best least square forecasting for MA(q) without observed shocks]\cite[62]{tsay2005analysis}
+	Consider an MA(q) process given by $$X_t = Z_t + \theta_1 Z_{t-1} + \theta_2 Z_{t-2} + ... + \theta_q Z_{t-q} + c_0, Z_t\sim WN(0,\sigma^2).$$ 
+	Let $\cF_t$ denote the information available upto $t$ but not including the information about the shocks It follows that
+	\begin{itemize}
+		\item the 1-step ahead best least-square forecast is
+$$\hat{X}_{t+1} \triangleq E[X_{t+1}|\cF_t] = c_0,$$
+and the error is $E[(X_{t+1} - \hat{X}_{t+1})^2|\cF_t] = \sigma^2.$	
+\item the m-step($m \geq 1$) ahead best least-square forecast is
+$$\hat{X}_{t+m}\triangleq E[X_{t+m}|\cF_t] = c_0,$$
+and the error is  $E[(X_{t+m} - \hat{X}_{t+m})^2|\cF_t] = \sigma^2(\sum_{i=1}^{m} \theta_i^2),\theta_0 = 1.$
+	\end{itemize}
+\end{lemma}
+\begin{proof}
+	We use the least-square minimizing property of conditional expectation(\autoref{ch:theory-of-probability:th:leastSquareMinimizingConditionalExpectation}). We have	
+	(1) 
+	\begin{align*}
+	\hat{X}_{t+1} &= E[Z_{t+1} + \theta_1 Z_{t} + ... + \theta_q Z_{t-q+1} + c_0|\cF_t] \\
+	&= E[Z_{t+1}|\cF_t] + E[\theta_1 Z_{t}|\cF_t] + E[\theta_2 Z_{t-1} + ... +\theta_q Z_{t-q+1} + c_0|\cF_t] \\
+	&=0 + 0 + ... + 0 + c_0 
+	\end{align*}
+	To get the error, we have
+	$$E[(X_{t+1} - \hat{X}_{t+1})^2|\cF_t] = E[(Z_{t+1} + \theta_1 Z_{t} + ... + \theta_q Z_{t-q+1})^2|\cF_t] = \sigma^2(\sum_{i=1}^{m} \theta_i^2),\theta_0 = 1.$$
+
+	(2) same as (1).
+\end{proof}
+
+\begin{remark}[practical consideration of observability of shocks]
+In reality, we cannot observe shocks; we can only observe $X_t$.	
+\end{remark}
+
+\subsection{AR process}
+\subsubsection{Basic properties}
+\begin{definition}[autoregressive operator of order $q$]
+\cite[11]{box2015time}The autoregressive operator of order $q$ is defined as
+$$\phi_q(B) = 1 - \phi_1 B - \phi_2 B^2 - ... - \phi_q B^q$$
+where $\phi_i$ are constants.
+\end{definition}
+
+\begin{definition}[AR process of order $p$]\cite[36]{chatfield2003analysis}\index{AR process}\index{autoregressive process}\index{AR(1) process}
+\begin{itemize}
+	\item A process $\{X_t\}$ is called an autoregressive(AR) process of order $p$ if
+	$$X_t = a_1 X_{t-1} + a_2 X_{t-2} + ... + a_p X_{t-p} + Z_t, Z_t\sim WN(0,\sigma^2)$$
+	or
+	$$\theta_p(B)X_t = Z_t.$$
+	\item Specifically, 
+	$AR(1)$ process has the following form
+	$$X_t = a_1X_{t-1} + Z_t.$$
+\end{itemize}	
+\end{definition}
+
+
+
+\begin{lemma}[$AR(1)$ properties]\label{ch:time-series-analysis:th:AR(1)processBasicProperties}
+The first order autoregressive process $AR(1)$, given by,
+	$$X_t = a_1X_{t-1} + Z_t, Z_t\sim WN(0,\sigma^2), X_0=x_0, \abs{a}<1,$$
+ has the following property:
+\begin{itemize}
+    \item It has solution
+    $$X_t = a^t X_0 + \sum_{i=1}^{t} a^{i-1}Z_{t-i+1}  $$
+    \item Mean and variance
+    \begin{align*}
+    E[X_t] &= 0 \\
+    Var[X_t] &= \sigma^2(1+a^2+a^4 + \cdots + a^{2(t-1)}) = \sigma^2\frac{1-a^{2t}}{1-a^2} \\ 
+    Var[X_t] &\to \sigma^2/(1-a^2), as~t\to\infty
+    \end{align*}
+    \item covariance
+    $$Cov[X_tX_s] = a^{t-s}Var[X_s], t\geq s$$.
+    \item $$\gamma(k) = \triangleq  = \begin{cases} a^k Var(X_t), k\geq 0\\
+        \gamma(-k), k<0
+    \end{cases}$$
+    \item $$\rho(k) = \begin{cases} a^k , k\geq 0\\
+    \rho(-k), k<0
+    \end{cases}$$
+\end{itemize}
+\end{lemma}
+\begin{proof}
+(1)
+\begin{align*}
+X_t &= aX_{t-1}+Z_t \\
+&= a(aX_{t-2}+Z_{t-1})+Z_t\\
+&= a^2 X_{t-2} + a Z_{t-1} + Z_t\\
+&= a^3 X_{t-3} + a^2Z_{t-2} + a Z_{t-1} + Z_t\\
+&= a^t X_0 + \sum_{i=1}^{t} a^{i-1}Z_{t-i+1} 
+\end{align*}
+
+(2) Directly from (1). Use the result of variance of sum of normal random variables; (3)(4)(5)
+\begin{align*}
+&Cov[X_tX_s] \\
+=& Cov[(a^{t-s}X_s + \sum_{j=1}^{t-s} a^{t-s-j}Z_{s+j}),X_s] \\
+=& Cov[a^{t-s}X_s,X_s] \\
+=& a^{t-s}Var[X_s] \\
+\end{align*}
+\end{proof}
+
+
+\begin{remark}[stationarity]
+Only when $\abs{a}<1$, such process can be stationary, otherwise will blow up.
+\end{remark}
+
+\begin{remark}[connection with Ornstein-Uhlenbeck process]
+Note that a stationary AR(1) process can be viewed as a discrete-time version of OU processes(\autoref{ch:theory-of-stochastic-process:sec:OUProcesses}).
+\end{remark}
+
+
+\subsubsection{stationarity and invertibility condition}
+\begin{lemma}[stationarity condition for AR(1)]
+\cite[54]{box2015time}The AR(1) process $X_t = \phi_1 X_{t-1} + Z_t$ has the necessary condition of stationarity of the roots of $1-\phi_1 t = 0$ has roots lying outside the unit circle, i.e., $\abs{t^*} > 1$; or equivalently, $\abs{\phi_1} <1$.
+\end{lemma}
+\begin{proof}
+In lag polynomial form, we have $$(1-\phi_1 B)X_t = Z_t \Rightarrow X_t = (1-\phi_1 B)^{-1}Z_t = \sum_{i=0}^\infty \phi^i_1 B^i Z_t$$
+where we know that $\abs{\phi_1}<1$ is necessary for the variance to be finite, which is equivalent to the condition of $\abs{t}=\abs{\phi_1^{-1}} > 1$  from $\abs{t\phi_1}=1$, where $t$ is the root of $1-\phi_1 t = 0$. 
+\end{proof}
+
+
+\begin{remark}
+One example for $AR(1)$ to be nonstationary is the random walking process $X_t = X_{t-1} + W_t$; Even though the mean is 0, but its variance,i.e., $\gamma(0)$ is changing with time.
+\end{remark}
+
+
+\begin{lemma}[condition of stationarity]\label{ch:time-series-analysis:th:ARstationarycondition}
+\cite[54]{box2015time} \hfill
+\begin{itemize}
+	\item The $AR(q)$ process $X_t = \phi_1 X_{t-1} + \phi_2 X_{t-2} + ... + \phi_q X_{t-q} + Z_t$ is stationary of the roots of polynomial $\phi(t) = 1-\phi_1 t - \phi_2 t^2 - \phi_3 t^3 ... = 0$ must all lying outside the unit circle,i.e., $\abs{t^*} > 1$.
+	\item Another necessary condition for stationary is
+	$$\abs{\phi_i}\leq 1, \forall i=1,2,...,q.$$
+\end{itemize}
+\end{lemma}
+\begin{proof}
+(1)	
+From \autoref{ch:time-series-analysis:th:inverselagpolynomial}. The condition ensures that AR(q) can be represented as a MA process, and further MA process are stationary(\autoref{ch:time-series-analysis:th:MAprocessisstationary}).
+(2) 
+\end{proof}
+ 
+
+
+\begin{lemma}[AR process is always invertible]
+\cite[57]{box2015time}An AR(q) process $X_t = \phi_1 X_{t-1} + \phi_2 X_{t-2} + ... + \phi_q X_{t-q} + Z_t$ is alway intertible.
+\end{lemma}
+\begin{proof}
+From the definition of invertible process(\autoref{ch:time-series-analysis:def:invertibility}).
+\end{proof}
+
+
+\subsubsection{Yule-Walker equation}
+
+\begin{theorem}[Yule-Walker equation for AR(q) process]\label{ch:time-series-analysis:YuleWalderEquationForAR(q)}
+Given an zero-mean $AR(p)$ model,
+$$X_t = a_1 X_{t-1} + a_2 X_{t-2} + ... + a_p X_{t-p} + Z_t, Z_t\sim WN(0,\sigma^2).$$
+The autocovariance and the coefficients $a_1,a_2,...,a_q$ are related in the following ways:
+\begin{itemize}
+	\item $$\gamma(h) = a_1\gamma(h-1) + a_2\gamma(h-2) + \cdots + a_q \gamma(h-q), ~for~ h=1,...,q;$$
+	or in matrix form
+	$$
+	\begin{bmatrix}
+	\gamma(1)\\
+	\gamma(2)\\
+	\vdots\\
+	\gamma(q)
+	\end{bmatrix} = \underbrace{\begin{bmatrix}
+	\gamma(0) & \gamma(1) & \cdots & \gamma(q-1)\\ 
+	\gamma(1) & \gamma(0) & \cdots & \gamma(q-2)\\ 
+	\vdots & \vdots & \ddots & \cdots\\ 
+	\gamma(q-1) & \gamma(q-2) & \cdots & \gamma(0) 
+	\end{bmatrix}}_\Gamma \begin{bmatrix}
+	a_1\\
+	a_2\\
+	\vdots\\
+	a_q
+	\end{bmatrix}.$$
+	In particular, the matrix $\Gamma$ is symmetric positive definite when $X_t$s are not perfectly correlated. 
+	\item If both sides divided by $\gamma(0)$, we have
+	$$
+	\begin{bmatrix}
+	\rho(1)\\
+	\rho(2)\\
+	\vdots\\
+	\rho(q)
+	\end{bmatrix} = \begin{bmatrix}
+	1 & \rho(1) & \cdots & \rho(q-1)\\ 
+	\rho(1) & 1 & \cdots & \rho(q-2)\\ 
+	\vdots & \vdots & \ddots & \cdots\\ 
+	\rho(q-1) & \rho(q-2) & \cdots & 1 
+	\end{bmatrix} \begin{bmatrix}
+	a_1\\
+	a_2\\
+	\vdots\\
+	a_q
+	\end{bmatrix}.$$
+	\item $$\gamma(0) = a_1\gamma(1) + a_2\gamma(2) + \cdots + a_p\gamma(q) + \sigma^2.$$
+	\item 
+\end{itemize} 	
+\end{theorem}
+\begin{proof}
+(1)(2)Given the zero mean $AR(q)$ model,
+$$X_t = a_1 X_{t-1} + a_2 X_{t-2} + ... + a_p X_{t-p} + Z_t,(*)$$	
+we can multiply both sides by $X_{t-h}$ for $h=1,...,p$, and get
+$$X_tX_{t-h} = a_1 X_{t-1}X_{t-h} + a_2 X_{t-2}X_{t-h} + ... + a_p X_{t-p}X_{t-h} + Z_tX_{t-h}.$$
+Take expectation and we get
+$$\gamma(h) = a_1\gamma(h-1) + a_2\gamma(h-2) + \cdots + a_q \gamma(h-q).$$
+
+The positive definiteness of $\Gamma$ can be seen from the fact that $$\Gamma = E[XX^T],X = (X_1,X_2,...,X_q),$$
+and for any nonzero $p\in \R^q$, $q^T\Gamma q = Var[q^TX] > 0. $
+(3)If we take $h = 0$, we will get
+$$X_tX_{t} = a_1 X_{t-1}X_{t} + a_2 X_{t-2}X_{t} + ... + a_p X_{t-p}X_{t} + Z_tX_{t}.$$
+Take expectation, we get
+$$\gamma(0) = a_1\gamma(1) + a_2\gamma(2) + \cdots + a_p\gamma(q) + \sigma^2.$$
+\end{proof}
+
+\begin{example}
+Consider the AR(2) process given by
+$$X_n = Z_n + a_1 X_{n-1} + a_2 X_{n-2}.$$
+The Yule-Walker equations are 
+$$\begin{bmatrix}
+1 ~ \rho_1 \\
+\rho_1 ~ 1
+\end{bmatrix}\begin{bmatrix}
+a_1 \\
+a_2
+\end{bmatrix} = \begin{bmatrix}
+\rho_1 \\
+\rho_2
+\end{bmatrix}.$$
+
+Solving the Yule-Walker equation, we obtain
+$$\rho_1 = \frac{a_1}{1 - a_2}, \rho_2 = \frac{a_1^2}{1 - a_2} + a_2.$$	
+\end{example}
+
+\subsubsection{Identification and parameter estimation}
+
+\begin{remark}[order identification]
+We can use the PACF(\autoref{ch:time-series-analysis:sec:PartialAutocorrelationFunction}) to identify the order of AR process.	
+\end{remark}
+
+\begin{theorem}[method of moments parameter estimation via Yule-Walker equation]
+Given an zero-mean $AR(p)$ model,
+$$X_t = a_1 X_{t-1} + a_2 X_{t-2} + ... + a_p X_{t-p} + Z_t, Z_t\sim WN(0,\sigma^2).$$
+The autocovariance and the coefficients $a_1,a_2,...,a_q$ are related in the following ways:
+\begin{itemize}
+	\item Let $\hat{\rho} = (\hat{\rho}(1),\hat{\rho}(2),...,\hat{\rho}(q))^T$, $a = (a_1,a_2,...,a_q)$, and $\hat{\Gamma}$ be the matrix of
+	$$\begin{bmatrix}
+	1 & \hat{\rho}(1) & \cdots & \hat{\rho}(q-1)\\ 
+	\hat{\rho}(1) & 1 & \cdots & \hat{\rho}(q-2)\\ 
+	\vdots & \vdots & \ddots & \cdots\\ 
+	\hat{\rho}(q-1) & \hat{\rho}(q-2) & \cdots & 1 
+	\end{bmatrix},$$
+	then $\hat{a} = (\hat{\Gamma})^{-1}\hat{\rho}.$
+	\item 
+	$$\hat{\sigma}^2 = \hat{\gamma}(0) - \hat{a}_1\hat{\gamma}(1) - \hat{a}_2\hat{\gamma}(2) - \cdots \hat{a}_q\hat{\gamma}(q)$$
+\end{itemize}
+\end{theorem}
+
+
+
+\begin{theorem}[least square estimation for AR(q)]\label{ch:time-series-analysis:th:LeastSquareParameterEstimationAR(q)}
+	Consider the AR(q) process given by
+	
+	\begin{itemize}
+		\item The correlation parameter $\beta = (\beta_1,\beta_2,..,\beta_q)^T$ 
+		$$Y = \begin{bmatrix}
+		x_{q+1}\\
+		x_{q+2}\\
+		\vdots \\
+		x_N
+		\end{bmatrix}, X = \begin{bmatrix}
+		x_q & x_{q-1} & \cdots & x_1 \\
+		x_{q+1} & x_q & \cdots & x_2\\
+		\vdots & \vdots & \ddots & \vdots\\
+		x_{N-1} & x_{N-2} & \cdots & x_{N-q}
+		\end{bmatrix},$$
+		and the $Y = X\beta $ model gives the least square estimator 
+		$$\hat{\beta} = (X^TX)^{-1}X^TY.$$
+		\item The estimation of $\sigma$ is given by
+		$$\hat{\sigma}^2 = \frac{SSE}{n-p-1}.$$		
+	\end{itemize}	
+\end{theorem}
+\begin{proof}
+See \autoref{ch:statistical-models:th:leastSquareSolution}	
+\end{proof}
+
+\begin{remark}[connection of least square approach to conditional likelihood approach]
+	\begin{itemize}
+		\item Note that we can decompose a full distribution as the product of conditional distributions given by 
+		$$f(X_N,X_{N-1},...,X_1) = f(X_N|X_{N-1},...,X_{N-q})f(X_{N-1}|X_{N-2},...,X_{N-q-1})\cdots f(X_{q+1}|X_{q},...,X_{1}).$$
+		If the conditional distribution is Gaussian, then the maximum likelihood will give the same formula as the least square solution.
+		\item In contrast, full distribution likelihood approach requires the auto-covariance structure of an $AR(q)$ process, which is difficult to obtain. 
+	\end{itemize}
+\end{remark}
+
+
+\begin{lemma}[least square estimation of the correlation for AR(1)]\cite[53]{chatfield2003analysis}\cite[46]{tsay2005analysis}\label{ch:time-series-analysis:th:leastSquareEstimationOfCorrelationAR(1)}
+Consider the AR(1) process given by
+\begin{itemize}
+	\item The correlation parameter $\rho$ as a solution to	
+	$$\min_{\rho} \sum_{i=2}^N (x_i - \rho x_{i-1})^2$$
+	is given by
+	$$\hat{\rho} = \frac{\sum_{t=1}^{N-1} x_t x_{t+1}}{\sum_{t=1}^{N-1} x_t^2}.$$	
+	Alternatively, 
+	$$Y = \begin{bmatrix}
+	x_2\\
+	x_3\\
+	\vdots\\
+	x_N
+	\end{bmatrix}, X = \begin{bmatrix}
+	x_1\\
+	x_2\\
+	\vdots\\
+	x_{N-1}
+	\end{bmatrix},$$
+	and the $Y = X\rho $ model gives the least square estimator 
+	$$\hat{\rho} = (X^TX)^{-1}X^TY.$$
+	\item The estimation of $\sigma$ is given by
+\end{itemize}
+\end{lemma}
+\begin{proof}
+Use the least square solution(\autoref{ch:statistical-models:th:leastSquareSolution}).	
+\end{proof}
+
+
+\begin{example}[least square estimation for AR(2)]
+	Consider the AR(2) process given by
+	
+	\begin{itemize}
+		\item The correlation parameter $\beta = (\beta_1,\beta_2)^T$ 
+		$$Y = \begin{bmatrix}
+		x_3\\
+		x_4\\
+		\vdots\\
+		x_N
+		\end{bmatrix}, X = \begin{bmatrix}
+		x_2 & x_1\\
+		x_3 & x_2\\
+		\vdots & \vdots\\
+		x_{N-1} & x_{N-2}
+		\end{bmatrix},$$
+		and the $Y = X\beta $ model gives the least square estimator 
+		$$\hat{\beta} = (X^TX)^{-1}X^TY.$$
+		\item The estimation of $\sigma$ is given by
+		
+	\end{itemize}	
+\end{example}
+
+
+
+
+
+
+\begin{remark}[model checking]
+Let $x_t$ be the time series observation and $\hat{x}_t$ be the linear optimal prediction. Let $r_t = x_t - \hat{x}_t$ be the residual. 	
+	We can use the serial correlation(\autoref{ch:time-series-analysis:def:LjungBoxSerialCorrelationTest}) to check whether the residual is correlated or not. If the model we use is proper, then there should be no correlation among the residuals.
+\end{remark}
+
+\subsubsection{Forecasting}
+\begin{lemma}[best least square forecasting for AR(1)]\cite[55]{tsay2005analysis}
+	Consider an AR(1) process given by $$X_t = a_1 X_{t-1} + Z_t + c_0, Z_t\sim WN(0,\sigma^2).$$ Let $\cF_t$ denote the information available upto $t$. It follows that
+	\begin{itemize}
+		\item the 1-step ahead best least-square forecast is
+		$$\hat{X}_{t+1} \triangleq E[X_{t+1}|\cF_t]= c_0 + a_1X_t,$$
+		and the error is $E[(X_{t+1} - \hat{X}_{t+1})^2|\cF_t] = \sigma^2.$	
+		\item the 2-step ahead best least-square forecast is
+		$$\hat{X}_{t+2}\triangleq E[X_{t+2}|\cF_t] = c_0 + a_1\hat{X}_{t+1},$$
+		and the error is $E[(X_{t+2} - \hat{X}_{t+2})^2|\cF_t] = (1 + a_1^2)\sigma^2.$	
+		
+		\item the m-step($m > 2$) ahead best least-square forecast is
+		$$\hat{X}_{t+m}\triangleq E[X_{t+m}|\cF_t] = c_0 + a_1 \hat{X}_{t+m-1},$$
+		and the error is $$E[(X_{t+m} - \hat{X}_{t+m})^2|\cF_t] = \sigma^2 + a_1^2E[(X_{t+m-1} - \hat{X}_{t+m-1})^2|\cF_t] = \sigma^2 \frac{a_1^m - 1}{a_1 - 1} .$$
+	\end{itemize}
+\end{lemma}
+\begin{proof}
+	We use the least-square minimizing property of conditional expectation(\autoref{ch:theory-of-probability:th:leastSquareMinimizingConditionalExpectation}). We have	
+	(1) 
+	\begin{align*}
+	\hat{X}_{t+1} &= E[Z_{t+1} + a_1 X_{t} + c_0|\cF_t] \\
+	&= E[Z_{t+1}|\cF_t] + E[a_1 X_{t}|\cF_t] + E[c_0|\cF_t] \\
+	&=0 + a_1 X_{t} + c_0 \\
+	&=a_1 X_{t} + c_0
+	\end{align*}
+	where we use the property of taking-out-known of conditional expectation(\autoref{ch:theory-of-probability:th:conditionalexpectationproperty}).
+	To get the error, we have
+	$$E[(X_{t+1} - \hat{X}_{t+1})^2|\cF_t] = E[Z_{t+1}^2|\cF_t] = \sigma^2.$$
+	(2) 
+	\begin{align*}
+	\hat{X}_{t+2} &= E[Z_{t+2} + a_1 X_{t+1} + c_0|\cF_t] \\
+	&= E[Z_{t+2}|\cF_t] + E[a_1 X_{t+1}|\cF_t] + E[c_0|\cF_t] \\
+	&= 0 + a_1\hat{X}_{t+1} + E[c_0|\cF_t] \\
+	&=0 + a_1(a_1X_t + c_0) + c_0 \\
+	&= a_1^2 X_t + a_1c_0 + c_0
+	\end{align*}
+	where we use the property of taking-out-known of conditional expectation(\autoref{ch:theory-of-probability:th:conditionalexpectationproperty}).
+	To get the error, we have
+	$$E[(X_{t+2} - \hat{X}_{t+2})^2|\cF_t] = E[(Z_{t+2} + a_1(X_{t+1} - \hat{X}_{t+1}))^2|\cF_t] = (1 + a^2)\sigma^2.$$
+	(3) same as (1)(2). 
+	To get the error, we have
+	$$E[(X_{t+m} - \hat{X}_{t+m})^2|\cF_t] = E[(Z_{t+m} + a_1(X_{t+m-1} - E[X_{t+m-1}|\cF_t])^2|\cF_t] =\sigma^2 + a_1^2E[(X_{t+m-1} - \hat{X}_{t+m-1})^2|\cF_t] .$$
+	Continue the recursive relation and we will get the result.
+\end{proof}
+
+\begin{lemma}[best least square forecasting for AR(q)]\cite[55]{tsay2005analysis}
+	Consider an AR(q) process given by $$X_t = a_1 X_{t-1} + ... + a_q X_{t-q} + Z_t + c_0, Z_t\sim WN(0,\sigma^2).$$ Let $\cF_t$ denote the information available upto $t$. It follows that
+	\begin{itemize}
+		\item the 1-step ahead best least-square forecast is
+		$$\hat{X}_{t+1} \triangleq E[X_{t+1}|\cF_t] = c_0 + a_1X_t + ... + a_q X_{t-q+1},$$
+		and the error is $$E[(X_{t+1} - \hat{X}_{t+1})^2|\cF_t] =E[Z_{t+1}^2|\cF_t] = \sigma^2.$$	
+		\item the 2-step ahead best least-square forecast is
+		$$\hat{X}_{t+2} \triangleq E[X_{t+2}|\cF_t] = c_0 + a_1\hat{X}_{t+1} + a_2 X_t + ... +a_q X_{t-q+2},$$
+		and the error is $E[(X_{t+2} - \hat{X}_{t+2})^2|\cF_t] = (1 + a_1^2)\sigma^2.$	
+		\item the 3-step ahead best least-square forecast is
+		$$\hat{X}_{t+3}\triangleq E[X_{t+3}|\cF_t] = c_0 + a_1\hat{X}_{t+2} + a_2\hat{X}_{t+1} + a_3X_{t} + ... + a_q X_{t-q+3},$$
+		and the error is $E[(X_{t+3} - \hat{X}_{t+3})^2|\cF_t] = (1 + a_1^2 + (a_1^2 + a_2)^2)\sigma^2.$
+		\item the m-step($m > q$) ahead best least-square forecast is
+		$$\hat{X}_{t+m}\triangleq E[X_{t+m}|\cF_t] = c_0 + a_1 \hat{X}_{t+m-1}+...+a_q \hat{X}_{t+m-q}.$$
+
+	\end{itemize}
+\end{lemma}
+\begin{proof}
+	We use the least-square minimizing property of conditional expectation(\autoref{ch:theory-of-probability:th:leastSquareMinimizingConditionalExpectation}). We have	
+	(1) 
+	\begin{align*}
+	\hat{X}_{t+1} &= E[Z_{t+1} + a_1 X_{t} + c_0|\cF_t] \\
+	&= E[Z_{t+1}|\cF_t] + E[a_1 X_{t}|\cF_t] + E[c_0|\cF_t] \\
+	&=0 + a_1 X_{t} + c_0 \\
+	&=a_1 X_{t} + c_0
+	\end{align*}
+	where we use the property of taking-out-known of conditional expectation(\autoref{ch:theory-of-probability:th:conditionalexpectationproperty}).
+	To get the error, we have
+	$$E[(X_{t+1} - \hat{X}_{t+1})^2|\cF_t] = E[Z_{t+1}^2|\cF_t] = \sigma^2.$$
+	(2) 
+	\begin{align*}
+	\hat{X}_{t+2} &= E[Z_{t+2} + a_1 X_{t+1} + c_0|\cF_t] \\
+	&= E[Z_{t+2}|\cF_t] + E[a_1 X_{t+1}|\cF_t] + E[c_0|\cF_t] \\
+	&= 0 + a_1\hat{X}_{t+1} + E[c_0|\cF_t] \\
+	&=0 + a_1(a_1X_t + c_0) + c_0 \\
+	&= a_1^2 X_t + a_1c_0 + c_0
+	\end{align*}
+	where we use the property of taking-out-known of conditional expectation(\autoref{ch:theory-of-probability:th:conditionalexpectationproperty}).
+	To get the error, we have
+	$$E[(X_{t+2} - \hat{X}_{t+2})^2|\cF_t] = E[(Z_{t+2} + a_1(X_{t+1} - \hat{X}_{t+1}))^2|\cF_t] = (1 + a^2_1)\sigma^2.$$
+	(3)(4) same as (1)(2). 
+	To get the error, we have
+\begin{align*}
+E[(X_{t+3} - \hat{X}_{t+3})^2|\cF_t] &= E[(Z_{t+3} + a_1(X_{t+2} - \hat{X}_{t+2}) + a_2 (X_{t+1} - \hat{X}_{t+1}))^2|\cF_t] \\
+&= E[(Z_{t+3} + a_1 Z_{t+2} + a_1(a_1(X_{t+1} - \hat{X}_{t+1})) + a_2 (X_{t+1} - \hat{X}_{t+1}))^2|\cF_t] \\
+&= (1 + a_1^2 + (a_1^2 + a_2)^2 )\sigma^2 
+\end{align*}	
+\end{proof}
+
+\subsection{ARMA process}
+\subsubsection{Basic properties}
+\begin{definition}[ARMA process]
+An $ARMA(p,q)$ model can be represented as
+$$\theta_p(L) X_t = \phi_q(L)W_t$$
+where $\theta_p$ is the AR operator of order $p$,$\phi_q$ is the MA operator of order $q$.
+\end{definition}
+
+
+\begin{remark}[Parameter redundancy in ARMA]
+When $\theta$ and $\phi$ share a common factor, the model can be simplified. For example, $(1-0.5L)(1-1/3L)X_t = (1-0.5L)W_t \Rightarrow (1-1/3B)X_t = W_t$.
+\end{remark}
+
+\begin{lemma}[stationarity of ARMA process]\cite[95]{shumway2010time}
+The $ARMA(p,q)$ process is stationary if the roots of $\theta_q(z) = 0$ satisfies $\abs{z}>1$.
+\end{lemma}
+\begin{proof}
+See \autoref{ch:time-series-analysis:th:ARstationarycondition}.
+\end{proof}
+
+\begin{lemma}[invertibility of ARMA process]\cite[95]{shumway2010time}
+An $ARMA$ model is \textbf{invertible}, i.e.,
+$W_t = \phi_q(L)^{-1}\theta_p(L)X_t =  \pi(L)W_t = \sum_{j=0}^\infty \pi_j X_{t-j}$
+if and only if $\phi_p(z)\neq 0$ for $\abs{z}<1$.
+\end{lemma}
+\begin{proof}
+When $\phi_q$ is invertible, then we have $W_t = \phi_q^{-1}(L)\theta_p(L)X_t$. Therefore, it is invertible.
+\end{proof}
+
+\begin{lemma}[causal form, moving average representation of AR process]\cite[95]{shumway2010time}
+An $ARMA$ model can be written as a \textbf{causal form}, i.e.
+$X_t = \theta_p(L)^{-1}\phi_q(L)W_t = \psi(L)W_t = \sum_{j=0}^\infty \psi_j W_{t-j}$
+if and only if $\theta_p(z)\neq 0$ for $\abs{z}<1$.
+\end{lemma}
+\begin{proof}
+See \autoref{ch:time-series-analysis:th:ARstationarycondition} and \autoref{ch:time-series-analysis:th:inverselagpolynomial}.
+\end{proof}
+
+
+\subsubsection{Forcasting}
+
+
+
+
+\section{Wold Representation theorem}
+\begin{definition}[orthogonal projection ]
+Let $X_t,t\in \Z$ be a covariance-stationary process. The random variable
+$$T[X_{t+h}|X_{t-1},...,X_{t-N}] = a_0 + a_1X_{t-1} + ... + a_Nx_{t-N}$$
+where coefficient $a_1,...,a_N$ are such that 
+$$E[(X_{t+h} - T[X_{t+h}|X_{t-1},...,X_{t-N}])^2]$$ is minimun, is called \textbf{orthogonal projection} of $X_{t+h}$ on $X_{t-1},...,X_{t-N}$.
+$$T[X_{t+h}|X_{t-1},X_{t-2},...] = a_0 + a_1X_{t-1} + a_Nx_{t-2} + ...$$
+\end{definition}
+
+
+\begin{definition}[linearly deterministic process]\index{linearly deterministic process}
+A covariance-stationary process, $X_t$, is called (linearly) deterministic if 
+$$T[X_{t}|X_{t-1},X_{t-2},...] = X_t.$$
+\end{definition}
+
+
+\begin{remark}[implications]\hfill
+\begin{itemize}
+\item A stationary process $X_t$ is deterministic if $X_t$ can be predicted correctly (with zero error) using the entire past $X_{t-1},X_{t-2},...$
+\item For a deterministic process, the one-step linear prediction error is zero.
+\item A \textbf{nonlinear dynamical system might not be linearly deterministic}. 
+\end{itemize}
+\end{remark}
+
+
+\begin{example}
+The process $X_t = A\cos(t) + Bcos(t)$ is deterministic process because $A,B$ can be determined from past history and then the future can be predicted with zero error.
+\end{example}
+
+
+\begin{theorem}[Wold Representation theorem, Wold decomposition theorem]\index{Wold Representation theorem}\index{Wold decomposition theorem}\label{ch:time-series-analysis:th:wolddecompositionsingleD}
+Any zero-mean nondeterministic covariance stationary time series $X_t$ can be \textbf{uniquely} decomposed as
+$$X_t = V_t + S_t$$
+where 
+\begin{itemize}
+\item $V_t$ is a linearly determinstic process
+\item $S_t$ is an infinitely moving average process given as
+$$S_t = \phi_\infty(L)W_t, \phi_\infty(L) = I + \phi_1 L + ...$$
+$$\sum_{i=1}^\infty \phi_i^2 < \infty$$
+\item $W_t \sim WN(0,\sigma^2)$
+\item $E[V_t W_s] = 0,\forall t,s$
+\end{itemize}
+\end{theorem}
+
+\begin{definition}[purely deterministic process]\index{purely deterministic process}
+zero-mean nondeterministic covariance stationary time series $X_t$ is called \textbf{purely nondeterministic process} if in this Wold decomposition, the deterministic process component is zero, i.e. $V_t = 0$. 
+\end{definition}
+
+
+
+
+\begin{theorem}[multivariate Wold decomposition]\index{Wold decomposition theorem}\label{ch:time-series-analysis:th:wolddecompositionmultiD}
+Any $m$ dimensional convariance stationary time series $X_t$ can be decomposed as
+\begin{align*}
+X_t &= V_t + \eta_t + \psi_1 \eta_{t-1} + \psi_2 \eta_{t-2} + ... \\
+& = V_t + \sum_{k=0}^\infty \psi_k \eta_{t-k}
+\end{align*} 
+where
+\begin{itemize}
+\item $V_t \in \R^m$ an $m$ dimensional linearly deterministic process.
+\item $\eta_t \in \R^m$ is multivariate white noise process, i.e. $E[\eta_t] = 0, E[\eta_t\eta_s^T] = \Sigma \delta_{st}$
+\item $cov(\eta_t,V_s) = 0,\forall t,s$
+\item $\psi_k \in \R^{m\times m}$ and $\psi_0 = I_m$, $\sum_{i=0}^\infty \psi_i\psi_i^T $ converges.
+\end{itemize}
+\end{theorem}
+
+\section{Spectral analysis for stationary process}
+\subsection{Spectral theory}
+\begin{theorem}[spectral representation of ACF]
+\cite[181]{shumway2010time} If the autocovariance function, $\gamma(h),h\in \cZ$, of a stationary process satisfies 
+$$\sum_{h=-\infty}^{\infty} \abs{\gamma(h)} < \infty$$
+then $\gamma(h)$ has the representation, 
+$$\gamma(h) = \int_{1/2}^{1/2}e^{2\pi i \omega h f(\omega) d\omega}$$
+as the inverse transform of the \textbf{spectral density}, which is defined as
+$$f(\omega) = \sum_{-\infty}^{\infty} \gamma(h)e^{-2\pi i \omega h}, -1/2 \leq \omega \leq 1/2$$
+\end{theorem}
+Proof: (1) first the convergence of series $\sum_{-\infty}^{\infty} \gamma(h)e^{-2\pi i \omega h}$ is guaranteed by the M-test. (2) It can be verified
+\begin{align*}
+    \gamma(h) &= \int_{1/2}^{1/2}e^{2\pi i \omega h} f(\omega) d\omega\\
+        &= \int_{1/2}^{1/2}e^{2\pi i \omega h}  \sum_{-\infty}^{h'\infty} \gamma(h')e^{-2\pi i \omega h'}d\omega \\
+        &=\gamma(h')\delta(h-h')=\gamma(h)
+\end{align*}
+where we have use the fact or (1) uniformly convergent series can be integrated term-by-term and (2) $$\sum_{h'=-\infty}^{\infty}\int_{1/2}^{1/2}e^{2\pi i \omega (h-h')}  d\omega =\delta(h-h')$$ based on orthnormality.
+
+
+\begin{remark}
+Here because the $\gamma$ only take value at discrete $h$, therefore its spectral density only span on a closed interval. 
+\end{remark}
+
+\begin{remark}
+This is not discrete Fourier transform, which will provide the spectral reprentation of a specific trajectory. 
+\end{remark}
+
+\begin{lemma}[white noise spectrum density]
+The white noise has the spectrum density given as $f(\omega) = 1$.
+\end{lemma}
+Proof: for white noise, we have $\gamma(h)=\delta(h)$, plug into the definition $f(\omega)$ and get the result.
+
+
+
+\subsection{Periodogram and discrete Fourier transform}
+\cite[187]{shumway2010time} Given data $x_1,x_2,...,x_n$, we define the periodogram to $$I(\omega_j) = \abs{d(\omega_j)}^2,\omega_j = j/n$$
+where
+$$d(\omega_j) = n^{-1/2}\sum_{t=1}^n x_t e^{-2\pi i \omega_j t}$$
+where $j=0,1,2...,n-1$.
+
+
+\section{Linear nonstationary process}
+\subsection{ARIMA models}
+\begin{definition}[integrated process]
+A series $\{X_t\}$ is integrated of order $d$, denoted as $I(d)$, if $$\nabla^d X_t = W_t$$
+or 
+$$(1-L)^d X_t= W_t.$$
+\end{definition}
+
+
+\begin{definition}[ARIMA]
+An $ARIMA(p,d,q)$ model can be represented as
+$$\theta_p(L)(1-L)^d X_t = \phi_q(L)W_t$$
+where $\theta_p$ is the AR operator of order $p$,$\phi_q$ is the MA operator of order $q$.
+If $p=0$, we get model $IMA(d,q) = ARIMA(0,d,q)$; If $q=0$, we get model $ARI(p,d)=ARIMA(p,d,q)$.
+\end{definition}
+
+\begin{remark}[How to fit the data] One idea to fit the data to the model is to first assume some $d$, take the differencing on the data, then then fit a ARMA model to the differenced data.
+\end{remark}
+
+
+\begin{example}\cite[140]{cowpertwait2009introductory} The model $$X_t = X_{t-1}+W_t + \beta W_{t-1} \Leftrightarrow (1-B)X_t = (1+\beta B)W_t$$
+is $ARIMA(0,1,1)$.
+\end{example}
+
+\begin{example}\cite[140]{cowpertwait2009introductory} The model $$X_t = (1+\alpha)X_{t-1}-\alpha X_{t-2}+W_t \Leftrightarrow (1-B)(1-\alpha B)X_t = W_t$$
+is $ARIMA(1,1,0)$.
+\end{example}
+
+
+\begin{remark}
+This $ARIMA$ model cannot handle seasonal effect, but can handle general polynomial trends. 
+\end{remark}
+
+\begin{definition}[seasonal ARIMA]
+If $d$ and $D$ are non-negative integers, then $\{X_t\}$ is a seasonal $ARIMA(p,d,q)\times (P,D,Q)_s$ process with period $s$ if the differenced series $Y_t = (1-B)^d(1-B^s)^DX_t$ is a causal $ARMA$ process defined by 
+
+$$\phi$$
+\end{definition}
+
+
+\begin{definition}[seasonal operator]
+The \textbf{seasonal autoregressive  operator $\Phi_P(B^s)$} with order $P$ and season $s$ is defined as
+$$\Phi_P(B^s) = 1- \Phi_1 B^s -- \Phi_2 B^2s ... - - \Phi_P B^Ps$$
+The \textbf{seasonal moving average  operator $\Theta_P(B^s)$} with order $Q$ and season $s$ is defined as
+$$\Theta_Q(B^s) = 1- \Theta_1 B^s -- \Theta_2 B^2s ... - - \Theta_Q B^Qs$$
+
+\end{definition}
+
+\begin{definition}[pure seasonal ARMA]
+A pure seasonal $ARMA(P,Q)_s$ process is given as
+$$\Phi_P(B^s)X_t = \Theta_Q(B^s)W_t$$
+\end{definition}
+
+\begin{example}[A seasonal AR(1)]
+A pure $SAR(1)_{12}$ can be written as
+$$X_t = \Phi X_{t-12} + W_t$$
+\end{example}
+
+\begin{definition}[mixed seasonal ARMA]
+A mixed seasonal $ARMA(p,q)\times(P,Q)_s$ process is given as
+$$\Phi_P(B^s)\phi_p(B)X_t = \Theta_Q(B^s)\theta_q(B)W_t$$
+\end{definition}
+
+\begin{remark}\hfill
+\begin{itemize}
+    \item Note that these polynomials are commute.
+    \item By setting $P,Q=0$, we can recover non-seasonal $ARMA$ model.
+\end{itemize}
+\end{remark}
+
+\begin{example}[A mixed seasonal model]
+Consider an $ARMA(0,1)\times(1,0)_{12}$ model:
+$$X_t -\theta X_{t-12} = W_t + \phi W_{t-1}$$
+\end{example}
+
+
+\subsection{Unit root nonstationary process}
+\subsubsection{Unit root process}
+
+\begin{definition}[AR(p) process as a unit root process]\hfill
+\begin{itemize}
+	\item An AR(p) process 
+	$$y_t = a_1y_{t-1} + a_2y_{t-2} + ... + a_p y_{t-p} + \epsilon_t,\epsilon_t\sim WN(0,1)$$
+	is a unit root process, if the characteristic polynomial 
+	$$p(z) = 1-a_1z - a_2z^2 - \cdots - a_p z^p$$
+	has at least one unit root(a root equal to 1) and all other roots are outside the complex unit circle. That is, if $p(z)$ has a unit root, then
+	$$p(1)=1 - a_1 - a_2 - \cdots - a_p = 0.$$
+	\item An AR(1) process
+		$$y_t = y_{t-1} + \epsilon_t, \epsilon_t\sim WN(0,1)$$
+	is a unit root process
+\end{itemize}	
+\end{definition}
+
+\begin{example}
+A random walk $$y_t = y_{t-1} + \epsilon_t,\epsilon_t\sim WN(0,1)$$
+is a $AR(1)$ process with unit root to the characteristic polynomial $1-z = 0$. 
+\end{example}
+
+\begin{lemma}[basic properties of AR(1) unit root process]
+Consider an AR(1) process given by
+		$$y_t = y_{t-1} + \epsilon_t, \epsilon_t\sim WN(0,\sigma^2),$$
+		where initial condition $y_0$.
+It follows that
+	\begin{itemize}
+		\item The solution is
+		$$y_t = y_0 + \sum_{j=1}^{t}\epsilon_j.$$
+		\item The mean and variance is
+		$$E[y_t] = y_0, Var[y_t] = \sigma^2 t$$
+		\item The long-run correlation is given by
+		$$corr(y_t,y_{t+h}) = \frac{E[(\sum_{i=1}^t u_i)(\sum_{i=1}^{t+h} u_i)]}{(t\sigma^2(t+h)\sigma^2)^{0.5}} = \frac{t}{\sqrt{t(t+h)}} \to 1$$
+		as $t\to \infty$.
+	\end{itemize}	
+\end{lemma}
+\begin{proof}
+(1) Just repeat substitution. (2)(3) Use (1).
+\end{proof}
+
+
+
+
+
+\begin{remark}[ in random walks]
+Let $y_t = y_{t-1} + z_t,z_t\sim N(0,\sigma^2)$ be a random walk. 
+
+\end{remark}
+
+
+\subsubsection{Trend stationarity vs. unit root process}
+
+\begin{note}[deterministic trend vs. stochastic trend]
+Many time series are trending. It is important to distinguish between two important cases:
+\begin{itemize}
+	\item A stationary process with a deterministic trend: shocks have \textbf{transitory} effects.
+	\item A process with a stochastic trend or a unit root: shocks have \textbf{permanent} effects.	
+\end{itemize}
+\end{note}
+
+\begin{example}[deterministic trend vs. stochastic trend]
+\begin{itemize}
+	\item Consider a stationary AR(1) model with a deterministic linear trend term
+	$$Y_t = \theta Y_{t-1} + a_0 + a_1 t + \epsilon_t, \epsilon_t\sim WN(0,\sigma^2),$$
+	where $\abs{\theta} < 1$, and $Y_0$ is an initial value.
+	\begin{itemize}
+		\item 	Note that the mean and variance is given by
+		$$E[Y_t] = \theta^t Y_0 + \mu + \mu_1t \to \mu + \mu_1t, as~ t\to\infty,$$
+		and
+		$$Var[Y_t] = \frac{\sigma^2}{1-\theta},$$
+		where $\mu = a_0/(1-\theta), \mu_1=a_1/(1-\theta)$.
+		
+		\item $Y_t$ is not a stationary process since its mean is time dependent.However, the process $Y_t - E[Y_t]$ is a stationary process, called trend-stationary.
+		\item Also note that stochastic part of $Y_t$ is stationary and shocks have transitory effects. We say that the process is mean reverting to its long-run $ \mu + \mu_1t$.
+	\end{itemize}
+	\item 
+
+	
+\end{itemize}	
+	
+\end{example}
+
+
+
+\subsubsection{Unit root test}
+\begin{definition}[Dickey-Fuller $\rho$ test]\index{Dickey-Fuller $\rho$ test} \cite[574]{hayashi2000econometrics}
+Consider the AR(1) model
+$$y_t = \theta y_{t-1} + \epsilon_t$$ with $T+1$ observations $\{y_0,y_1,...,y_T\}$ and the hypothesis
+$$H_0: \theta = 1; H_1: \theta < 1.$$
+The test statistic,known as Dickey-Fuller $\rho$ statistic, is given as
+$$DF = T(\hat{\theta} - 1)$$
+where $\hat{\theta}$ is the least square estimation of $\theta$ from linear regression.
+\end{definition}
+
+
+\begin{definition}[Dickey-Fuller $t$ test]\index{Dickey-Fuller $t$ test} \cite[574]{hayashi2000econometrics}
+Consider the AR(1) model
+$$y_t = \theta y_{t-1} + \epsilon_t$$ with $T+1$ observations $\{y_0,y_1,...,y_T\}$ and the hypothesis
+$$H_0: \theta = 1; H_1: \theta < 1.$$
+The test statistic,known as Dickey-Fuller $t$ statistic, is given as
+$$DF_t = \frac{\hat{\theta} - 1}{SSE[\hat{\theta}/(n-2)]}$$
+where $\hat{\theta}$ is the least square estimation of $\theta$ from linear regression, such that
+$$\hat{\theta} = \frac{\sum_{i=1}^T y_{i-1}y_i}{\sum_{i=1}^T y_i^2}$$
+\end{definition}
+
+\begin{definition}[augmented Dickey-Fuller test]\index{augmented Dickey–Fuller test} 
+
+\end{definition}
+
+
+
+\section{Autoregressive conditional heteroscedastic model}
+\subsection{ARCH models}
+\subsubsection{The motivation}
+
+\subsubsection{The model}
+\begin{definition}[autoregressive conditional heteroscedastic model, general case]\index{autoregressive conditional heteroscedastic model}
+	Let $a_t$ denotes the error terms. The ARCH(q) model assumes
+	$$a_t = \sigma_t \epsilon_t$$
+	where $\epsilon_t\sim WN(0,1)$, 
+	and $$\sigma_t^2 = \alpha_0 + \sum_{i=1}^q \alpha_i a_{t-i}^2, \alpha_i\geq 0,\forall i=0,...,q$$
+\end{definition}
+
+\begin{definition}[autoregressive conditional heteroscedastic model, order 1, ARCH(1)]\index{autoregressive conditional heteroscedastic model}
+Let $a_t$ denotes the error terms. The ARCH(1) model assumes
+$$a_t = \sigma_t \epsilon_t$$
+where $\epsilon_t\sim WN(0,1)$, 
+and $$\sigma_t^2 = \alpha_0 + \alpha_1 a_{t-1}^2, \alpha_0,\alpha_1 \geq 0.$$
+
+We also require $\alpha_1<1$ for stationarity.
+\end{definition}
+
+\begin{remark}[characteristics]\hfill
+\begin{itemize}
+	\item $a_t$ can be simply viewed as a 'special' white noise process in which the variance $E[a_t^2]$ is correlated with previous history.
+	\item Note that $a_t$ is uncorrelated with previous history $a_{t-1}$ even though $\sigma_t$ is correlated, i.e. 
+	$$E[a_ta_{t-1}] = E[\sigma_t\sigma_{t-1}\epsilon_t\epsilon_{t-1}] = E[\sigma_t\sigma_{t-1}]E[\epsilon_t\epsilon_{t-1}] = 0.$$
+	\item $a_t$ is stationary if $\sigma_t$ is stationary. It can be showed that when $\alpha_0 > 0, 0 < \alpha_1 < 1$, $\sigma_t$ is stationary. Since $\epsilon_t$ and $\sigma_t$ are both stationary and independent, then $\sigma_t\epsilon_t$ is stationary.
+\end{itemize}
+\end{remark}
+
+\begin{lemma}[weak stationarity of ARCH(1)]\label{ch:time-series-analysis:th:weakStationaryARCH(1)}
+The ARCH(1) model given by
+$$a_t = \sigma_t \epsilon_t, \sigma_t^2 = \alpha_0 + \alpha_1a_{t-1}^2, \alpha_1 \in [0,1)$$
+has the following properties:
+\begin{itemize}
+	\item It has the constant mean $E[a_t] = 0$, and $$Var[a_t] = \frac{\alpha_0}{1 - \alpha_1},Cov(a_t,a_s) = \delta(s,t) \frac{\alpha_0}{1 - \alpha_1}.$$
+	
+	That is, ARCH(1) with $\alpha_1\in [0,1)$ is a weakly stationary process. 
+	\item (stationary fourth moment) If $\alpha_1 < \sqrt{1/3}$, then $a_t$ has stationary fourth moment given by
+	$$E[a_t^4] = 3\frac{\alpha_0^2 (1 + \alpha_1)}{(1-\alpha_1)(1-3\alpha_1^2)}.
+	$$
+	
+\end{itemize}
+\end{lemma}
+\begin{proof}
+(1)(a) $$E[a_t] = E[\sigma_t\epsilon_t]=E[\sigma_t]E[\epsilon_t] = 0.$$	
+(b) 
+Note that 
+$$Cov(a_t,a_s) = E[a_t^2a_{s}^2] = E[\sigma_t\sigma_{s}\epsilon_t\epsilon_{s}] =E[\sigma_t\sigma_{s}]E[\epsilon_t^2]E[\epsilon_{s}^2] = 0, ~if~ t\neq s.$$
+If $t=s$, $Cov(a_t,a_s) = E[\sigma_t^2]$
+In the following we will calculate $E[\sigma_t^2]$.
+Note that we can also write ARCH(1) as $$\sigma_t^2 = \alpha_0 + \alpha_1\epsilon_{t-1}^2 \sigma_{t-1}^2.$$
+Then
+\begin{align*}
+E[\sigma_t^2] &= \alpha_0 + \alpha_1 E[\sigma_{t-1}^2] \\
+&= \alpha_0 + \alpha_1(\alpha_0 + \alpha_1 E[\sigma_{t-2}^2]) \\
+&= \alpha_0 + \alpha_1\alpha_0 + \alpha_1(\alpha_0 +  \alpha_1E[\sigma_{t-3}^2]) \\
+&= \alpha_0(1 + \alpha_1 + \alpha_1^2 + ...)\\
+&= \frac{\alpha_0}{1 - \alpha_1 }
+\end{align*}
+(2)
+\begin{align*}
+E[a_t^4] &= E[E[a_t^4|\cF_{t-1}]] \\
+&=E[E[\epsilon_t^4(\alpha_0 + \alpha_1 a_{t-1}^2)^2|\cF_{t-1}]] \\
+&=E[\epsilon_t^4E[(\alpha_0 + \alpha_1 a_{t-1}^2)^2|\cF_{t-1}]] \\
+&=3E[E[(\alpha_0 + \alpha_1 a_{t-1}^2)^2|\cF_{t-1}]] \\
+&=3E[(\alpha_0^2 + 2\alpha_0\alpha_1 a_{t-1}^2 + \alpha_1^2a_{t-1}^4)] \\
+&=3(\alpha_0^2 + 2\alpha_0\alpha_1 E[a_{t-1}^2] + \alpha_1^2E[a_{t-1}^4] \\
+&=3(\alpha_0^2 + 2\alpha_0\alpha_1 \frac{\alpha_0}{1 - \alpha_1} + \alpha_1^2E[a_{t-1}^4] \\
+&= 3K + \beta E[a_{t-1}^4],K = \alpha_0^2 + 2\alpha_0\alpha_1 \frac{\alpha_0}{1 - \alpha_1} = \frac{\alpha_0(1 + \alpha_1)}{1 - \alpha_1},\beta = 3\alpha_1^2 \\
+&= 3K + 3K\beta + \beta^2E[a_{t-2}^4] \\
+&= 3K(1 + \beta + \beta^2 + ...) \\
+&= \frac{3K}{1-\beta} 
+\end{align*}
+where we use $E[\epsilon_t^4] = 3$ .
+\end{proof}
+
+
+
+
+
+
+\begin{theorem}[basic statistical properties of ARCH(1)]\cite[118]{tsay2005analysis}\label{ch:time-series-analysis:th:BasicStatisticalProperitesARCH(1)}
+	Consider an ARCH(1) model given by
+	$$a_t = \sigma_t \epsilon_t, \sigma_t^2 = \alpha_0 + \alpha_1a_{t-1}^2, \alpha_1 \in [0,1).$$
+Let $\cF_{t-1}$ denote the information up to time $t-1$. It follows that
+\begin{itemize}
+	\item (unconditional mean and variance)
+	$$E[a_t] = 0, Var[a_t] = E[a_t^2] = \frac{\alpha_0}{1-\alpha_1},Cov(a_t,a_s) = \delta(s,t) \frac{\alpha_0}{1 - \alpha_1}.$$
+	As a result, we can write
+	$$\sigma_t^2 = (1-\alpha_1)Var[a_t] + \alpha_1 a_{t-1}^2.$$
+	\item (conditional mean and variance) $a_t$ has conditional mean and variance given by
+	$$E[a_t|\cF_{t-1}] = 0$$
+	$$ E[a_t^2|\cF_{t-1}]  = Var[a_t|\cF_{t-1}] = \sigma_t^2 = (\alpha_0 + \alpha_1 a_{t-1}^2).$$
+	$$ E[a_t^2|\cF_{t-2}]  = Var[a_t|\cF_{t-1}] = \sigma_t^2 = (\alpha_0 + \alpha_1 a_{t-1}^2).$$
+	
+	\item (covariance structure of squares)
+	$$E(a_t^2,a_s^2) = $$
+	$$Cov(a_t^2,a_s^2) = $$
+	
+	In particular$\alpha_0 = 0$, 
+	\item (heavy tail property)
+	$$kurt(a_t) = \frac{E[a_t^4]}{(E[a_t^2])^2} = 3\frac{1-\alpha_1^2}{1 - 3\alpha_1^2} > 3.$$
+\end{itemize}
+\end{theorem}
+\begin{proof}
+(1)(a) $$E[a_t] = E[\sigma_t\epsilon_t]=E[\sigma_t]E[\epsilon_t] = 0.$$
+(b) \begin{align*}
+Var[a_t] &= E[a_t^2] - (E[a_t])^2\\
+&=E[a_t^2] \\
+&=E[\sigma_t^2\epsilon_t^2]\\
+&=E[\sigma_t^2]\\
+&=\alpha_0 + \alpha_1E[a_{t-1}^2]
+\end{align*}
+use the fact that $a_t$ is a stationary process, thus $E[a_{t-1}^2] = E[a_t^2]$, we have $Var[a_t] = \frac{\alpha_0}{1-\alpha_1}$.\\
+(2)
+(a)
+\begin{align*}
+E[a_t|\cF_{t-1}] &= E[\epsilon_{t}\sqrt{\alpha_0 + \alpha_1 a_{t-1}^2}|\cF_{t-1}] \\
+&= E[\epsilon_t|\cF_{t-1}]E[\sqrt{\alpha_0 + \alpha_1 a_{t-1}^2}|\cF_{t-1}] \\
+&= 0
+\end{align*}
+(b)
+\begin{align*}
+Var[a_t|\cF_{t-1}] &= E[a_t^2|\cF_{t-1}] - (E[a_t|\cF_{t-1}])^2 \\
+&= E[\epsilon_t^2|\cF_{t-1}](\alpha_0 + \alpha_1 a_{t-1}^2) - 0 \\
+&= (\alpha_0 + \alpha_1 a_{t-1}^2)
+\end{align*}
+(3)
+\begin{align*}
+E[a_t^2a_s^2] &= E[\epsilon_t^2\epsilon_s^2\sigma_t^2\sigma_s^2] \\
+&= E[\epsilon_t^2]E[\epsilon_s^2]E[\sigma_t^2\sigma_s^2] \\
+&=E[(\alpha_0 + \alpha_1 a_{t-1}^2)(\alpha_0 + \alpha_1 a_{s-1}^2)]\\
+&=E[(\alpha_0^2 + \alpha_1^2a_{t-1}^2a_{s-1}^2 + \alpha_0\alpha_1a_{t-1}^2 + \alpha_0\alpha_1a_{s-1}^2)]\\
+&=\alpha_0^2 + 2\alpha_0\alpha_1\frac{\alpha_0}{1-\alpha_1} + \alpha_1^2E[a_{t-1}^2a_{s-1}^2] \\
+&= K + \alpha_1^2  E[a_{t-1}^2a_{s-1}^2],K = \alpha_0^2 + 2\alpha_0\alpha_1\frac{\alpha_0}{1-\alpha_1} = \frac{\alpha_0^2(1+\alpha_1)}{1-\alpha_1}\\
+& = \frac{K}{1-\alpha_1^2} \\
+& = \frac{\alpha_0^2}{(1-\alpha_1)^2} 
+\end{align*}
+
+
+(4)Note that $E[a_t^2] = Var[a_t^2] = \alpha_0/(1-\alpha_1)$ and 
+ $$E[a_t^4] = 3\frac{\alpha_0^2 (1 + \alpha_1)}{(1-\alpha_1)(1-3\alpha_1^2)},$$
+ from \autoref{ch:time-series-analysis:th:weakStationaryARCH(1)}.
+\end{proof}
+
+\begin{remark}[interpretation]\cite[116]{tsay2005analysis}\hfill
+\begin{itemize}
+	\item (predictability) $a_t$ cannot be predicted based on history because of zero covariance; $a_t^2$ can be predicted from history because 
+	$$E[a_t^2|\cF_{t-1}] = Var[a_t|\cF_{t-1}] = \sigma_t^2 = (\alpha_0 + \alpha_1 a_{t-1}^2). $$
+	\item From $$\sigma_t^2 = (1-\alpha_1)Var[a_t] + \alpha_1 a_{t-1}^2,$$
+	large variations in $a_t$ tend to be followed by large variations and small variations tend to be followed by small variations.
+	\item $$kurt(a_t) = \frac{E[a_t^4]}{(E[a_t^2])^2} = \frac{E[\sigma_t^4]E[\epsilon_t^4]}{(E[\sigma_t^2]E[\epsilon_t^2])^2} = \frac{3E[\sigma_t^4]}{(E[\sigma_t^2])^2} > 3$$
+	where we use the fact that $E[\sigma_t^4] > (E[\sigma_t^2])^2$ due to
+	$$Var[a_t^2] = E[a_t^4] - (E[a_t^2])^2 > 0.$$
+	\item  Intuitively, we can view $a_t$ as a mixture of Gaussian, which has fat tails.
+\end{itemize}	
+\end{remark}
+
+
+\begin{theorem}[basic statistical properties of ARCH(q)]\cite[118]{tsay2005analysis}
+	Consider a weakly stationary ARCH(q) model given by
+	$$a_t = \sigma_t \epsilon_t, \sigma_t^2 = \alpha_0 + \alpha_1a_{t-1}^2 + \alpha_2 a_{t-2}^2 + \cdots + \alpha_q a_{t-q}^2.$$
+	Let $\cF_{t-1}$ denote the information up to time $t-1$. It follows that
+	\begin{itemize}
+		\item (unconditional mean and variance)
+		$$E[a_t] = 0, Var[a_t] = E[a_t^2] = \frac{\alpha_0}{1 - \sum_{i=1}^q\alpha_i},Cov(a_t,a_s) = \delta(s,t) \frac{\alpha_0}{1 - \sum_{i=1}^q\alpha_i}.$$
+		\item (conditional mean and variance) $a_t$ has conditional mean and variance given by
+		$$E[a_t|\cF_{t-1}] = 0, E[a_t^2|\cF_{t-1}]  = Var[a_t|\cF_{t-1}] = \sigma_t^2 = (\alpha_0 + \sum_{i=1}^q\alpha_i a_{t-i}^2).$$
+		\item (mean prediction) Let $t < s$, then 
+		$$E[a_t|\cF_s] = 0,$$
+		that is, $a_t$ is unpredictable.
+	\end{itemize}
+\end{theorem}
+\begin{proof}
+	(1)(a) $$E[a_t] = E[\sigma_t\epsilon_t]=E[\sigma_t]E[\epsilon_t] = 0.$$
+	(b) \begin{align*}
+	Var[a_t] &= E[a_t^2] - (E[a_t])^2\\
+	&=E[a_t^2] \\
+	&=E[\sigma_t^2\epsilon_t^2]\\
+	&=E[\sigma_t^2]\\
+	&=\alpha_0 + \sum_{i=1}^q\alpha_i E[a_{t-i}^2]
+	\end{align*}
+	use the fact that $a_t$ is a stationary process, thus $E[a_{t-i}^2] = E[a_t^2]$, we have $Var[a_t] = \frac{\alpha_0}{1-\sum_{i=1}^q\alpha_i}$.\\
+	(2)
+	(a)
+	\begin{align*}
+	E[a_t|\cF_{t-1}] &= E[\epsilon_{t}\sqrt{\alpha_0 + \sum_{i=1}^q\alpha_i a_{t-i}^2}|\cF_{t-1}] \\
+	&= E[\epsilon_t|\cF_{t-1}]E[\sqrt{\alpha_0 \sum_{i=1}^q\alpha_i a_{t-i}^2}|\cF_{t-1}] \\
+	&= 0
+	\end{align*}
+	(b)
+	\begin{align*}
+	Var[a_t|\cF_{t-1}] &= E[a_t^2|\cF_{t-1}] - (E[a_t|\cF_{t-1}])^2 \\
+	&= E[\epsilon_t^2|\cF_{t-1}](\alpha_0 + \sum_{i=1}^q\alpha_i a_{t-i}^2) - 0 \\
+	&= (\alpha_0 + \sum_{i=1}^q\alpha_i a_{t-i}^2)
+	\end{align*}
+	(3) 
+	$$E[a_t|\cF_s] = E[\sigma_t \epsilon_t|\cF_s] = E[\sigma_t|\cF_s]E[ \epsilon_t|\cF_s] = 0,$$
+	note that $\sigma_t$ and $\epsilon_t$ are independent because $\sigma_t$ depends on the previous shocks that are independent of $\epsilon_t$.
+\end{proof}
+
+
+\subsubsection{Variance forecasting}
+
+\begin{lemma}[conditional expectation equivalence between variance and square innovations for ARCH(q)]\label{ch:time-series-analysis:th:ConditionalExpectationEquivalenceVarianceSquareInnovationARCH(q)}
+	Consider an ARCH(q) model given by
+$$a_t = \sigma_t \epsilon_t, \sigma_t^2 = \alpha_0 + \sum_{i=1}^{q} \alpha_i a_{t-i}^2, \sum_{i=1}^{q}\alpha_i \in [0,1).$$	
+		Let $\cF_t$ denote the information available up to time $t$. 
+	Then
+		$$E[\sigma_{t}^2|\cF_s] = E[a_{t}^2|\cF_s],s < t.$$
+\end{lemma}
+\begin{proof}
+Note that $$a_t^2 = \sigma_t^2 \epsilon_t^2.$$
+Take conditional expectation on both sides and get
+	$$E[a_t^2|\cF_s] = E[\sigma_t^2 \epsilon_t^2|\cF_s] = E[\sigma_t^2|\cF_s] E[\epsilon_t^2|\cF_s] = E[\sigma_t^2|\cF_s].$$
+where we used the fact that $E[\epsilon_t^2|\cF_s] = 1$ and the independence between $\sigma_t$ and $\epsilon_t$.	
+\end{proof}
+
+
+\begin{theorem}[variance prediction in ARCH(1)]
+	Consider an ARCH(1) model given by
+	$$a_t = \sigma_t \epsilon_t, \sigma_t^2 = \alpha_0 + \alpha_1a_{t-1}^2,\alpha_1 \in [0,1).$$
+	
+	Let $\cF_t$ denote the information available up to time $t$. Then,
+	\begin{align*}
+	E[a_{t+1}^2|\cF_t] = E[\sigma_{t+1}^2|\cF_t] \triangleq 
+	\sigma^2_{t+1} &= \alpha_0 + \alpha_1 a_{t}^2 \\ 
+	E[a_{t+2}^2|\cF_t] = E[\sigma_{t+2}^2|\cF_t]\triangleq \hat{\sigma}_{t+2}^2 
+	&=\sigma^2 + (\alpha_1)(\sigma_{t+1}^2 - \sigma^2)\\
+	E[a_{t+3}^2|\cF_t] = E[\sigma_{t+3}^2|\cF_t]\triangleq \hat{\sigma}_{t+3}^2 &= \sigma^2 + (\alpha_1)^2(\sigma_{t+1}^2 - \sigma^2)\\
+	\vdots & \\
+	E[a_{t+l}^2|\cF_t] = E[\sigma_{t+l}^2|\cF_t]\triangleq\hat{\sigma}_{t+l}^2 &= \sigma^2 + (\alpha_1)^{l-1}(\sigma_t^2 - \sigma^2)
+	\end{align*}
+	where $\sigma^2$ is the unconditional variance $$\sigma^2 = \frac{\alpha_0}{1 - \alpha_1}.$$	
+\end{theorem}
+\begin{proof}
+Note that the equivalence between square innovation and variance is discussed in \autoref{ch:time-series-analysis:th:ConditionalExpectationEquivalenceVarianceSquareInnovationARCH(q)}. 	
+Further note that $\sigma_{t+1}^2$ given $\cF_t$ is actually deterministic quantity. For the rest, we have
+\begin{align*}
+	\sigma_{t+1}^2 &= \alpha_0 + \alpha_1 a_{t}^2 \\
+	E[\sigma_{t+2}^2|\cF_t]\triangleq \hat{\sigma}_{t+2}^2 &= \alpha_0 + \alpha_1 E[a_{t+1}^2|\cF_{t}] \\
+	&=\alpha_0 + \alpha_1\sigma_{t+1}^2 \\
+	&=\sigma^2 + (\alpha_1)(\sigma_{t+1}^2 - \sigma^2)\\
+	E[\sigma_{t+3}^2|\cF_t]\triangleq \hat{\sigma}_{t+3}^2 &= \alpha_0 + \alpha_1 E[a_{t+2}^2|\cF_{t}] \\
+	&=\alpha_0 + \alpha_1 \hat{\sigma}_{t+2}^2\\
+	&=\sigma^2 + \alpha_1(\hat{\sigma}^2_{t+2}-\sigma^2)\\
+	&=\sigma^2 + (\alpha_1)^2(\sigma_{t+1}^2 - \sigma^2)
+	\end{align*}
+where we use the fact of conditional variance(\autoref{ch:time-series-analysis:th:BasicStatisticalProperitesARCH(1)}) that
+$$E[a_{t+1}^2|\cF_{t}] = \sigma_{t+1}^2 = (\alpha_0 + \alpha_1 a_{t}^2).$$
+and the fact that $$E[a_{t+2}^2|\cF_t] = E[\sigma_{t+2}^2|\cF_t]\triangleq \hat{\sigma}_{t+2}^2$$.
+
+	
+Others can be proved similarly.	
+\end{proof}
+
+\begin{remark}[implication for convergence rate]
+	We can see that $\hat{\sigma}_{t+l}^2 \to \sigma$ as $l\to \infty$. If the variance spikes up during a crisis, then the number of the period before the variance restore to equilibrium value $\sigma$ can be estimated using the value of $(\alpha_1+\beta_1)$(the larger the longer).
+\end{remark}
+
+\begin{theorem}[variance prediction in ARCH(q)]
+	Consider an ARCH(q) model given by
+	$$a_t = \sigma_t \epsilon_t, \sigma_t^2 = \alpha_0 + \sum_{i=1}^{q} \alpha_i a_{t-i}^2, \sum_{i=1}^{q}\alpha_i \in [0,1).$$
+	
+	Let $\cF_t$ denote the information available up to time $t$. Then,
+	\begin{align*}
+	E[a_{t+1}^2|\cF_t] = E[\sigma_{t+1}^2|\cF_t] \triangleq 
+\sigma^2_{t+1} &= \alpha_0 + \sum_{i=1}^{q}\alpha_i a_{t-i+1}^2 \\ 
+E[a_{t+2}^2|\cF_t] = E[\sigma_{t+2}^2|\cF_t]\triangleq \hat{\sigma}_{t+2}^2 
+&=\alpha_0 + \alpha_1 \hat{\sigma}_{t+1}^2 + \sum_{i=2}^{q}\alpha_i a_{t-i+2}^2\\
+E[a_{t+3}^2|\cF_t] = E[\sigma_{t+3}^2|\cF_t]\triangleq \hat{\sigma}_{t+3}^2 &= \alpha_0 + \sum_{i=1}^{2}\alpha_i \hat{\sigma}_{t-i+3}^2 + \sum_{i=3}^{q}\alpha_i a_{t-i+3}^2\\
+\vdots & \\
+E[a_{t+l}^2|\cF_t] = E[\sigma_{t+l}^2|\cF_t]\triangleq\hat{\sigma}_{t+l}^2 &= \alpha_0 + \sum_{i=1}^{l-1}\alpha_i \hat{\sigma}_{t-i+l}^2 + \sum_{i=l}^{q}\alpha_i a_{t-i+l}^2\\
+\vdots & \\
+E[a_{t+\infty}^2|\cF_t] = E[\sigma_{t+\infty}^2|\cF_t]\triangleq \hat{\sigma}_{t+\infty}^2 &= \frac{\alpha_0}{1 - \sum_{i=1}^{q}\alpha_i} 
+	\end{align*}
+	where note that the unconditional variance $$\sigma^2 = \frac{\alpha_0}{1 - \sum_{i=1}^{q}\alpha_i}.$$	
+\end{theorem}
+\begin{proof}
+	\begin{align*}
+	\sigma_t^2 &= \alpha_0 + \sum_{i=1}^{q}\alpha_i a_{t-i}^2 \\
+	E[\sigma_{t+1}^2|\cF_t]\triangleq \hat{\sigma}_{t+1}^2 &= \alpha_0 + \sum_{i=1}^{q}\alpha_i E[a_{t-i+1}^2|\cF_{t}] \\
+	&=\alpha_0 + \sum_{i=1}^{q}\alpha_i a_{t-i+1}^2 \\
+	E[\sigma_{t+2}^2|\cF_t]\triangleq \hat{\sigma}_{t+2}^2 &= \alpha_0 + \alpha_1 E[a_{t-i+2}^2|\cF_{t}] +\sum_{i=2}^{q}\alpha_i E[a_{t-i+2}^2|\cF_{t}] \\
+	&= \alpha_0 + \alpha_1 \hat{a}_{t-i+1}^2 +\sum_{i=2}^{q}\alpha_i a_{t-i+1}^2 \\
+	E[\sigma_{t+3}^2|\cF_t]\triangleq \hat{\sigma}_{t+3}^2 &= \alpha_0 + \sum_{i=1}^{2}\alpha_i E[a_{t-i+3}^2|\cF_{t}] +\sum_{i=3}^{q}\alpha_i E[a_{t-i+3}^2|\cF_{t}] \\
+	&= \alpha_0 + \sum_{i=1}^{2}\alpha_i \hat{\sigma}_{t-i+3}^2 +\sum_{i=3}^{q}\alpha_i a_{t-i+3}^2 
+	\end{align*}
+	Others can be proved similarly.	
+	
+	To calculate the variance prediction for $l\to\infty$, we use the result of unconditional variance.
+\end{proof}
+
+\subsubsection{Detect ARCH effect}
+
+
+\begin{lemma}[order determination in ARCH process via linear regression]
+	
+	$$\sigma_t^2 = \alpha_0 + \alpha_1 a_{t-1}^2 + \cdots + \alpha_m a_{t-m}^2$$
+	
+	
+\end{lemma}
+\begin{proof}
+Note that in our $ARCH(m)$ model, we have	
+	$$\sigma_t^2 = \alpha_0 + \alpha_1 a_{t-1}^2 + \cdots + \alpha_m a_{t-m}^2.$$
+Because $a_t^2$ is the unbiased estimator of $\sigma_t^2$, i.e. 
+$$E[a_t^2] = E[\sigma_t^2\epsilon_t^2] = E[\sigma_t^2]$$	
+
+\end{proof}
+
+
+\subsubsection{Parameter estimation}
+\begin{lemma}[conditional likelihood estimation ]\cite[120]{tsay2005analysis}
+	
+The conditional log-likelihood function is given by
+$$L = \sum_{t=m+1}^T[-\frac{1}{2}\ln (2\pi) - \frac{1}{2}\ln (\sigma_t^2) - \frac{1}{2}\frac{a_t^2}{\sigma_t^2}]$$	
+\end{lemma}
+
+\subsection{GARCH models}
+\subsubsection{The model}
+\begin{definition}[generalized autoregressive conditional heteroscedastic model, general case]\index{autoregressive conditional heteroscedastic model}\cite[132]{tsay2005analysis}
+	Let $a_t$ denotes the error terms. The GARCH(p,q) model assumes
+	$$a_t = \sigma_t \epsilon_t$$
+	where $\epsilon_t\sim WN(0,1)$, 
+	and $$\sigma_t^2 = \alpha_0 + \sum_{i=1}^p \alpha_i a_{t-i}^2 + \sum_{i=1}^q \beta_i \sigma_{t-i}^2, \alpha_i, \beta_j \geq 0,\forall i,j \geq 1$$
+\end{definition}
+
+
+\begin{definition}[generalized autoregressive conditional heteroscedastic model, order 1, GARCH(1,1)]\index{autoregressive conditional heteroscedastic model}
+	Let $a_t$ denotes the error terms. The GARCH(q) model assumes
+	$$a_t = \sigma_t \epsilon_t$$
+	where $\epsilon_t\sim WN(0,1)$, 
+	and $$\sigma_t^2 = \alpha_0 + \alpha_1 a_{t-1}^2+ \beta_1 \sigma_{t-1}^2, \alpha_0,\alpha_1,\beta_1 \geq 0.$$
+	
+	We also require $\alpha_1 + \beta_1<1$ for stationarity.
+\end{definition}
+
+
+\begin{lemma}[weak stationarity of GARCH(1,1)]	\label{ch:time-series-analysis:th:weakStationaryGARCH(1)}
+	Consider a GARCH(1,1) model given by
+	$$a_t = \sigma_t \epsilon_t, \sigma_t^2 = \alpha_0 + \alpha_1a_{t-1}^2 + \beta_1 \sigma_{t-1}^2, \alpha_1 + \beta_1 \in [0,1).$$
+	
+	It follows that
+	\begin{itemize}
+		\item It has the constant mean $E[a_t] = 0$, and $$Cov(a_t,a_s) = \delta(s,t) \frac{\alpha_0}{1 - \alpha_1 - \beta_1}.$$
+		That is, GARCH(1,1) with $\alpha_1+\beta_1\in [0,1)$ is a weakly stationary process. 
+		\item (stationary fourth moment) 
+	\end{itemize}
+\end{lemma}
+\begin{proof}
+	(1) $$E[a_t] = E[\sigma_t\epsilon_t]=E[\sigma_t]E[\epsilon_t] = 0.$$	
+	(2) 
+	Note that 
+	$$Cov(a_t,a_s) = E[a_ta_{s}] = E[\sigma_t\sigma_{s}\epsilon_t\epsilon_{s}] =E[\sigma_t\sigma_{s}]E[\epsilon_t]E[\epsilon_{s}] = 0, ~if~ t\neq s.$$
+	where we use the independence between $\epsilon_t$ and $\sigma_t$.
+	If $t=s$, $Cov(a_t,a_s) = E[\sigma_t^2]E[\epsilon_t^2] = E[\sigma_t^2]$.
+	In the following we will calculate $E[\sigma_t^2]$.
+	Note that we can also write GARCH(1,1) as $$\sigma_t^2 = \alpha_0 + \alpha_1\epsilon_{t-1}^2 \sigma_{t-1}^2+\beta_1\epsilon_{t-1}^2 \sigma_{t-1}^2.$$
+	Then
+	\begin{align*}
+	E[\sigma_t^2] &= \alpha_0 + (\alpha_1 + \beta_1) E[\sigma_{t-1}^2] \\
+	&= \alpha_0 + (\alpha_1+\beta_1)(\alpha_0 + (\alpha_1+\beta_1) E[\sigma_{t-2}^2]) \\
+	&= \alpha_0 + (\alpha_1+\beta_1)\alpha_0 + (\alpha_1+\beta_1)(\alpha_0 +  (\alpha_1+\beta_1)E[\sigma_{t-3}^2]) \\
+	&= \alpha_0(1 + (\alpha_1+\beta_1) + (\alpha_1+\beta_1)^2 + ...)\\
+	&= \frac{\alpha_0}{1 - \alpha_1 - \beta_1}
+	\end{align*}
+	
+	
+\end{proof}
+
+\begin{theorem}[basic statistical properties of GARCH(1,1)]\cite[132]{tsay2005analysis}\label{ch:time-series-analysis:th:basicStatisticalPropertiesGARCH(1,1)}
+	The GARCH(1,1) model given by
+	$$a_t = \sigma_t \epsilon_t, \sigma_t^2 = \alpha_0 + \alpha_1a_{t-1}^2 + \beta_1\sigma_{t-1}^2,\alpha_1+\beta_1\in [0,1)$$
+	has the following property:
+\begin{itemize}
+	\item (unconditional mean and variance) 
+		$$E[a_t] = 0$$
+	and
+	$$Var[a_t] = \frac{\alpha_0}{1-\alpha_1-\beta_1}.$$
+	\item (conditional mean and variance) $a_t$ has conditional mean and variance given by
+	$$E[a_t|\cF_{t-1}] = 0,$$ 
+	$$E[a_t^2|\cF_{t-1}] = Var[a_t|\cF_{t-1}] = \sigma_t^2 = (\alpha_0 + \alpha_1 a_{t-1}^2 + \beta_1 \sigma_{t-1}^2).$$
+		\item (mean prediction) Let $t < s$, then 
+$$E[a_t|\cF_s] = 0,$$
+that is, $a_t$ is unpredictable.
+\end{itemize}	
+\end{theorem}
+\begin{proof}
+(1) $$E[a_t] = E[\sigma_t\epsilon_t]=E[\sigma_t]E[\epsilon_t] = 0.$$
+ \begin{align*}
+Var[a_t] &= E[a_t^2] - (E[a_t])^2\\
+&=E[a_t^2] \\
+&=E[\sigma_t^2\epsilon_t^2]\\
+&=E[\sigma_t^2]\\
+&=\alpha_0 + \alpha_1E[a_{t-1}^2] + \beta_1\sigma_{t-1}^2\\
+&=\alpha_0 + (\alpha_1 + \beta_1)E[a_{t-1}^2]
+\end{align*}
+use the fact that $a_t$ is a stationary process, thus $E[a_{t-1}^2] = E[a_t^2]$, we have $Var[a_t] = \frac{\alpha_0}{1-\alpha_1-\beta_1}$.	
+(2)
+(a)
+\begin{align*}
+E[a_t|\cF_{t-1}] &= E[\epsilon_{t}\sqrt{\alpha_0 + \alpha_1 a_{t-1}^2 + \beta_1 \sigma_{t-1}^2}|\cF_{t-1}] \\
+&= E[\epsilon_t|\cF_{t-1}]E[\sqrt{\alpha_0 + \alpha_1 a_{t-1}^2 + \beta_1 \sigma_{t-1}^2}|\cF_{t-1}] \\
+&= 0
+\end{align*}
+(b)
+\begin{align*}
+Var[a_t|\cF_{t-1}] &= E[a_t^2|\cF_{t-1}] - (E[a_t|\cF_{t-1}])^2 \\
+&= E[\epsilon_t^2|\cF_{t-1}](\alpha_0 + \alpha_1 a_{t-1}^2 + \beta_1 \sigma_{t-1}^2) - 0 \\
+&= (\alpha_0 + \alpha_1 a_{t-1}^2 + \beta_1 \sigma_{t-1}^2)
+\end{align*}
+	(3) 
+$$E[a_t|\cF_s] = E[\sigma_t \epsilon_t|\cF_s] = E[\sigma_t|\cF_s]E[ \epsilon_t|\cF_s] = 0,$$
+note that $\sigma_t$ and $\epsilon_t$ are independent because $\sigma_t$ depends on the previous shocks that are independent of $\epsilon_t$.
+\end{proof}
+
+
+\begin{note}[$ARCH(\infty)$ representation of $GARCH(1,1)$]
+\begin{align*}
+\sigma_t^2 &= \alpha_0 + \alpha_1 a_{t-1}^2 + \beta_1\sigma_{t-1}^2\\
+&=\alpha_0 + \alpha_1 a_{t-1}^2 + \beta_1(\alpha_0 + \alpha_1 a_{t-2}^2 + \beta_1\sigma_{t-2}^2) \\
+&=\alpha_0 + \alpha_1 a_{t-1}^2 + \beta_1\alpha_0 + \beta_1\alpha_1 a_{t-2}^2 + \beta_1^2\sigma_{t-2}^2\\
+&=\alpha_0 + \alpha_1 a_{t-1}^2 + \beta_1\alpha_0 + \beta_1\alpha_1 a_{t-2}^2 + \beta_1^2(\alpha_0 + \alpha_1 a_{t-2}^2 + \beta_1\sigma_{t-2}^2) \\
+&\vdots \\
+&=\frac{\alpha_0}{1 - \beta_1} + \alpha_1\sum_{i=0}^{\infty} a_{t-1-i}^2\beta_1^i
+\end{align*}
+Therefore, $\sigma_t^2$ contains history back to infinity, even though the strength decreases geometrically. 
+\end{note}
+
+
+\subsubsection{Variance forecasting}
+\begin{lemma}[conditional expectation equivalence between variance and square innovations for ARCH(q)]\label{ch:time-series-analysis:th:ConditionalExpectationEquivalenceVarianceSquareInnovationGARCH(p,q)}
+	Consider an GARCH(p,q) model given by
+		$$a_t = \sigma_t \epsilon_t$$
+	where $\epsilon_t\sim WN(0,1)$, 
+	and $$\sigma_t^2 = \alpha_0 + \sum_{i=1}^p \alpha_i a_{t-i}^2 + \sum_{i=1}^q \beta_i \sigma_{t-i}^2, \alpha_i, \beta_j \geq 0,\forall i,j \geq 1.$$	
+	Let $\cF_t$ denote the information available up to time $t$. 
+	Then
+	$$E[\sigma_{t}^2|\cF_s] = E[a_{t}^2|\cF_s],s < t.$$
+\end{lemma}
+\begin{proof}
+	Note that $$a_t^2 = \sigma_t^2 \epsilon_t^2.$$
+	Take conditional expectation on both sides and get
+	$$E[a_t^2|\cF_s] = E[\sigma_t^2 \epsilon_t^2|\cF_s] = E[\sigma_t^2|\cF_s] E[\epsilon_t^2|\cF_s] = E[\sigma_t^2|\cF_s].$$
+	where we used the fact that $E[\epsilon_t^2|\cF_s] = 1$ and the independence between $\sigma_t$ and $\epsilon_t$.	
+\end{proof}
+
+\begin{theorem}[variance prediction in GARCH(1,1)]
+Consider a GARCH(1,1) model given by
+$$a_t = \sigma_t \epsilon_t, \sigma_t^2 = \alpha_0 + \alpha_1a_{t-1}^2 + \beta_1\sigma_{t-1}^2,\alpha_1+\beta_1\in [0,1).$$
+
+	
+	Let $\cF_t$ denote the information available up to time $t$. Then,
+	\begin{align*}
+	E[\sigma_{t+1}^2|\cF_t]\triangleq \sigma_{t+1}^2 
+	&=\alpha_0 + \alpha_1 a_{t}^2  + \beta_1 \sigma_{t}^2\\
+	E[\sigma_{t+2}^2|\cF_t]\triangleq \hat{\sigma}_{t+2}^2 
+	&=\sigma^2 + (\alpha_1+ \beta_1)(\sigma_{t+1}^2 - \sigma^2)\\
+	E[\sigma_{t+3}^2|\cF_t]\triangleq \hat{\sigma}_{t+2}^2 &= \sigma^2 + (\alpha_1+ \beta_1)^2(\sigma_{t+1}^2 - \sigma^2)\\
+	\vdots & \\
+	E[\sigma_{t+l}^2|\cF_t]\triangleq\hat{\sigma}_{t+l}^2 &= \sigma^2 + (\alpha_1+ \beta_1)^{l-1}(\sigma_{t+1}^2 - \sigma^2)
+	\end{align*}
+where $\sigma^2$ is the unconditional variance $$\sigma^2 = \frac{\alpha_0}{1 - \alpha_1 - \beta_1}.$$	
+\end{theorem}
+\begin{proof}
+Note that the equivalence between square innovation and variance is discussed in \autoref{ch:time-series-analysis:th:ConditionalExpectationEquivalenceVarianceSquareInnovationARCH(q)}.
+
+Further note that $\sigma_{t+1}^2$ given $\cF_t$ is actually deterministic quantity. For the rest, we have
+\begin{align*}
+\sigma_{t+1}^2 &= \alpha_0 + \alpha_1 a_{t}^2  + \beta_1 \sigma_{t}^2 \\
+E[\sigma_{t+2}^2|\cF_t]\triangleq \hat{\sigma}_{t+2}^2 &= \alpha_0 + \alpha_1 E[a_{t+1}^2|\cF_{t}] + \beta_1 \sigma_{t+1}^2 \\
+&=\alpha_0 + \alpha_1\sigma_{t+1}^2 + \beta_1\sigma_{t+1}^2\\
+&=\alpha_0 + (\alpha_1+ \beta_1)\sigma_{t+1}^2\\
+&=\sigma^2 + (\alpha_1+ \beta_1)(\sigma_{t+1}^2 - \sigma^2)\\
+E[\sigma_{t+3}^2|\cF_t]\triangleq \hat{\sigma}_{t+3}^2 &= \alpha_0 + \alpha_1 E[a_{t+2}^2|\cF_{t}] + \beta_1 \hat{\sigma}_{t+2}^2 \\
+&=\alpha_0 + \alpha_1 \hat{\sigma}_{t+2}^2 + \beta_1\hat{\sigma}_{t+2}^2\\
+&=\alpha_0 + (\alpha_1+ \beta_1)\hat{\sigma}_{t+2}^2\\
+&=\sigma^2 + (\alpha_1+ \beta_1)(\hat{\sigma}_{t+2}-\sigma^2)\\
+&=\sigma^2 + (\alpha_1+ \beta_1)^2(\sigma_{t+1}^2 - \sigma^2)
+\end{align*}	
+where we use the fact(\autoref{ch:time-series-analysis:th:basicStatisticalPropertiesGARCH(1,1)}) that
+	$$E[a_{t+1}^2|\cF_{t}] = \sigma_{t+1}^2 = (\alpha_0 + \alpha_1 a_{t}^2 + \beta_1 \sigma_{t}^2).$$
+
+Others can be proved similarly.
+\end{proof}
+
+\begin{remark}[implication for convergence rate]
+	We can see that $\hat{\sigma}_{t+l}^2 \to \sigma$ as $l\to \infty$. If the variance spikes up during a crisis, then the number of the period before the variance restore to equilibrium value $\sigma$ can be estimated using the value of $(\alpha_1+\beta_1)$(the larger the longer).
+\end{remark}
+
+
+
+\subsubsection{Detect GARCH effect}
+
+
+\subsubsection{Parameter estimation}
+
+
+\subsection{ARMA-GARCH model}
+
+\begin{definition}[ARMA(1,1)-GARCH(1,1) model]
+	
+	$$X_t = \mu + \phi X_{t-1} + $$
+\end{definition}
+
+
+
+see here for parameter estimation \href{https://en.wikipedia.org/wiki/Autoregressive_conditional_heteroskedasticity}{link}
+
+\section{Notes on Bibliography}
+
+
+Introductory level treatment, see \cite{chatfield2003analysis}.
+Intermediate level treatment, see \cite{brockwell2002introduction}\cite{hamilton1994time}\cite{shumway2010time}\cite{enders2014applied}\cite{subbaRao2017timeSeries}.
+Advanced level treatment, see \cite{brockwell1991time}
+
+
+For multivariate time series and cointegration, see \cite{tsay2013multivariate}\cite{pfaff2008analysis}\cite{lutkepohl2005new}.
+
+For finanical time series, see \cite{tsay2005analysis}\cite{tsay2013multivariate}\cite{hayashi2000econometrics}.
+
+
+Analysis of Integrated and Cointegrated Time Series with R
+
+
+
+
+\printbibliography
+
+\chapter{Time series analysis II}
+
+\section{Multivariate time series}
+\begin{definition}[multivariate time series]\index{multivariate time series}
+A $K$ dimensional \textbf{multivariate time series }$\{X_t\}_{t\in T}$ is a collection of $K$ dimensional random vectors $X_t$ taking values in $\R^K$ whose the indexing set $T$ is the set of integers.
+\end{definition}
+
+
+\begin{definition}[mean vector, covariance matrix, cross-correlation matrix]\index{mean vector}\index{covariance matrix}\index{cross-correlation matrix}
+Given a $K$ dimensional multivariate time series, 
+the mean vector is defined as
+$$\mu(t) = E[X_t],\mu(t)\in \R^K.$$
+The covariance matrix is defined as
+$$\Gamma_0(t) = E[(X_t - \mu)(X_t - \mu)^T], \Gamma_0(t) \in \R^{K\times K}.$$
+And the cross-correlation matrix
+$$\Gamma_k(t) = Cov(X_t,X_{t-k}) = E[(X_t - \mu)(X_{t-k} - \mu)^T],\Gamma_k(t) \in \R^{K\times K}.$$
+\end{definition}
+
+
+\begin{definition}[weakly stationary]\index{weakly stationary}
+The multivariate time series $X_t$ is weakly stationary if
+$\mu(t)$ is constant and $\Gamma_k(t)$ does not depend on $t$.
+\end{definition}
+
+\begin{definition}[Matrix polynomial of lag operator]
+A matrix polynomial  of lag operator of order $p$is defined as
+$$\Theta_p(B) = I_k + \Theta_1B + \Theta_2 B^2 + ... + \Theta_p B^p$$
+where $B$ is the lag operator(we can view as a special scalar), $I_k,\Theta_i \in \R^{k\times k}$
+\end{definition}
+
+
+\begin{definition}[invertibility]\cite[7]{tsay2013multivariate}
+A multivariate(m dimension) time series $z_t$ is said to be \textbf{invertible} if it can be written as
+$$z_t = c + a_t + \sum_{j=1}^\infty \pi_j z_{t-j},$$
+where
+\begin{itemize}
+	\item $c\in \R^m $ is a constant vector;
+	\item $\pi_i \in \R^{m\times m}, i=1,2,...$ are matrices;
+	\item $\{a_t\}$ is a white noise process with $Var[a_t] = \Sigma_a \in \R^{m\times m}$. 
+\end{itemize}
+
+To ensure convergence, we also require $\pi_i\to 0$ as $i\to \infty$.
+\end{definition}
+
+
+\section{Vector autoregressive models}
+\subsection{Models}
+
+
+
+\subsubsection{VAR(1) model}
+\begin{definition}[VAR(1)]
+An $m$ dimensional multivariate time series $X_t$ is called $VAR(1)$ process if 
+$$X_t = C + \Phi_1 X_{t-1} + \eta_t$$
+where $X_t\in \R^m,\Phi_i\in \R^{m\times m}, \eta_t\sim MN(0,\Sigma),\Sigma \in \R^{m\times m}, \eta_t, C \in \R^m$.
+
+\end{definition}
+
+\begin{example}
+A bivariate VAR(1) model is given explicitly by
+$$\begin{bmatrix}
+X_{1,t} \\
+X_{2,t}
+\end{bmatrix} = \begin{bmatrix}
+C_1\\
+C_2
+\end{bmatrix} + \begin{bmatrix}
+\Phi_{1,11} & \Phi_{1,12}\\
+\Phi_{1,21} & \Phi_{1,22}
+\end{bmatrix}\begin{bmatrix}
+X_{1,t-1}\\
+X_{2,t-1}  
+\end{bmatrix}$$	
+\end{example}
+
+\begin{lemma}[mean-adjusted of VAR(1)]
+	A stable VAR(1) process $X_t = C + A X_{t-1} + u_t$  can be written as
+	$$X_t - \mu = A(X_{t-1} - \mu) + u_t$$
+	where $\mu = (I_K - A)^{-1}C$.
+\end{lemma}
+\begin{proof}
+	$$X_t - \mu = A(X_{t-1} - \mu) + u_t \implies X_t - (I - A)\mu = AX_{t-1} + u_t.$$
+	Therefore, we can set $(I-A)\mu = C$. 
+\end{proof}
+
+
+
+
+
+
+
+\begin{lemma}[stationary condition for VAR(1) process]\cite[32]{tsay2013multivariate}\label{ch:time-series-analysis:th:stationaryConditionForVAR(1)}
+A VAR(1) process $$X_t = C + A X_{t-1} + u_t$$
+is stationary if all eigenvalues of $A$ satisfy $
+\abs{\lambda} < 1$. 	
+Or equivalent 
+$$det(I_K - Az) \neq 0, \forall z\in \C,  \abs{z} \leq 1. $$
+
+Such VAR(1) process is said to be \textbf{stationary or stable}.
+\end{lemma}
+\begin{proof}
+(1)
+\begin{align*}
+X_t &= AX_{t-1} + u_t \\
+&= A(AX_{t-2} + u_{t-1}) + u_t \\
+&= \vdots \\
+&= A^{t-v}X_{v} + \sum_{i=0}^{t-1} A^i u_{t-i}
+\end{align*}
+As $v\to -\infty$, $A^\infty$ will have a limit if the spectral radius of $A$ is smaller than 1(\autoref{ch:linearalgebra:th:convergenceofmatrixpower}). 
+(2)
+To show that equivalence, suppose there exists a $z_0$ such that $\abs{z_0} \leq 1$ and $det(I_K - Az_0) = 0$. 
+Then
+$$det(I_K - Az_0) = z_0^K det(I_k/z_0 - A) = 0;$$
+that is, there exists $1/z_0 = \lambda_0, \abs{\lambda_0} \geq 1$ as the eigenvalue of $A$.
+\end{proof}
+
+\begin{note}[implications of stability]
+From \autoref{ch:linearalgebra:singularityfromspectralradius}, a stable VAR(1) process will ensure
+$(I_K - A)^{-1}$
+exist; and
+$$(I_K - A)^{-1} = I_K + A + A^2 + ...$$
+Then
+$$X_t = (I_K-AB)^{-1}(C + u_t),$$
+where $B$ is the lag operator.
+\end{note}
+
+\begin{lemma}[Vector moving averaging representation of stable VAR(1)]\label{ch:time-series-analysis:th:VectorMARepresentationStableVAR(1)}\cite[36]{tsay2013multivariate}
+	A stable $K$ dimensional VAR(1) process 
+	$$X_t = C + A X_{t-1} + u_t$$
+	has the moving averaging representation as
+	$$X_t = (I_K + A + A^2 + ... )C + (I_Ku_t + Au_{t-1} + A^2u_{t-2} + ...),$$
+	or equivalently,
+	$$X_t = (I_K -A)^{-1}C + (I_K-AB)^{-1}u_t,$$
+where $B$ is the lag operator.	
+\end{lemma}
+\begin{proof}
+	Directly recursively expand the original equation.
+\end{proof}
+
+
+
+\begin{lemma}[basic properties of a stable VAR(1)]\cite[16]{lutkepohl2005new}
+A \textbf{stable} $K$ dimensional VAR(1) process 
+$$X_t = C + A X_{t-1} + u_t$$
+has
+\begin{itemize}
+\item constant mean $\mu = (I_K - A)^{-1}C$.
+\item constant covariance variance: $Cov(X_t,X_t) = E[(X_t - \mu)^2] = (I_K - A)^{-1}Cov(\mu_t,\mu_t)(I_K - A)^{-T} = \sum_{i=0}^\infty A^{h+i} Cov(u_t,u_t) (A^i)^T.$
+\item shift-invariant cross-covariance matrix: $$\Gamma(h) = \sum_{i=0}^\infty A^{h+i} \Sigma_u (A^i)^T.$$
+
+\item it is a weakly stationary process; moreover, since $u_t$ is multivariate Gaussian, it is also a strongly stationary process. 
+\end{itemize}
+\end{lemma}
+\begin{proof}
+(1)(2) use moving average representation (\autoref{ch:time-series-analysis:th:VectorMARepresentationStableVAR(1)}) to prove. 
+\begin{align*}
+X_t &= (I_K + A + A^2 + ... )C + (I_Ku_t + Au_{t-1} + A^2u_{t-2} + ...) \\
+X_t &= (I_K-A)^{-1}C + (I_K-A)^{-1}u_t \implies E[X_t] = (I_K-A)^{-1}C
+\end{align*}
+
+(3)
+Note that
+$$X_t - \mu = (I_K - AB)^{-1}u_t.$$
+
+Then,
+$$Cov(X_{t+h},X_t) = E[(X_{t+h} - \mu)(X_t - \mu)^T] = A^hE[(X_t - \mu)^(X_t - \mu)^T].$$
+(4) directly from (1)(2)(3).
+\end{proof}
+
+
+\subsubsection{VAR(2) model}
+\begin{definition}[VAR(2)]
+	An $m$ dimensional multivariate time series $X_t$ is called $VAR(2)$ process if 
+	$$X_t = C + \Phi_1 X_{t-1} + \Phi_2 X_{t-2} + \eta_t$$
+	where $X_t\in \R^m,\Phi_1,\Phi_2 \in \R^{m\times m}, \eta_t\sim MN(0,\Sigma),\Sigma \in \R^{m\times m}, \eta_t, C \in \R^m$.
+\end{definition}
+
+
+\begin{lemma}[VAR(1) representation of VAR(2) process]
+	Every $m$ dimensional $VAR(2)$ process $X_t$ is equivalent to a $2m$ dimensional $VAR(1)$ process by using the following transformation procedures:
+	Define
+	\begin{align*}
+	Z_t &= (X_t^T,X_{t-1}^T)^T\\
+	Z_{t-1} &= (X_{t-1}^T,X_{t-2}^T)^T
+	\end{align*}
+	where $Z_t \in \R^{2m}$. Then
+	$$Z_t = D + AZ_{t-1} + F$$
+	where $D\in \R^{2m},A\in \R^{2m\times 2m},F\in \R^{2m}$ are given as
+	$$
+	D = \begin{bmatrix}
+	C\\ 0_m 
+	\end{bmatrix}
+	,
+	A = \begin{pmatrix}
+	\Phi_1 & \Phi_2 \\ 
+	I_m & 0 
+	\end{pmatrix}
+	,
+	F = \begin{bmatrix}
+	\eta_t\\ 0_m 
+	\end{bmatrix}
+	$$ 
+\end{lemma}
+
+
+\begin{lemma}[stability condition for VAR(2) process]\cite[38]{tsay2013multivariate}
+	The stability condition for a VAR(2) process is
+	$$det(I_{2m} - \phi_1z - \phi_2 z^2) \neq 0, \forall \abs{z} \leq 1.$$
+\end{lemma}
+\begin{proof}
+Use the equivalent representation VAR(1) of VAR(2) and stability condition for VAR(1) \autoref{ch:time-series-analysis:th:stationaryConditionForVAR(1)}.
+We have
+\begin{align*}
+det(I_{2m} - Az) &= \begin{vmatrix}
+I_m - \phi_1 z & -\phi_2 z\\
+-I_m z  & I_m
+\end{vmatrix} \\
+& =  \begin{vmatrix}
+I_m - \phi_1 z - \phi_2 z^2 & -\phi_2 z\\
+0  & I_m
+\end{vmatrix} \\
+& = \abs{I_m - \phi_1 z - \phi_2 z^2}
+\end{align*}
+where we multiply the second column block matrix by $z$ and add to the first column(which will not change the determinant value(\autoref{appendix:th:matrixDeterminantProperties})).
+\end{proof}
+
+
+
+
+\subsubsection{VAR(p) model}
+\begin{definition}[VAR operator]\index{VAR operator}
+	A VAR operator of order $q$ is a matrix polynomial of lag operator given as
+	$$\Phi_p(B) = I_k - \Phi_1B - \Phi_2 B^2 - ... - \Phi_p B^p$$
+	where $B$ is the lag operator, $\Theta_i \in \R^{k\times k}$
+\end{definition}
+
+
+
+
+
+\begin{definition}[VAR(p) process]\cite[27]{tsay2005analysis}
+	An $m$ dimensional multivariate time series $X_t$ is called $VAR(p)$ process if 
+	$$X_t = C + \Phi_1 X_{t-1} + \Phi_2 X_{t-2} + ... + \Phi_pX_{t-p} + \eta_t$$
+	where $X_t\in \R^m,\Phi_i\in \R^{m\times m}, \eta_t\sim MN(0,\Sigma),\Sigma \in \R^{m\times m}, \eta_t, C \in \R^m$.
+	Using VAR operator, we have
+	$$\Phi_p(B) X_t = C + \eta_t$$
+\end{definition}
+
+
+\begin{lemma}[VAR(1) representation of VAR(p) process]
+Every $m$ dimensional $VAR(p)$ process $X_t$ is equilvalent to a $mp$ dimensional $VAR(1)$ process by using the following transformation procedures:
+Define
+\begin{align*}
+Z_t &= (X_t^T,X_{t-1}^T,...,X_{t-p+1}^T)^T\\
+Z_{t-1} &= (X_{t-1}^T,X_{t-2}^T,...,X_{t-p}^T)^T
+\end{align*}
+where $Z_t \in \R^{m\times p}$. Then
+$$Z_t = D + AZ_{t-1} + F$$
+where $D\in \R^{mp},A\in \R^{mp\times mp},F\in \R^{mp}$ are given as
+$$
+D = \begin{bmatrix}
+	C\\ 0_m \\ 0_m \\ \vdots \\ 0_m \\0_m
+\end{bmatrix}
+,
+A = \begin{pmatrix}
+	\phi_1 & \phi_2 & \phi_3 & \dots & \dots & \phi_p\\ 
+	I_m & 0 & 0 & \dots & \dots & 0 \\ 
+	0 & I_m & 0 & \dots & \dots & 0 \\ 
+	\vdots & \ddots & \ddots &  &  & 0\\ 
+	0 & 0 & \ddots & I_m & 0 & 0\\ 
+	0 & 0 &  \dots & 0 & I_m & 0
+\end{pmatrix}
+,
+F = \begin{bmatrix}
+	\eta_t\\ 0_m \\ 0_m \\ \vdots \\ 0_m \\0_m
+\end{bmatrix}
+$$ 
+\end{lemma}
+
+
+\begin{lemma}[stability condition for VAR(p) process]
+The stability condition for a VAR(p) process is
+$$det(I_m - \phi_1z - ... - \phi_p z^p) \neq 0, \forall \abs{z} \leq 1.$$
+or equivalently, $$det(I_{mp} - \bm{A}z)\neq 0, \forall \abs{z} \leq 1.$$
+\end{lemma}
+\begin{proof}
+Use the VAR(1) representation and stability condition for VAR(1) process. Note that
+\begin{align*}
+det(I_{mp} - Az) &= \begin{vmatrix}
+I_m-\phi_1 z & -\phi_2 z & -\phi_3 z& \dots & \dots & -\phi_p z\\ 
+-I_m z & I_m & 0 & \dots & \dots & 0 \\ 
+0 & -I_m z& I_m & \dots & \dots & 0 \\ 
+\vdots & \ddots & \ddots &  &  & 0\\ 
+0 & 0 & \ddots & -I_m z& I_m & 0\\ 
+0 & 0 &  \dots & 0 & -I_m z & I_m
+\end{vmatrix} \\
+&=\begin{vmatrix}
+I_m-\phi_1 z -\phi_2 z^2 - \cdots \phi_p z^p & -\phi_2 z - \phi_3z^2 -\cdots & -\phi_3 z& \dots & \dots & -\phi_p z\\ 
+0 & I_m & 0 & \dots & \dots & 0 \\ 
+0 & & I_m & \dots & \dots & 0 \\ 
+\vdots & \ddots & \ddots &  &  & 0\\ 
+0 & 0 & \ddots & 0& I_m & 0\\ 
+0 & 0 &  \dots & 0 & 0 & I_m
+\end{vmatrix} \\
+&= \abs{I_m-\phi_1 z -\phi_2 z^2 - \cdots \phi_p z^p} 
+\end{align*}
+Note that we iterative eliminate the off-diagonal entries in the lower triangle matrix(starting from the p-1 column, then p-2 column, until the first column).
+\end{proof}
+
+
+\begin{lemma}[invertibility of VAR(p) operator and MA representation]\cite[23]{lutkepohl2005new}
+Consider the VAR(p) process given as
+$$y_t = C + (A_1B + ... + A_pB^p)y_t + u_t$$
+and define 
+$$A(B) = I_K - A_1B - ... - A_pB^p.$$
+We have
+\begin{itemize}
+\item If $det(I_K - A_1z - ... - A_p z^p) \neq 0, \forall \abs{z} \leq 1 $, then $A(B)$ is invertible.
+\item If $A(B)$ is invertible, let $\Phi(B)$ denote its inverse such that $\Phi(B)A(B) = I_K$, then 
+$$\Phi(B) = \sum_{i=1}^\infty \Phi_i B^i$$
+where
+\begin{align*}
+I_K &= \Phi_0\\
+0 &=\Phi_1 - \Phi_0A_1\\
+0 &=\Phi_2 - \Phi_1A_1 - \Phi_0A_2\\
+\vdots & \\
+0 &=\phi_i - \sum_{j=1}^i \Phi_{i-j}A_j
+\vdots &
+\end{align*}
+\end{itemize}
+\end{lemma}
+
+\begin{corollary}[ MA representation]
+A stable $VAR(p)$ process has its moving average representation as
+$$y_t = \Phi(B)C + \Phi(B)u_t$$
+where $\Phi(B) = (I_K - A_1B - ... - A_pB^p)^{-1}$.
+\end{corollary}
+
+
+\begin{remark}[connection with Wold decomposition]
+The MA representation is an example of the Wold decomposition for stationary multivariate time series(\autoref{ch:time-series-analysis:th:wolddecompositionmultiD}).
+\end{remark}
+
+
+\begin{lemma}[mean of VAR(p), and mean-adjusted form]
+For a stable Var(p) process $X_t$, we have
+\begin{itemize}
+\item $\mu = \Phi(B)C$, where $\Phi(B) = (I_K - A_1B - ... - A_pB^p)^{-1}$.
+\item It can be written as
+$$X_t - \mu = A_1(X_{t-1} - \mu) + A_2(X_{t-2} - \mu) + ... + A_p(X_{t-p} - \mu) + \eta_t.$$
+\end{itemize} 
+\end{lemma}
+
+\subsection{Parameter estimation}
+
+
+\section{Vector autoregressive moving-average(VMA) model}
+\subsection{Vector moving-average model }
+\begin{definition}[VMA operator]
+A VAR operator of order $q$ is a matrix polynomial of lag operator given as
+$$\Theta_p(B) = I_k - \Theta_1B - \Theta_2 B^2 - ... - \Theta_p B^p$$
+where $B$ is the lag operator, $\Theta_i \in \R^{k\times k}$
+\end{definition}
+
+
+\begin{definition}[VMA(q) model]\cite[106]{tsay2013multivariate}
+A VMA model of order $q$ for a m dimensional time series $z_t$ is given by
+$$z_t = \mu + a_t - \sum_{i=1}^q \theta_i a_{t-i},$$
+where
+\begin{itemize}
+	\item $\mu\in \R^m$ is a constant vector;
+	\item $\theta_i \in \R^{m\times m}, i=1,2,...,q$ are matrices and $\theta_q \neq 0$;
+	\item $\{a_t\}$ is a white noise process with $Var[a_t] = \Sigma_a \in \R^{m\times m}$. 
+\end{itemize}
+
+Using VMA operator, the VMA(q) model can also be written as
+$$z_t = \mu + \Theta_q a_t.$$	
+\end{definition}
+
+
+\begin{lemma}[properties of VMA(q) model]\cite[110]{tsay2013multivariate}
+Consider a VMA(q) model of a time series $z_t$. It follows that
+\begin{itemize}
+	\item $E[z_t] = \mu$.
+	\item $Var[z_t] = \Gamma_0 = \Sigma_a + \sum_{i=1}^q \theta_i \Sigma_a \theta_i^T$.
+	\item $$Cov(z_t, z_{t-j}) = \Gamma_j = \sum_{i=j}^q \theta_j \Sigma_a \theta_{i-j}^T,$$
+	where $\theta_0 = -I_k, \forall j=1,...,q$.
+	\item $\Gamma_j  \triangleq Cov(z_t, z_{t-j}) = 0, \forall j > q$.
+\end{itemize}
+\end{lemma}
+\begin{proof}
+(1) $$E[z_t] = E[\mu + a_t - \sum_{i=1}^q \theta_i a_{t-i}] = \mu +　0.$$
+(2)	
+\begin{align*}
+Var[z_t] &= E[(z_t - \mu)(z_t - \mu)^T] \\
+& =  E[\Theta_qa_t a_t^T\Theta_q^T] \\
+& = E[a_t a_t^T] + \sum_{i=1}^q \theta_i \Sigma_a \theta_i^T 
+\end{align*}
+(3)(4) Note that
+\begin{align*}
+Var[z_t] &= E[(z_t - \mu)(z_t - \mu)^T] \\
+& =  E[\Theta_q B^j a_t a_t^T\Theta_q^T] 
+\end{align*}
+\end{proof}
+
+
+\subsection{Vector ARMA model}
+
+\begin{definition}[VARMA(p,q) model]\cite[127]{tsay2013multivariate}
+A m-dimensional time series $z_t$ is a VARMA(p,q) process if
+$$\Phi_p z_t = C + \Theta_q a_t,$$
+where
+\begin{itemize}
+	\item $C \in \R^m$ is a constant vector;
+	\item $\Phi_p = I_m - \sum_{i=1}^p \phi_i B^i, \phi_i\in \R^{m\times m}$;
+	\item $\Theta_p = I_m - \sum_{i=1}^q \theta_i B^i, \theta_i \in \R^{m\times m}$;
+	\item $\{a_t\}$ is a white noise process with $Var[a_t] = \Sigma_a \in \R^{m\times m}$. 	
+\end{itemize}	
+\end{definition}
+
+
+\begin{remark}
+identifiability issue (TODO) \cite[128]{tsay2013multivariate}.
+\end{remark}
+
+\section{Structural analysis}
+
+\begin{definition}[Granger casualty based on linear predictor]\cite[42]{lutkepohl2005new}\index{Granger causalty}
+Let $\Omega_t = \{z_s,x_s|s\leq t\}$, let $T(z_{t+h}|\Omega_t)$ be the optimal linear prediction of $z_{t+h}$ based on $\Omega_t$. Then $x_t$ is said to Granger cause $z_t$ if the MSE of the predictor $T(z_{t+h}|\Omega_t)$ is less than the MSE of the predictor $T(z_{t+h}|\Omega_{t} \\ \{x_s|s\leq t\}\})$.
+\end{definition}
+
+
+\begin{remark}[interpretation]\hfill
+\begin{itemize}
+\item If a variable, or a group of variables, $y_1$ is found to be helpful for predicting another variable, or group of variables $y_2$, then $y_1$ is said to Granger-cause $y_2$.
+\item The notation of Granger causality does not imply true causality. Granger causality is a statistical concept of causality that is based on prediction. 
+\end{itemize}
+\end{remark}
+
+
+
+\section{Cointegration}
+\subsection{Concepts and basics}
+\subsubsection{order of integration}
+\begin{definition}[integrated of order]\index{integrated of order}\cite[559]{hayashi2000econometrics}
+An $m$-dimensional time series $\bm{X}_t = (x_{1,t},...,x_{m,t})$ is \textbf{integrated of order }$d$,denoted by $I(d)$, if
+for each component 
+$$\nabla^d \bm{X}_t = (1-L)^d\bm{X}_t$$
+is stationary.
+\end{definition}
+
+\begin{definition}[integrated of order 0 process]\cite[563]{hayashi2000econometrics}
+A time series $X_t$ is integrated of order 0, denoted $I(0)$, if it admits a moving average representation 
+
+with 
+$$\sum_{k=0}^\infty \abs{b_k^2} < \infty$$
+\end{definition}
+
+\begin{definition}[integrated of order 0 process, alternative]
+A time series $X_t$ is integrated of order 0, denoted $I(0)$, if it admits a moving average representation with 
+$$\sum_{k=0}^\infty \abs{b_k^2} < \infty$$
+\end{definition}
+
+\begin{remark}[interpretation]
+This implies that the autocovariance is decaying to 0 sufficiently quickly. This is a necessary, but not sufficient condition for a stationary process. Therefore, all stationary processes are I(0), but not all I(0) processes are stationary.
+\end{remark}
+
+\begin{lemma}[integration order of AR(p) process ]\cite[238]{lutkepohl2005new}
+Consider an AR(p) process $\Phi_p X_t = Z_t$. If its characteristic polynomial has $m$ unit root and the rest of roots lying outside the unit disk, then it is $I(m)$.
+\end{lemma}
+\begin{proof}
+Note that $\Phi_p^{-1}$ contains $m$ factors $(I-L)^{-1}$. When we apply $(1-L)^m$ to $\Phi^{-1}$, 
+$$X_t = (1-L)^m \Phi_p^{-1} Z_t$$
+ will be a stationary process.  
+\end{proof}
+
+\begin{example}
+Consider $X_t$ is given by
+$$X_t = X_{t-1} + \epsilon_t,\epsilon_t \in WN(0,1).$$
+
+$X_t$ is integrated of order 1 since 
+$$X_t - X_{t-1} = \epsilon_t \sim I(0).$$	
+\end{example}
+
+
+
+\begin{lemma}[construct high order integrated process]
+Given a $I(d-1)$ time series $X_t$, the process
+$$Z_t = \sum_{k=0}^t X_k$$
+is $I(d)$.
+\end{lemma}
+\begin{proof}
+$\nabla Z_t =  \sum_{k=0}^t \nabla X_k = X_t \sim I(d-1)$
+\end{proof}
+
+
+
+
+\subsubsection{cointegration}
+\begin{definition}[cointegration]\index{cointegration}
+Consider an $m$-dimensional time series $\bm{X}_t = (x_{1,t},...,x_{m,t})$ of integrated of order 1. $\bm{X}_t$ is called cointegrated if there exists $\beta \in \R^m$ such that
+$$\beta^T \bm{X_t}$$
+is a stationary process.
+\end{definition}
+
+\begin{example}
+For instance, a stock market index and the price of its associated futures contract move through time, each roughly following a random walk. Testing the hypothesis that there is a statistically significant connection between the futures price and the spot price could now be done by testing for the existence of a cointegrated combination of the two series.
+\end{example}
+
+\begin{remark}[cointegration vs. correlation]
+Consider two time series $X_1(t)$ and $X_2(t)$, 
+\begin{itemize}
+\item The correlation specifies co-movement of fluctuations around the mean (i.e., $X_1(t)-E[X_1]$ and $X_2(t)-E[X_2]$); the correlation tends to be a short-term relationship.
+\item The cointegration specifies co-movement of values,i.e., $X_1(t)$ and $X_2(t)$; the cointegration tends to be a long-term relationship.
+\end{itemize}
+\end{remark}
+
+
+
+\begin{definition}[trend stationary process]\index{trend stationary process}
+A process $Y_t$ is said to be trend stationary if
+$$Y_t = f(t) + e_t$$
+where $t$ is the time index, $f$ is the function mapping from time index to $\R$, and $e_t$ is a stationary process.
+\end{definition}
+
+\begin{example}\hfill
+\begin{itemize}
+\item $Y_t = at + b +e_t$ is a stationary process with linear trend.
+\item $Y_t = e^t + e_t$ is a stationary process with exponential trend.
+\end{itemize}
+\end{example}
+
+\subsubsection{Test of cointegration}
+
+
+
+\subsubsection{Cointegration parameter estimation}
+
+
+
+
+
+\subsection{Vector error correction model}
+
+
+\begin{definition}[vector error correction model]\cite[248]{lutkepohl2005new}
+Denote $\Delta y_t = y_t - y_{t-1}$. Let $w_t$ be a $K$-dimensional Brownian motion, $A_i\in \R^{K\times K}$	
+\begin{itemize}
+	\item Let $y_t$ be a $K$-dimensional VAR(1) process, given by
+	$$y_t = A_1y_{t-1} + w_t$$
+	
+	subtracting $y_{t-1}$ on both sides, we get the VECM as
+	
+	$$\Delta y_t = \Pi y_{t-1} + w_t$$
+	where
+	$$\Pi = - (I_K - A_1)$$
+	\item Let $y_t$ be a $K$-dimensional VAR(2) process, given by
+	$$y_t = A_1y_{t-1} + A_2y_{t-2} + w_t$$
+	
+	The VECM is given by
+	
+	$$\Delta y_t = \Pi y_{t-1} + \Gamma\Delta y_{t-1} + w_t$$
+	where
+	$$\Pi = - (I_K - A_1), \Gamma = -A_{2}.$$
+	\item 	Let $y_t$ be a $K$-dimensional VAR(p) process, given by
+	$$y_t = A_1y_{t-1} + \cdots + A_py_{t-p} + w_t.$$
+	
+	The VECM is given by
+	
+	$$\Delta y_t = \Pi y_{t-1} + \Gamma_1\Delta y_{t-1} + \cdots + \Gamma_{p-1}\Delta y_{t-p+1} + w_t$$
+	where
+	$$\Pi = - (I_K - A_1 - \cdots - A_p)$$
+	and
+	$$\Gamma_i = -(A_{i+1}+\cdots + A_p), i=1,...,p-1$$
+\end{itemize}	 
+\end{definition}
+
+\begin{remark}[verification of the equivalence]
+To verify the equivalence of VECM to the original form, we have(take VaR(2) as an example)
+\begin{align*}
+\Delta y_t &= \Pi y_{t-1} + \Gamma\Delta y_{t-1} + w_t \\
+y_t - y_{t-1} &= (-I_k+A_1+A_2)y_{t-1} - A_2(y_{t-1}-y_{t-2})+w_t \\
+y_t &= A_1y_{t-1} + A_2y_{t-2} + w_t
+\end{align*}	
+\end{remark}
+
+
+\begin{lemma}[identify cointegration vector vector error correction form]\cite[248]{lutkepohl2005new}
+Let $y_t$ be a $K$-dimensional VAR(p) process, given by
+$$y_t = A_1y_{t-1} + \cdots + A_py_{t-p} + w_t$$
+with
+$$\Delta y_t = \Pi y_{t-1} + \Gamma_1\Delta y_{t-1} + \cdots + \Gamma_{p-1}\Delta y_{t-p+1} + w_t$$
+where
+$$\Pi = - (I_K - A_1 - \cdots - A_p)$$
+and
+$$\Gamma_i = -(A_{i+1}+\cdots + A_p), i=1,...,p-1$$
+
+Let $rank(\Pi) = r$.
+It follows that
+\begin{itemize}
+	\item If $r = 0$, or equivalently $\Pi = 0$, then $y_t$ is not cointegrated.
+	\item if $0<r <K$ and let the singular decomposition of $\Pi$ be $\Pi = UV^T$, where $U\in \R^{K\times m}, V\in \R^{K\times m}$, and each column in $V$ is one possibility of cointegration vector. 
+	\item if $r=K$, then $y_t$ is not unit-root process.
+\end{itemize}
+
+
+\end{lemma}
+\begin{proof}	
+Because the left-hand side and the right-hand side are both $I(0)$(stationary), we must have $\Pi y_{t-1}$ to be $I(0)$(otherwise, suppose $\Pi y$ is not, then the equality cannot hold).	
+Suppose the of $rank(\Pi) = m < K$, then based on the singular value theory(\autoref{ch:linearalgebra:th:SVD}), we can decompose $\Pi = UV^T$, where $U\in \R^{K\times m}, V\in \R^{K\times m}$, and each column in $V$ is one possibility of cointegration vector. 
+
+\end{proof}
+
+
+\begin{note}[non-uniqueness of cointegration vector]\cite[249]{lutkepohl2005new}
+\end{note}
+
+\section{State space models}
+\begin{definition}[state space model]\index{state space model}
+A state space model is given as
+\begin{align*}
+z_t &= A_tz_{t-1} + \epsilon_t\\
+y_t &=C_tz_t + \delta_t
+\end{align*}
+where $z_t\in \R^d,A\in \R^{d\times d}, \epsilon_t \sim MN(0,Q), Q\in \R^{d\times d}, y_t \in \R^p, C_t\in \R^{p\times d}, \delta_t \sim MN(0,R).$
+If $A_t, C_t$ are indepedent of time $t$, then it is called time-invariant state space model.
+\end{definition}
+
+
+\begin{remark}[non-uniqueness of representation]
+Consider any nonsingular matrix $M\in \R^{d\times d}$, then
+\begin{align*}
+Mz_t = MA_tM^{-1}Mz_{t-1} + M\epsilon_t &\implies z_t^* = A_t^* z_{t-1}^* + \epsilon_t^*\\
+y_t = C_tM^{-1}Mz_{t-1} + \delta_t &\implies y_t = G_t^* z_{t}^* + \delta_t\\
+\end{align*}
+That is, $y_t$ will still be the same.
+\end{remark}
+
+\begin{remark}[dimension of state and minimal dimension]
+One can increase the dimension of the state vector without 'adding information'. For example, let $M\in \R^{k\times d},k>d$($M$ is required to have full column rank), and let $M* = (M^TM)^{-1}M^T \in \R^{d\times k}$ be its pseudo inverse, then
+ \begin{align*}
+ Mz_t = MA_tM^*Mz_{t-1} + M\epsilon_t &\implies z_t^* = A_t^* z_{t-1}^* + \epsilon_t^*\\
+ y_t = C_tM^*Mz_{t-1} + \delta_t &\implies y_t = G_t^* z_{t}^* + \delta_t\\
+ \end{align*}
+That is, we increase the dimensionality of the state vector $z_t$ to higher dimension; however, $y_t$ remains the same.\\
+\textbf{note:}
+If $k<d$ or $M$ does not have full column rank, then 
+$(M^TM)^{-1}$ does not exist due to \autoref{ch:linearalgebra:ranklemmaone}. Then we cannot do such transformation without losing information.
+\end{remark}
+
+
+\section{Notes on Bibliography}
+
+
+Introductory level treatment, see \cite{chatfield2003analysis}.
+Intermediate level treatment, see \cite{brockwell2002introduction}\cite{hamilton1994time}\cite{shumway2010time}.
+Advanced level treatment, see \cite{brockwell1991time}
+
+
+For multivariate time series and cointegration, see \cite{tsay2013multivariate}\cite{pfaff2008analysis}\cite{lutkepohl2005new}.
+
+For finanical time series, see \cite{tsay2005analysis}\cite{tsay2013multivariate}\cite{hayashi2000econometrics}.
+
+
+Analysis of Integrated and Cointegrated Time Series with R
+
+
+\printbibliography

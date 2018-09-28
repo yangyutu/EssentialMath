@@ -1,0 +1,634 @@
+
+\begin{refsection}
+\startcontents[chapters]
+\chapter{Deterministic Optimal Control Theory}\label{ch:deterministic-optimal-control-theory}
+	
+\printcontents[chapters]{}{1}{}
+\section{Basic problem}
+\begin{definition}[admissible control and trajectory]
+
+\end{definition}
+
+\begin{definition}[basic problem]
+Given a dynamic system $\dot{x}(t) = a(x(t),u(t),t),x(0)=x_0$, the basic optimal control problem is to maximize the performance measure
+$$\max_{u(x,t)} J(x_0,u(x,t)) = h(x_{t_f},t_f) + \int_{t_0}^{t_f} g(x(t),u(x,t),t) dt$$
+The functional relationship $u^*(x,t)=f(x(t),t)$ that maximize $J$ is called \textbf{optimal control policy} .
+\end{definition}
+
+\begin{definition}[optimal control problem infinite horizon under discount]\index{infinite horizon optimal control}
+Given a dynamic system $\dot{x}(t) = a(x(t),u(t),t),x(0)=x_0$, the optimal control problem for infinite horizon is to maximize the performance measure
+$$\max_{u(x)} J(x_0,u(x_0)) = \int_{t_0}^{\infty} e^{-\gamma (t-t_0)}g(x(t),u(x),t) dt,$$
+where $\gamma \in (0,1)$ is the discount factor, and the functional relationship $u^*(x)=f(x)$ that maximize $J$ is called \textbf{optimal control policy}.
+\end{definition}
+
+\begin{remark}[interpretation]\hfill
+\begin{itemize}
+	\item For different concrete types of performance measure function $g$, see \cite[30]{kirk2012optimal}.
+	\item For infinite horizon problem, the optimal control policy does not have time dependence.
+\end{itemize}
+\end{remark}
+
+
+\begin{definition}[open-loop control]\index{open-loop control}
+If the optimal control is a function of initial state $x_0$ and $t$, that is $u^*(t)=f(x_0,t)$, then the optimal control is open-loop control.
+\end{definition}
+
+\section{Controllability \& observability}\index{controllability}\index{observability}
+\begin{definition}[controllability for discrete-time linear system]
+A $n$ dimensional discrete-time system
+$$x(k+1) = Ax(k) + Bu(k)$$
+is said to be completely controllable if for $x(0) = 0$ and given $x_1$, there exists a finite index $N$ and sequence of control inputs $u(0),u(1),...,u(N-1)$ such that this input sequence will yield $x(N)=x_1$.
+\end{definition}
+
+\begin{remark}[interpretation]\hfill
+\begin{itemize}
+    \item The intuition is that we can use finite steps of control to reach any states.
+    \item The choice of the initial condition $x(0) = 0$ will not lose generality, because for other initial condition we can always arrive at that state using finite steps.
+\end{itemize}
+\end{remark}
+
+\begin{theorem}[controllability criterion]
+\cite[278]{luenberger1979introduction}A discrete-time linear system is completed controllable if and ony if the $n\times nm$ controllability matrix
+$$M=[B,AB,...,A^{n-1}B]$$
+has rank $n$.
+\end{theorem}
+\begin{proof}
+Suppose a sequence of inputs $u(0),u(1),...,u(N-1)$ is applied to the system, with $x(0) = 0$. It follows
+$$x(N) = A^{N-1}Bu(0) + A^{N-2}Bu(1)+\cdots+Bu(N-1).$$
+From here, we can see points in the state space can be reached if and only if they can be expressed as linear combinations of columns of $M$.
+It can be showed that $N = n$ will suffice(see reference).
+\end{proof}
+
+\begin{remark}[caution when $u$ is constrained]
+The above theorem assumes that admissible $u$ is a vector space. If $u$ is constrained, it will not apply. 
+\end{remark}
+
+
+
+\iffalse
+\begin{definition}[observability for discrete-time system] The discrete-time system
+$$x(k+1) = Ax(k),y(k) =Cx(k)$$
+is completely observable if there is a finite index $N$ such that the knowledge of the output $y(0),y(1),...,y(N-1)$ is sufficient to determine the value of the initial state $x(0)$.
+\end{definition}
+
+\begin{theorem}[observability criterion]
+\cite{luenberger1979introduction}The discrete-time linear system is completely observable if and only if the $pn \times n$ observability matrix:
+$$
+\begin{pmatrix}C\\CA\\CA^2\\CA^3\\ \vdots \\CA^{n-1} \end{pmatrix}
+$$
+has rank $n$
+\end{theorem}
+
+
+\fi
+
+%\subsection{Pontryagin's Minimum Principle}
+
+
+\section{Dynamic programming principle}
+\subsection{Principle of optimality}
+\begin{lemma}
+\cite[54]{kirk2012optimal}Let $a-b-e$ be an optimal trajectory in the state space from $a$ to $e$ with associated cost $J_{abc}*$, then $b-e$ is the optimal path from $b$ to $e$.
+\end{lemma}
+Proof: Suppose there is another path $b-f-e$ with less cost than the cost of $b-e$, then the total cost for $a-b-e$ can be reduced, which is a contradiction.
+
+
+\subsection{The Hamilton-Jacobi-Bellman equation (finite horizon)}
+\begin{theorem}[HJB for infinite horizon process]\label{ch:deterministic-optimal-control-theory:th:HJBfinitehorizon} \cite[88]{kirk2012optimal}
+	Let $$V(x(t),t)=\min_{u(\tau),t\leq \tau \leq t_f}[ \int_t^{t_f} g(x(\tau),u(\tau),\tau) d\tau + h(x(t_f),t_f) ].$$
+	Then the HJB equation is given as
+	$$0 = V_t + \min_{u(t)}[ g(x(t),u(t),t) + V_x\dot{x}] $$
+	with boundary condition 
+	$$V(x(t_f),t_f) = h(x(t_f),t_f)$$
+	
+\end{theorem}
+
+\begin{proof}
+Let $$V(x(t),t)=\min_{u(\tau),t\leq \tau \leq t_f}[ \int_t^{t_f} g(x(\tau),u(\tau),\tau) d\tau + h(x(t_f),t_f) ]$$By subdividing the interval, we have
+\begin{align*}
+    V(x(t),t) &=\min_{u(\tau),t\leq \tau \leq t_f}[ \int_t^{t_f} g(x(\tau),u(\tau),\tau) d\tau + h(x(t_f),t_f) ]\\
+    &= \min_{u(\tau),t\leq \tau \leq t_f}[ \int_t^{t + dt} g(x(\tau),u(\tau),\tau) d\tau \\+  & \int_{t+dt}^{t_f} g(x(\tau),u(\tau),\tau) d\tau + h(x(t_f),t_f) ]\\
+    &= \min_{u(t)}[ g(x(t),u(t),t) dt + V(x(t+dt),t+dt)]\\
+    & = \min_{u(t}[ g(x(t),u(t),t) dt + V(x(t),t) + V_t dt + V_x \dot{x}dt]
+\end{align*}
+Then, we have the HJB equation 
+$$0 = V_t + \min_{u(t)}[ g(x(t),u(t),t) + V_x\dot{x}] $$
+with boundary condition 
+$$V(x(t_f),t_f) = h(x(t_f),t_f)$$
+\end{proof}
+
+\begin{remark}
+The function $V(x(t),t)$ is not a function of $u$ since it is the already the minimum value. 
+\end{remark}
+
+\subsection{The Hamilton-Jacobi-Bellman equation (infinite horizon)}
+\begin{lemma}[time independence of value function]
+Define the value function $$V(x(t),t)=\min_{u(\tau),t\leq \tau }[ \int_t^{\infty} \exp(-\gamma (\tau-t)) g(x(\tau),u(\tau),\tau) d\tau ]$$
+then $V$ only depends on $x(t_0)$.
+\end{lemma}
+\begin{proof}
+\begin{align*}
+V(x(t),t)&=\min_{u(\tau),t\leq \tau }[ \int_t^{\infty} \exp(-\gamma (\tau-t))g(x(\tau),u(\tau),\tau) d\tau ]\\
+&=\min_{u(s),0\leq s }[ \int_0^{\infty}\exp(-\gamma s) g(x(s+t),u(s+t),s+t) ds ]\\
+&=\min_{u(s),0\leq 0 }[ \int_0^{\infty}\exp(-\gamma s) g(x(s),u(s),s) ds = V(x(0),0)
+\end{align*}
+where we use variable substitution and the time invariance of $g$.	
+\end{proof}
+
+\begin{theorem}[HJB for infinite horizon process]\label{ch:deterministic-optimal-control-theory:th:HJBinfinitehorizon}
+Let $$V(x(t),t)=\min_{u(\tau),t\leq \tau }[ \int_t^{\infty} \exp(-\gamma (\tau-t)) g(x(\tau),u(\tau),\tau) d\tau ],$$	
+then HJB equation 
+$$0 = \min_{u(t)}[ g(x(t),u(t),t) -\gamma V+ V^T_x \dot{x}] $$
+with boundary condition $V(x(t),t) = C, \forall x\in X$
+\end{theorem}
+
+\begin{proof}
+Let $$V(x(t),t)=\min_{u(\tau),t\leq \tau }[ \int_t^{\infty} \exp(-\gamma (\tau-t)) g(x(\tau),u(\tau),\tau) d\tau ]$$By subdividing the interval, we have
+
+\begin{align*}
+    V(x(t),t) &=\min_{u(\tau),t\leq \tau }[ \int_t^{t_f} \exp(-\gamma (\tau-t) g(x(\tau),u(\tau),\tau) d\tau ]\\
+    &= \min_{u(\tau),t\leq \tau }[ \int_t^{t + dt}  \exp(-\gamma dt) g(x(\tau),u(\tau),\tau) d\tau \\  & + \exp(-\gamma dt) \int_{t+dt}^{\infty} \exp(-\gamma (\tau-t-dt) g(x(\tau),u(\tau),\tau) d\tau  ]\\
+    &= \min_{u(t)}[ g(x(t),u(t),t) dt +  \exp(-\gamma dt) V(x(t+dt),t+dt)]\\
+    & = \min_{u(t)}[ g(x(t),u(t),t) dt + \exp(-\gamma dt) V(x(t),t) + V_x \dot{x}dt]\\
+\end{align*}
+Then, we have the HJB equation 
+$$0 = \min_{u(t)}[ g(x(t),u(t),t) -\gamma V+ V_x \dot{x}] $$
+with boundary condition $V(x(t),t) = C, \forall x\in X$
+where we have used the time independence property of $V$, and $\exp(-\gamma dt) = 1-\gamma dt$
+\end{proof}
+
+\begin{remark}
+If $\gamma = 0$, then there is no discount.
+\end{remark}
+
+
+\section{Linear quadratic control(finite horizon)}
+\begin{definition}[finite horizon linear quadratic control]
+Consider the system state equation given as
+$$\dot{x}(t) = A(t)x(t) + B(t)u(t)$$
+and we want to minimize
+$$J = \frac{1}{2}x^T(t_f)Hx(t_f) + \frac{1}{2}\int_{t_0}^{t_f} x^T(t)Qx(t) + u^T(t)R(t)u(t) dt$$
+where $H$ and $Q$ are real symmetric positive semi-definite matrices, $R$ is a real symmetric positive definite matrix.
+\end{definition}
+
+\begin{remark}
+Note that matrix $R$ has to be positive definite to eliminate the situation that $u(t)$ blows up in order to minimize $J$.
+\end{remark}
+
+
+\begin{theorem}[HJB equation for finite horizon linear quadratic control]
+	Define the value function $$V(x(t),t)=\min_{u(\tau),t\leq \tau \leq t_f}[\frac{1}{2}x^T(t_f)Hx(t_f) + \frac{1}{2}\int_{t_0}^{t_f} x^T(t)Qx(t) + u^T(t)R(t)u(t) dt]$$
+	
+	
+	The HJB equation is given as
+	$$0 = V_t + \frac{1}{2}x^TQx- \frac{1}{2}V^{T}_xBR^{-1}B^TV_x+V^{T}_xAx$$ with boundary condition $V(x(t_f),t_f) = \frac{1}{2}x^T(t_f)Hx(t_f)$.
+\end{theorem}
+\begin{proof}
+Use theorem(\autoref{ch:deterministic-optimal-control-theory:th:HJBfinitehorizon}), we have
+$$0 = V_t + \min_{u(t)}[ g(x(t),u(t),t) + V_x^T\dot{x}].$$
+Note that $\dot{x} = Ax + Bu$, the minimize 
+$$\frac{1}{2}x^T(t)Qx(t) + \frac{1}{2}u^T(t)R(t)u(t) + V_x^T(Ax+Bu)$$
+over $u$.
+The minimizer is given by $u^* = -R^{-1}B^TV_x$.
+Plug in $u^*$ and we will get the result.
+	
+	
+	
+\end{proof}
+
+\begin{remark}[solution to HJB]
+We can propose a solution with quadratic form $V(x(t),t) = \frac{1}{2}x^TH(t)x$ and solve the form of $H(t)$.
+ Also see \cite[93]{kirk2012optimal} for details. 	
+\end{remark}
+
+
+
+\section{Linear quadratic control(infinite horizon)}
+
+\begin{definition}[infinite horizon linear quadratic control]
+Consider the system state equation given as
+$$\dot{x}(t) = Ax(t) + Bu(t)$$
+and we want to minimize
+$$J = \frac{1}{2}\int_{t_0}^{\infty}\exp(-\gamma t)[ x^T(t)Qx(t) + u^T(t)R(t)u(t)] dt$$
+where $H$ and $Q$ are real symmetric positive semi-definite matrices, $R$ is a real symmetric positive definite matrix, and $\gamma$ is the discount factor($\gamma = 0$ means no discount).	
+\end{definition}
+
+
+\begin{remark}
+Note that $R$ has to be positive definite to eliminate the situation that $u(t)$ blows up in order to minimize $J$.
+\end{remark}
+
+
+
+\begin{theorem}
+The HJB equation for the infinite horizon linear quadratic control problem is given as
+$$\gamma V = \frac{1}{2}x^TQx- \frac{1}{2}V^{T}_xBR^{-1}B^TV_x+V^{T}_xAx$$ with boundary condition $V(x(t_0) = 0 ,t_0) = 0$.  
+\end{theorem}
+\begin{proof}
+	Use theorem(\autoref{ch:deterministic-optimal-control-theory:th:HJBinfinitehorizon}), we have
+	$$\gamma V =\min_{u(t)}[ g(x(t),u(t),t) + V_x^T\dot{x}].$$
+	Note that $\dot{x} = Ax + Bu$, the minimize 
+	$$\frac{1}{2}x^T(t)Qx(t) + \frac{1}{2}u^T(t)R(t)u(t) + V_x^T(Ax+Bu)$$
+	over $u$.
+	The minimizer is given by $u^* = -R^{-1}B^TV_x$.
+	Plug in $u^*$ and we will get the result.	
+\end{proof}
+
+\begin{remark}[solution methods]\hfill
+	\begin{itemize}
+		\item See \cite[213]{kirk2012optimal}\cite{wiki:algebraicRiccati} for details on how to solve this nonlinear algebraic equations.
+		\item For infinite horizon case will give a ordinary differential equation instead of a partial differential equation in finite horizon case. 
+		\item We can use finite difference method to solve this ODE.Note that in every interior node, we have a algebraic equation.
+	\end{itemize}
+
+\end{remark}
+
+
+\section{Notes on bibliography}
+For introductory treatment, see \cite{luenberger1979introduction}\cite{kirk2012optimal}.
+
+For applications in finance, see \cite{miranda2004applied}.
+
+For advanced treatment, see \cite{fleming2006controlled}
+
+For introduction to calculus of variations, see \cite{kirk2012optimal}.
+
+numerical solution hamilton jacobi bellman
+
+For treatment of linear state space control, see \cite{williams2007linear}.
+
+\printbibliography
+\end{refsection}
+\begin{refsection}
+
+\chapter{Stochastic Optimal Control}\label{ch:stochastic-optimal-control}
+\minitoc
+\section{Continuous-time stochastic optimal control}
+\subsection{HJB equation for general nonlinear systems}
+\begin{definition}[general nonlinear system control]\cite[421]{stengel2012optimal}\hfill
+	\begin{itemize}
+		\item We are given a continuous-time $n-$dimensional dynamic system
+		$$\dot{x}(t)  =  f(x(t),u(t),t) + L(t)w(t),x(0) = x_0$$
+		where $L(t)\in \R^{n\times s}$, and random disturbance $w(t)$ satisfying 
+		$$E[w(t)] = 0, E[w(t)w(\tau)^T] = W(t)\delta(t-\tau)$$
+		\item The goal is to minimize
+		$$J = E[\phi(x(t_f),t_f) + \int_{t_0}^{t_f} \cL(x(t),u(t),t) dt]$$
+		by choosing $u(t)$ as the control input. The $\phi$ is the terminal cost and $\cL(x,u,t)$ is the instantaneous cost function.
+	\end{itemize}
+\end{definition}
+
+\begin{definition}[value function]
+The value function $V(x,t)$ is defined over the state space and the time interval $[t,t_f]$,given as
+$$V(x(t),t) = \min_{u(t),t\in [t,t_f]} E[\int_t^{t_f} \cL(x(\tau),u(\tau),\tau) d\tau ]$$
+\end{definition}
+
+\begin{remark}[interpretation]
+The value function is a deterministic function and  is the expected optimal cost for the system starting at $x(t)$ at time $t$. 
+\end{remark}
+
+\begin{theorem}[Hamilton-Jacobi-Bellman (HJB) equation]\index{Hamilton-Jacobi-Bellman (HJB) equation}\label{ch:stochastic-optimal-control:HJBequaiton}
+Under optimal control, the value function of the optimal trajectories must satisfy the following HJB equation given as:
+$$\Pa_t V(x,t) = \min_{u(t)} \{\cL(x,u,t) + \nabla_x V(x,t)^T f(x,u) + \frac{1}{2} Tr[\nabla_x^2 V(x,t) L(t)W(t)L(t)^T]  \}$$ 
+\end{theorem}
+\begin{proof}
+\begin{align*}
+V(x+\Delta x, t + \Delta t) &= V(x,t) + \Pa_t V(x,t) \Delta t + \nabla_x V(x,t)^T \Delta x + \frac{1}{2} \Delta x^T \nabla^2_x V(x,t) \Delta x + o(\Delta t) \\
+&=V + \Pa_t V \Delta t + \nabla_x V^T (f + Lw)\Delta t + (f + Lw)^T\nabla^2_x V(x,t)(f + Lw)(\Delta t)^2 + o(\Delta t) \\
+&=V + \Pa_t V \Delta t + \nabla_x V^T (f + Lw)\Delta t + (f + Lw)^T\nabla^2_x V(x,t)(f + Lw)(\Delta t)^2 + o(\Delta t)
+\end{align*}
+where we use $\Delta x = (f + Lw)\Delta t $, the trace of a scalar is the scalar itself and the cyclic rule of matrix trace(\autoref{appendix:th:matrixtraceproperty}).
+\end{proof}
+
+
+
+\subsection{Linear Gaussian quadratic system}\index{linear Gaussian quadratic control}
+
+\begin{definition}[linear Gaussian quadratic control]\cite[421]{stengel2012optimal}\hfill
+	\begin{itemize}
+		\item We are given a continuous-time $n-$dimensional dynamic system
+		$$\dot{x}(t)  =  Fx + Gu + Lw$$
+		where $L(t)\in \R^{n\times s}$, and random disturbance $w(t)$ satisfying 
+		$$E[w(t)] = 0, E[w(t)w(\tau)^T] = W(t)\delta(t-\tau)$$
+		\item The goal is to minimize
+		$$J = \frac{1}{2}E[x^T(t_f)S_fx(t_f) + \int_{t_0}^{t_f}[x(t)^T ~ u(t)^T]\begin{bmatrix}
+		Q(t) & M(t)\\
+		M(t)^T & R(t)
+		\end{bmatrix} \begin{bmatrix}
+		x(t)\\
+		u(t)
+		\end{bmatrix}$$
+		by choosing $u(t)$ as the control input. The $R(t),Q(t)$ are symmetric matrices and $R(t)$ is required to be positive definite. 
+	\end{itemize}
+\end{definition}
+
+
+\begin{theorem}[Hamilton-Jacobi-Bellman (HJB) equation]
+	Under optimal control, the value function of the optimal trajectories must satisfy the following HJB equation given as:
+	$$\Pa_t V(x,t) = -\min_{u(t)} \frac{1}{2}\{x^TQx + 2x^TMu + u^TRu + x^TS(Fx + Gu) + Tr(SLWL^T) \}$$ 
+\end{theorem}
+\begin{proof}
+(use \autoref{ch:stochastic-optimal-control:HJBequaiton}).	
+\end{proof}
+
+
+
+\section{Discrete-time Stochastic dynamic programming }
+\begin{definition}[basic problem of finite horizon]\cite[12]{bertsekas2012dynamic}\hfill
+	\begin{itemize}
+		\item We are given a discrete-time dynamic system
+		$$x_{k+1}  =  f_k(x_k,u_k,w_k)$$
+		where the state $x_k$ is an element of a space $S_k$, the control $u_k$ is an element in the control space $C_k$, and random disturbance $w_k$ is an element of a space $D_k$.
+		\item A control policy $\pi$ is consisting of a sequence of functions
+		$$\pi = \{\mu_0,\mu_1,...,\mu_N\}$$
+		where $\mu_k:S_k\to C_k$ is a function  maps states $x_k$ to $u_k = \mu_k(x_k)$.
+		\item For given cost function $g_k,k=0,1,...,N$, the expected cost of $\pi$ starting at $x_0$ is
+		$$J_\pi(x_0) = E[g_N(x_N) + \sum_{k=0}^{N-1} g_k(x_k,\mu_k(x_k),w_k)]$$
+		where the expectation is taken over the joint distribution of all $w_k$ and $x_k$.
+		\item The goal is to find an optimal control policy $\pi^*$ such that 
+		$$J_{\pi^*}(x_0) = \min_{\pi} J_\pi(x_0)$$
+	\end{itemize}
+\end{definition}
+
+
+\begin{theorem}[Principle of Optimality]\index{Principle of Optimality}
+\cite[18]{bertsekas2012dynamic}
+Let $\pi^* = \{\mu_0^*,\mu_1^*,...,\mu_N^*\}$ be a optimal policy for the basic problem, and assume that when using $\pi^*$, a given state $x_i$ has positive probability. Then the truncated policy $\{\mu_i^*,\mu_{i+1}^*,...,\mu_N^*\}$ is optimal for the subproblem starting at $x_i$
+$$E[g_N(x_N) + \sum_{k=i}^{N-1} g_k(x_k,\mu_k(x_k),w_k)]$$
+\end{theorem}
+
+
+
+\begin{lemma}[dynamic programming algorithm for basic problem of finite horizon]\index{dynamic programming}
+The optimal cost function $J^*$ and its associated optimal control policy $\pi^* = \{\mu_0^*,\mu_1^*,...,\mu_{N-1}^*\}$ can be calculated using the following backward induction procedures:
+$$J^*_N(x_N) = g_N(x_N)$$
+$$J^*_k(x_k) = \min_{\mu_k(x_k)} E_{w_k}[g_k(x_k,u_k,w_k) + J^*_{k+1}(f_k(x_k,\mu_k(x_k),w_k))],k=0,1,...,N-1$$
+\end{lemma}
+\begin{proof}
+Directly from principle of optimality.	
+\end{proof}
+
+
+\begin{remark}[interpretation]
+The lemma provides a way to calculate the optimal control policy.
+\end{remark}
+
+\begin{lemma}[monotonicity property of dynamic programming I]
+If we change the final cost $g_N$ to an uniformly larger cost function $g_N'$(i.e. $g_N'(x) \geq g_N(x),\forall x$), then all optimal cost function $J_k^*$ will be uniformly increasing(at least not decreasing).
+
+Similar situation holds when $g_N$ is changed to an uniformly smaller one.
+\end{lemma}
+\begin{proof}
+Obviously $J_N^{*'} = g_N'$ will uniformly increase. For other $k$ with induction, 
+$$J_k^{*'} = \min E[g_k + J_{k+1}^{*'}] \geq \min E[g_k + J_{k+1}^*] = J^*_k$$
+\end{proof}
+
+
+\begin{lemma}[monotonicity property of dynamic programming II]\cite[60]{bertsekas2012dynamic}
+Consider the basic problem with all functions and sets being time-invariant($S_k=S,g_k=g,f_k = f,...$).
+If in the dynamic programming algorithm we have 
+$$J_{N-1}^*(x) \leq J_N^*(x),\forall x\in S$$
+then
+$$J_{k}^*(x) \leq J_{k+1}^*(x), \forall x\in S, \forall k.$$
+Similarly, if 
+$$J_{N-1}^*(x) \geq J_N^*(x),\forall x\in S$$
+then
+$$J_{k}^*(x) \geq J_{k+1}^*(x), \forall x\in S, \forall k.$$
+\end{lemma}
+
+
+
+\section{Stochastic optimal control in infinite horizon}
+\subsection{Basic problem and the dynamic programming algorithm}
+\begin{definition}[basic problem of infinite horizon]\cite[3]{bertsekas2012dynamic2}\hfill
+	\begin{itemize}
+		\item We are given a \textbf{stationary} discrete-time dynamic system
+		$$x_{k+1}  =  f(x_k,u_k,w_k)$$
+		where the state $x_k$ is an element of a space $S$, the control $u$ is an element in the control space $C$, and random disturbance $w_k$ is an element of a space $D$.
+		\item A \textbf{stationary} control policy $\pi$ is consisting of a sequence of functions
+		$$\pi = \{\mu,\mu,...\}$$
+		where $\mu:S\to C$ is a function  maps states $x_k$ to $u_k = \mu(x_k)$.
+		\item For given cost function $g,k=0,1,...,N$, the expected cost of $\pi$ starting at $x_0$ is
+		$$J_\pi(x_0) = \lim_{N\to\infty}E_{w_k,k=1,...,N}[\sum_{k=0}^N \alpha^k g(x_k,\mu(x_k),w_k)]$$
+		where $\alpha\in [0,1)$ is the discount factor, the expectation is taken over the joint distribution of all $w_k$ and $x_k$.
+		\item The goal is to find an optimal control policy $\pi^*$ such that 
+		$$J_{\pi^*}(x_0) = \min_{\pi} J_\pi(x_0)$$
+	\end{itemize}
+\end{definition}
+
+\begin{remark}[what stationarity means?]\hfill
+\begin{itemize}
+\item Compared to finite horizontal problem, infinite horizon problem requires the dynamical system to be time invariant. 
+\item If $f(x_k,u_k,w_k)$ is state dependent but not time dependent, then the dynamic system is still time-invariant. For example, we can have $f(x_k,u_k,w_k) = A(x_k)x_k + B(x_k)u_k + L(x_k)w_k$, or write as $f(x,u,w) = A(x)x + B(x)u + L(x)w$
+\end{itemize}	
+\end{remark}
+
+
+\begin{definition}[dynamic programming operator]\hfill
+	\begin{itemize}
+		\item $(TJ)(x) = \min_{u\in U(x)} E[g(x,u,w) + \alpha J(f(x,u,w))]$
+		\item $(T_\mu J)(x) =  E[g(x,u,w) + \alpha J(f(x,\mu(x),w))]$
+	\end{itemize}
+\end{definition}
+
+
+\subsection{Convergence analysis}
+
+\begin{lemma}[Monotonicity lemma]\cite[9]{bertsekas2012dynamic2}
+For any functions $J,J':X\to \R$ such that for all $x\in X$,
+$$J(x) \leq J'(x)$$ 
+and any stationary policy $\mu:X\to U$, we have
+$$(T^kJ)(x) \leq (T^kJ')(x)$$
+and
+$$(T^kJ)(x) \leq (T^kJ')(x)$$
+for all $x\in X$ and all $k=1,2,...$
+\end{lemma}
+\begin{proof}
+For $k=1$, we can show its correctness. For other $k$ use induction.
+\end{proof}
+
+
+\begin{lemma}[constant shift lemma]\cite[9]{bertsekas2012dynamic2}
+For every $k$, function $J:X\to \R$, stationary policy $\mu$, scalar $r\in \R$, and $x\in X$, we have
+\begin{align*}
+(T^k(J+r))(x) &= (T^kJ)(x) + \alpha^k r\\
+(T^k_\mu(J+r))(x) &= (T^k_\mu J)(x) + \alpha^k r
+\end{align*}
+\end{lemma}
+\begin{proof}
+For $k=1$, we can show that 
+\begin{align*}
+(T(J+r))(x) &= (T^kJ)(x) + \alpha r\\
+(T_\mu(J+r))(x) &= (T^k_\mu J)(x) + \alpha r
+\end{align*}
+Then we can use induction for other $k$.
+\end{proof}
+
+
+
+\begin{theorem}[dynamic programming operator as a contraction mapping]\index{dynamic programming operator}\cite[18]{bertsekas2012dynamic}\label{ch:stochastic-optimal-control:dynamicprogrammingcontracting}
+	The following two operators defined as the space of bounded functions of $J:X\to \R$
+	\begin{itemize}
+	\item $(TJ)(x) = \min_{u\in U(x)} E[g(x,u,w) + \alpha J(f(x,u,w))]$
+	\item $(T_\mu J)(x) =  E[g(x,u,w) + \alpha J(f(x,\mu(x),w))]$	
+	\end{itemize}
+	are	contracting mappings with respect to the sup-norm/max-norm. Note that the expectation is taken respect to distribution of $w$.
+\end{theorem}
+\begin{proof}
+Denote $$c = \max_{x\in X}\abs{J(x) - J'(x)},$$
+so that for all $x\in X$, we have
+$$J(x) - c \leq J'(x) \leq J(x) + c$$
+Apply $T$ and use Monotonicity and constant shift lemma, we have
+$$TJ - \alpha c \leq TJ' \leq J +\alpha c, \forall x\in X$$
+Therefore
+$$\abs{TJ - TJ'} \leq \alpha c$$
+and 
+$$\max \abs{TJ - TJ'} \leq \alpha \max \abs{J - J'}$$
+\end{proof}
+
+\begin{corollary}[convergence rate]\cite[18]{bertsekas2012dynamic2}
+	For any two bounded functions $J,J':X\to \R$, we have
+	$$\max_{x\in X} \abs{(T^k J)(x) -(T^k J')(x) } \leq \alpha^k \max_{x\in X} \abs{(J)(x) -(J')(x) }$$
+\end{corollary}
+
+\begin{corollary}[convergence rate]\cite[18]{bertsekas2012dynamic2}
+For any two bounded functions $J,J':X\to \R$ and any stationary policy $\mu$, we have
+$$\max_{x\in X} \abs{(T^k_\mu J)(x) -(T^k_\mu J')(x) } \leq \alpha^k \max_{x\in X} \abs{(J)(x) -(J')(x) }$$
+\end{corollary}
+
+
+\begin{remark}[interpretation of convergence]\hfill
+\begin{itemize}
+	\item Any initial $J$ is guaranteed to converge.
+	\item The convergence rate depends on the initial distance between $J$ and $J^*$, and the discount factor. In the extreme case of $\alpha = 0$, convergence is one single step.
+\end{itemize}	
+\end{remark}
+
+
+
+\section{Finite state Markov decision process}\index{Markov decision process}
+\begin{definition}[Markov decision process]\hfill
+	\begin{itemize}
+		\item We are given a \textbf{stationary} discrete-time dynamic system
+		$$x_{k+1}  =  f(x_k,u_k,w_k)$$
+		where the state $x_k$ is an element of a space $S$, the control $u$ is an element in the control space $C$, and random disturbance $w_k$ is an element of a space $D$.
+		\item A \textbf{stationary} control policy $\pi$ is consisting of a sequence of functions
+		$$\pi = \{\mu,\mu,...\}$$
+		where $\mu:S\to C$ is a function  maps states $x_k$ to $u_k = \mu(x_k)$.
+		\item For given cost function $g,k=0,1,...,N$, the expected cost of $\pi$ starting at $x_0$ is
+		$$J_\pi(x_0) = \lim_{N\to\infty}E_{w_k,k=1,...,N}[\sum_{k=0}^N \alpha^k g(x_k,\mu(x_k),w_k)]$$
+		where $\alpha\in [0,1)$ is the discount factor, the expectation is taken over the joint distribution of all $w_k$ and $x_k$.
+		\item The goal is to find an optimal control policy $\pi^*$ such that 
+		$$J_{\pi^*}(x_0) = \min_{\pi} J_\pi(x_0)$$
+	\end{itemize}
+\end{definition}
+
+
+\begin{definition}[dynamic programming operator]\hfill
+	\begin{itemize}
+		\item $(TJ)(i) = \min_{u\in U(i)} g(i,u) + \alpha \sum_{j=1}^n p_{i,j}(u)J(j)],\forall i\in X$
+		\item $(T_\mu J)(i) =  g(i,\mu(i)) + \alpha \sum_{j=1}^n p_{i,j}(\mu(i))J(j)],\forall i\in X$
+	\end{itemize}
+where $\alpha$ is the discount factor.
+\end{definition}
+
+\begin{remark}[representation in linear algebra]
+When the state space is of finite size $N$, we can represent $J$ as a vector in $\R^N$, $P$ as a matrix in $\R^{N\times N}$ and $T, T_\mu:\R^N\to \R^N$ as operators. 
+\end{remark}
+
+
+\begin{lemma}[cost function of a stationary policy]
+	 The cost function associated with a stationary policy $\mu$ is given as 
+	$$J_\mu = T_\mu J_\mu = g_\mu + \alpha P_\mu J_\mu$$
+	which can be solved as
+	$$J_\mu = (I - \alpha P_\mu)^{-1} g_\mu$$
+	And it can be showed that $(I - \alpha P_\mu)$ is non-singular for $\alpha \in [0,1)$
+\end{lemma}
+\begin{proof}
+Since $P_\mu$ is irreducible and aperiodic, we know that all eigenvalues $\lambda$ of $P$ has $\abs{\lambda} \leq 1$ or $\rho(P) \leq 1$.(\autoref{ch:linearalgebra:th:spectralpropertystochasticmatrix}) Then $aP$ has all its eigenvalues $\abs{\lambda} \leq \alpha < 1$(\autoref{ch:linearalgebra:th:eigenvalueproperty}), and therefore $I-\alpha P$ is invertible(\autoref{ch:linearalgebra:singularityfromspectralradius}).  
+\end{proof}
+
+\begin{theorem}[optimal policy via value iteration]
+Given any initial value function $J\in \R^N$, the following iteration 
+$$J(i) = (TJ)(i) = \min_{u\in U(i)} g(i,u) + \sum_{j=1}^n p_{ij}(u)J(j)$$
+will converge to optimal value function $J^*$. And the $\mu$ associated with $J^*$ is the optimal policy.
+\end{theorem}
+\begin{proof}
+Use the fact that the dynamic programming operator $T$ is a contraction mapping. See \autoref{ch:stochastic-optimal-control:dynamicprogrammingcontracting} and \autoref{ch:functional-analysis:sec:contraction-mapping-and-fixed-point-theorems}.
+\end{proof}
+
+
+\section{Model-free reinforcement learning}\index{reinforcement learning}
+
+
+
+\begin{definition}[state-action value function]\index{state-action value function}\cite[16]{wiering2012reinforcement}
+\begin{itemize}
+\item The state-action value function $Q^\pi:S\times A\to \R$ associated with a policy $\pi$ is defined as the expected return starting from state $s$, taking action $a$ and thereafter following the policy $\pi$, given as
+		$$Q^\pi(s,a) = E_\pi \{\sum_{k=0}^\infty \gamma^k r_{t+k}|s_t = s,a_t = a\}$$
+\item The optimal state-action value function $Q^*:S\times A\to \R$  is defined as the expected return starting from state $s$, taking action $a$ and thereafter following an optimal policy $\pi^*$, such that
+$$Q^*(s,a) = \max_{\pi} Q^\pi(s,a) $$
+\item The optimal policy $\pi^*$ is related to $Q^*$ as
+$$\pi^*(s) = \arg \max_a Q^*(s,a).$$  
+\end{itemize}
+\end{definition}
+
+
+\begin{lemma}[recursive relations]
+The optimal state-action value function will satisfy
+		$$Q^*(s,a) = E[r + \gamma \max_{a\in A(s')} Q(s',a')],$$
+where the expectation is taken with respect to the distribution of $s'$(the state after taking $a$ at $s$). 
+The optimal state-action value function is connected to value function via
+		$$V^*(s) = \max_{a} Q^*(s,a)$$	
+\end{lemma}
+
+
+
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\KwIn{discount factor $\gamma$ and learing rate $\alpha$}
+	choose an action $a\in A(s)$ based on the rule:
+	$a = \arg\max_a Q(s,a)$
+	
+	execute the action $Q$.\\
+	
+	observe the new state $s'$ and receive the reward $r$.\\
+
+	$$Q(s,a) = (1-\alpha) Q(s,a) + \alpha(r + \gamma \max_{a\in A(s')} Q(s',a'))$$
+	$s = s_0$
+	
+	
+	\KwOut{The $Q$ function}
+	\caption{Q-learning algorithm}
+\end{algorithm}
+
+\begin{remark}[interpretation of model free]\hfill
+	\begin{itemize}
+		\item Compared to Markov decision process, which requires a transition matrix $P$ as the model, Q learning does not requires a explicit model.
+	\end{itemize}
+\end{remark}
+
+
+\begin{remark}
+	The convergence of $Q$ learning algorithm has been addressed at \cite[495]{bertsekas2012dynamic2}. Essentially, there are two requirements:
+	\begin{itemize}
+		\item All state control pairs $(s,a)$ must be generated infinitely often within the infinitely long sequence $\{(s_k,a_k)\}$.
+		\item The stepsize/learning rate should be diminishing and satisfying the following conditions:
+		$$\alpha_k > 0, \forall k, \sum_{k=1}^\infty \alpha_k = \infty, \sum_{k=1}^\infty \alpha_k^2 < \infty$$
+		One choice would be $\alpha_k = \frac{1}{n}$.
+	\end{itemize}
+\end{remark}
+
+\section{Notes on bibliography}
+
+
+For certainty equivalence, see \cite[160]{bertsekas2012dynamic}
+
+For dynamic programming theory, see abstract dynamic programming.
+
+For reinforcement learning, see \cite{wiering2012reinforcement}.
+
+For applications in finance, see \cite{chang2004stochastic}\cite{pham2009continuous}\cite{bertsekas2012dynamic}.
+
+
+\printbibliography
+\end{refsection}

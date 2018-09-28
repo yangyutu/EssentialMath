@@ -1,0 +1,137 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>gpprior</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-08-30"><meta name="DC.source" content="gpprior.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">gpprior.m</a></li><li><a href="#2">Define the x variable</a></li><li><a href="#3">Define the kernel parameters of interest</a></li><li><a href="#4">Loop over the gamma values</a></li></ul></div><h2>gpprior.m<a name="1"></a></h2><p>Plots realisations from a GP prior using an RBF covariance function</p><p>From A First Course in Machine Learning Simon Rogers, August 2016 [simon.rogers@glasgow.ac.uk]</p><pre class="codeinput">clear <span class="string">all</span>; close <span class="string">all</span>;
+</pre><h2>Define the x variable<a name="2"></a></h2><p>The first step is to define the x values of interest, we'll pick some random ones in the range -5 to 5</p><pre class="codeinput">x = rand(200,1) * 10 - 5;
+x = sort(x);
+</pre><h2>Define the kernel parameters of interest<a name="3"></a></h2><p>We are using an RBF covariance function:</p><p><img src="gpprior_eq10215900389117492238.png" alt="$$k(x_i,x_j) = \alpha\exp\left\{-\gamma(x_n-x_m)^2\right\}$$"></p><pre class="codeinput">gamvals = [0.05,0.1,0.5];
+alpha = 1;
+</pre><h2>Loop over the gamma values<a name="4"></a></h2><p>at each stage, compute the covariance matrix and then sample 5 functions from the GP (i.e. 5 realisations from the N dimensional Gaussian with men zero and covariance equal to the covariance matrix.</p><pre class="codeinput">N = length(x);
+<span class="keyword">for</span> gam = gamvals
+    C = zeros(N);
+    <span class="keyword">for</span> n = 1:N
+        <span class="keyword">for</span> n2 = 1:N
+            C(n,n2) = alpha*exp(-gam*(x(n)-x(n2))^2);
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    <span class="comment">% add some jitter for numerical stability</span>
+    C = C + 1e-6*eye(N);
+    f = mvnrnd(repmat(0,N,1),C,5);
+    figure()
+    plot(x,f,<span class="string">'.'</span>);
+    title(sprintf(<span class="string">'Gamma = %g'</span>,gam));
+    xlabel(<span class="string">'x'</span>);
+    ylabel(<span class="string">'f(x)'</span>);
+    drawnow;
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="gpprior_01.png" alt=""> <img vspace="5" hspace="5" src="gpprior_02.png" alt=""> <img vspace="5" hspace="5" src="gpprior_03.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% gpprior.m
+% Plots realisations from a GP prior using an RBF covariance function
+%
+% From A First Course in Machine Learning
+% Simon Rogers, August 2016 [simon.rogers@glasgow.ac.uk]
+clear all; close all;
+
+%% Define the x variable
+% The first step is to define the x values of interest, we'll pick some
+% random ones in the range -5 to 5
+x = rand(200,1) * 10 - 5;
+x = sort(x);
+
+%% Define the kernel parameters of interest
+% We are using an RBF covariance function:
+% 
+% $$k(x_i,x_j) = \alpha\exp\left\{-\gamma(x_n-x_m)^2\right\}$$
+% 
+gamvals = [0.05,0.1,0.5];
+alpha = 1;
+%% Loop over the gamma values
+% at each stage, compute the covariance matrix and then sample 5 functions
+% from the GP (i.e. 5 realisations from the N dimensional Gaussian with men
+% zero and covariance equal to the covariance matrix.
+N = length(x);
+for gam = gamvals
+    C = zeros(N);
+    for n = 1:N
+        for n2 = 1:N
+            C(n,n2) = alpha*exp(-gam*(x(n)-x(n2))^2);
+        end
+    end
+    % add some jitter for numerical stability
+    C = C + 1e-6*eye(N);
+    f = mvnrnd(repmat(0,N,1),C,5);
+    figure()
+    plot(x,f,'.');
+    title(sprintf('Gamma = %g',gam));
+    xlabel('x');
+    ylabel('f(x)');
+    drawnow;
+end
+##### SOURCE END #####
+--></body></html>

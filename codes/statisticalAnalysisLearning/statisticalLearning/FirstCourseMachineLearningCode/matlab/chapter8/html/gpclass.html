@@ -1,0 +1,533 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>gpclass</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-08-31"><meta name="DC.source" content="gpclass.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">gpclass.m</a></li><li><a href="#2">Binary GP classification (1D) using the Laplace approximation</a></li><li><a href="#3">Set the covariance parameters</a></li><li><a href="#4">Compute the covariance matrix (training)</a></li><li><a href="#5">Generative model - Figure 8.18 in book</a></li><li><a href="#6">Inference of f</a></li><li><a href="#7">Newton-Rapshon procedure for finding the MAP estimate of f</a></li><li><a href="#8">Predictions with the point estimate</a></li><li><a href="#9">Propogating uncertainty through the sigmoid function</a></li><li><a href="#10">Plot the marginal posterior at the training points</a></li><li><a href="#11">And the test predictions</a></li></ul></div><h2>gpclass.m<a name="1"></a></h2><p>Performs binary GP classification with one dimensional data</p><p>From A First Course in Machine Learning Simon Rogers, August 2016 [simon.rogers@glasgow.ac.uk]</p><pre class="codeinput">clear <span class="string">all</span>; close <span class="string">all</span>;
+</pre><h2>Binary GP classification (1D) using the Laplace approximation<a name="2"></a></h2><pre class="codeinput">clear <span class="string">all</span>;close <span class="string">all</span>;
+
+<span class="comment">% If you don't want the exact data from the book, comment the rng line</span>
+<span class="comment">% and the two that slightly change x values</span>
+rng(100);
+N = 10;
+x = rand(N,1);
+x = sort(x);
+x(3) = x(3) + 0.05;
+x(10) = x(10) + 0.05;
+</pre><h2>Set the covariance parameters<a name="3"></a></h2><pre class="codeinput">gamma = 10;
+alpha = 10;
+</pre><h2>Compute the covariance matrix (training)<a name="4"></a></h2><pre class="codeinput"><span class="keyword">for</span> n = 1:N
+    <span class="keyword">for</span> m = 1:N
+        C(n,m) = alpha*exp(-gamma*(x(n)-x(m))^2);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><h2>Generative model - Figure 8.18 in book<a name="5"></a></h2><p>Change the rng parameter to get different datasets</p><pre class="codeinput">rng(84)
+<span class="comment">% Sample a function from the GP prior</span>
+f = mvnrnd(repmat(0,N,1),C);
+figure(1);
+hold <span class="string">off</span>;
+<span class="comment">% Plot the realisations of the function</span>
+plot(x,f,<span class="string">'r+'</span>,<span class="string">'markersize'</span>,10,<span class="string">'linewidth'</span>,2)
+hold <span class="string">on</span>
+xlabel(<span class="string">'x'</span>)
+ylabel(<span class="string">'f(x)'</span>)
+yl = ylim;
+yl(1) = yl(1) - 0.2;
+<span class="comment">% Plot the data points along the x axis</span>
+plot(x,repmat(yl(1),N,1),<span class="string">'ko'</span>,<span class="string">'markersize'</span>,10,<span class="string">'linewidth'</span>,2)
+
+<span class="comment">% Convert the function values to probabilities via a sigmoid function</span>
+figure(2);hold <span class="string">off</span>
+p = 1./(1+exp(-f));
+<span class="comment">% Plot the probabilities</span>
+plot(x,p,<span class="string">'r+'</span>,<span class="string">'markersize'</span>,10,<span class="string">'linewidth'</span>,2)
+ylim([-0.02 1]);
+yl = ylim;
+hold <span class="string">on</span>
+<span class="comment">% Get some random numbers</span>
+u = rand(N,1);
+t = zeros(N,1);
+<span class="comment">% Set the target class to 1 if the random value is less than the probability</span>
+t(u&lt;=p') = 1;
+<span class="comment">% Plot the data agin, coloured according to class</span>
+pos = find(t==0);
+plot(x(pos),repmat(yl(1),length(pos),1),<span class="string">'ko'</span>,<span class="string">'markersize'</span>,10,<span class="string">'linewidth'</span>,2,<span class="string">'markerfacecolor'</span>,[0.6 0.6 0.6]);
+pos = find(t==1);
+plot(x(pos),repmat(yl(1),length(pos),1),<span class="string">'ko'</span>,<span class="string">'markersize'</span>,10,<span class="string">'linewidth'</span>,2,<span class="string">'markerfacecolor'</span>,[1 1 1]);
+set(gca,<span class="string">'ytick'</span>,[0:0.1:1],<span class="string">'yticklabel'</span>,[0:0.1:1])
+xlabel(<span class="string">'x'</span>)
+ylabel(<span class="string">'P(T=1|x)'</span>)
+</pre><img vspace="5" hspace="5" src="gpclass_01.png" alt=""> <img vspace="5" hspace="5" src="gpclass_02.png" alt=""> <h2>Inference of f<a name="6"></a></h2><p>We will start with a point estimate obtained through numerical optimisation</p><h2>Newton-Rapshon procedure for finding the MAP estimate of f<a name="7"></a></h2><p>Initialise f as a vector of zeros</p><pre class="codeinput">f = zeros(N,1);
+<span class="comment">% Pre-compute the inverse of C (for efficiency)</span>
+invC = inv(C);
+
+<span class="comment">% Newton-Raphson procedure (p.300)</span>
+max_its = 10;
+it = 1;
+allf = zeros(max_its,N);
+allf(1,:) = f';
+<span class="keyword">while</span> it &lt; max_its
+    g = 1./(1+exp(-f));
+    gradient = -invC*f + t - g;
+    hessian = -invC - diag(g.*(1-g));
+    f = f - inv(hessian)*gradient;
+    it = it + 1;
+    allf(it,:) = f';
+<span class="keyword">end</span>
+hessian = -invC - diag(g.*(1-g));
+
+figure();hold <span class="string">off</span>
+<span class="comment">% Plot the inferred optimised f values</span>
+plot(x,f,<span class="string">'r+'</span>,<span class="string">'markersize'</span>,10,<span class="string">'linewidth'</span>,2)
+hold <span class="string">on</span>
+<span class="comment">% plot the data</span>
+pos = find(t==0);
+yl = ylim;
+plot(x(pos),repmat(-3.5,length(pos),1),<span class="string">'ko'</span>,<span class="string">'markersize'</span>,15,<span class="string">'markerfacecolor'</span>,[0.6 0.6 0.6])
+pos = find(t==1);
+yl = ylim;
+plot(x(pos),repmat(-3.5,length(pos),1),<span class="string">'ko'</span>,<span class="string">'markersize'</span>,15,<span class="string">'markerfacecolor'</span>,[1 1 1])
+xlim([0 1])
+
+<span class="comment">% Plot the evolution of the f values through the optimisation</span>
+figure();
+plot(allf(1:5,:),<span class="string">'k'</span>)
+xlabel(<span class="string">'Iteration'</span>);
+ylabel(<span class="string">'f'</span>);
+</pre><img vspace="5" hspace="5" src="gpclass_03.png" alt=""> <img vspace="5" hspace="5" src="gpclass_04.png" alt=""> <h2>Predictions with the point estimate<a name="8"></a></h2><p>Define some test points for vidualisation and compute the test covariance</p><pre class="codeinput">testx = [0:0.01:1]';
+Ntest = length(testx);
+<span class="comment">% Compute the required covariance functions</span>
+<span class="keyword">for</span> n = 1:N
+    <span class="keyword">for</span> m = 1:Ntest
+        R(n,m) = alpha*exp(-gamma*(x(n)-testx(m))^2);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="keyword">for</span> n = 1:Ntest
+    <span class="keyword">for</span> m = 1:Ntest
+        Cstar(n,m) = alpha*exp(-gamma*(testx(n) - testx(m))^2);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">% Compute the latent function at the test points</span>
+fs = R'*invC*f;
+
+<span class="comment">% Plot the predictive latent function</span>
+figure();hold <span class="string">off</span>
+plot(testx,fs,<span class="string">'k'</span>,<span class="string">'color'</span>,[0.6 0.6 0.6],<span class="string">'linewidth'</span>,2)
+hold <span class="string">on</span>
+pos = find(t==0);
+yl = ylim;
+plot(x(pos),f(pos),<span class="string">'ko'</span>,<span class="string">'markersize'</span>,15,<span class="string">'markerfacecolor'</span>,[0.6 0.6 0.6])
+pos = find(t==1);
+plot(x(pos),f(pos),<span class="string">'ko'</span>,<span class="string">'markersize'</span>,15,<span class="string">'markerfacecolor'</span>,[1 1 1])
+xlabel(<span class="string">'x'</span>)
+ylabel(<span class="string">'f(x)'</span>)
+
+<span class="comment">% Plot the predictive probabilities</span>
+figure()
+hold <span class="string">off</span>
+plot(testx,1./(1+exp(-fs)),<span class="string">'k'</span>,<span class="string">'linewidth'</span>,2,<span class="string">'color'</span>,[0.6 0.6 0.6])
+hold <span class="string">on</span>
+pos = find(t==0);
+plot(x(pos),1./(1+exp(-f(pos))),<span class="string">'ko'</span>,<span class="string">'markersize'</span>,15,<span class="string">'markerfacecolor'</span>,[0.6 0.6 0.6])
+pos = find(t==1);
+plot(x(pos),1./(1+exp(-f(pos))),<span class="string">'ko'</span>,<span class="string">'markersize'</span>,15,<span class="string">'markerfacecolor'</span>,[1 1 1])
+ylim([-0.03 1])
+xlabel(<span class="string">'x'</span>)
+ylabel(<span class="string">'P(T=1|x)'</span>)
+</pre><img vspace="5" hspace="5" src="gpclass_05.png" alt=""> <img vspace="5" hspace="5" src="gpclass_06.png" alt=""> <h2>Propogating uncertainty through the sigmoid function<a name="9"></a></h2><p>In the previous example, we simply pushed the predictive mean through the sigmoid function. We can also account for the predictive variance. Here we do this by generating lots of samples from the latent function, pushing them all through the sigmoid function and then taking the mean</p><pre class="codeinput"><span class="comment">% Comute the predictive variance</span>
+predvar = diag(Cstar - R'*invC*R);
+<span class="comment">% Watch out for really small values</span>
+predvar(predvar&lt;1e-6) = 1e-6;
+
+<span class="comment">% Generare lots of samples and then average</span>
+Nsamples = 10000;
+u = randn(Ntest,Nsamples).*repmat(sqrt(predvar),1,Nsamples) + repmat(fs,1,Nsamples);
+pavg = mean(1./(1+exp(-u)),2);
+
+<span class="comment">% Plot the resulting predictive probabilities</span>
+figure();
+hold <span class="string">off</span>
+plot(testx,pavg,<span class="string">'k'</span>,<span class="string">'linewidth'</span>,2,<span class="string">'color'</span>,[0.6 0.6 0.6])
+hold <span class="string">on</span>
+pos = find(t==0);
+plot(x(pos),1./(1+exp(-f(pos))),<span class="string">'ko'</span>,<span class="string">'markersize'</span>,15,<span class="string">'markerfacecolor'</span>,[0.6 0.6 0.6])
+pos = find(t==1);
+plot(x(pos),1./(1+exp(-f(pos))),<span class="string">'ko'</span>,<span class="string">'markersize'</span>,15,<span class="string">'markerfacecolor'</span>,[1 1 1])
+
+xlabel(<span class="string">'x'</span>)
+ylabel(<span class="string">'P(T==1|x)'</span>)
+</pre><img vspace="5" hspace="5" src="gpclass_07.png" alt=""> <h2>Plot the marginal posterior at the training points<a name="10"></a></h2><p>Plot the posterior of the latent variables at the training points (mean plus and minus standard deviation)</p><pre class="codeinput">figure();
+hold <span class="string">off</span>
+
+<span class="comment">% Compute the posterior covariance</span>
+covf = -inv(hessian);
+post_sd = sqrt(diag(covf));
+pos = find(t==0);
+errorbar(x(pos),f(pos),post_sd(pos),<span class="string">'ko'</span>,<span class="string">'markersize'</span>,15,<span class="string">'markerfacecolor'</span>,[0.6 0.6 0.6],<span class="string">'linewidth'</span>,2)
+hold <span class="string">on</span>
+pos = find(t==1);
+errorbar(x(pos),f(pos),post_sd(pos),<span class="string">'ko'</span>,<span class="string">'markersize'</span>,15,<span class="string">'markerfacecolor'</span>,[1 1 1],<span class="string">'linewidth'</span>,2)
+xlim([-0.02 1])
+xlabel(<span class="string">'x'</span>)
+ylabel(<span class="string">'f'</span>)
+</pre><img vspace="5" hspace="5" src="gpclass_08.png" alt=""> <h2>And the test predictions<a name="11"></a></h2><p>Add the predictive mean and variance, and some samples to the plots.</p><pre class="codeinput"><span class="comment">% Compute the predictive mean and covariance</span>
+pred_mu = R'*invC*f;
+pred_cov = Cstar - R'*(C\R) + R'*(C\covf)*invC*R;
+pred_cov = pred_cov + 1e-6*eye(Ntest);
+
+figure();
+hold <span class="string">off</span>
+
+<span class="comment">% Sample some predictive functions and plot them</span>
+samps = gausssamp(pred_mu,pred_cov,10);
+plot(testx,samps',<span class="string">'k'</span>,<span class="string">'color'</span>,[0.6 0.6 0.6])
+hold <span class="string">on</span>
+<span class="comment">% Plot the predictive mean and variance</span>
+plot(testx,pred_mu,<span class="string">'k'</span>,<span class="string">'linewidth'</span>,2)
+sd = sqrt(diag(pred_cov));
+plot(testx,pred_mu + sd,<span class="string">'k--'</span>,<span class="string">'linewidth'</span>,2)
+plot(testx,pred_mu - sd,<span class="string">'k--'</span>,<span class="string">'linewidth'</span>,2)
+
+<span class="comment">% Plot the values at the data</span>
+pos = find(t==0);
+errorbar(x(pos),f(pos),post_sd(pos),<span class="string">'ko'</span>,<span class="string">'markersize'</span>,15,<span class="string">'markerfacecolor'</span>,[0.6 0.6 0.6],<span class="string">'linewidth'</span>,2)
+hold <span class="string">on</span>
+pos = find(t==1);
+errorbar(x(pos),f(pos),post_sd(pos),<span class="string">'ko'</span>,<span class="string">'markersize'</span>,15,<span class="string">'markerfacecolor'</span>,[1 1 1],<span class="string">'linewidth'</span>,2)
+xlim([0 1]);
+ylim([-6 6]);
+
+xlabel(<span class="string">'x'</span>)
+ylabel(<span class="string">'f(x)'</span>)
+
+<span class="comment">% Turn each sample into a probability to plot</span>
+figure()
+hold <span class="string">off</span>
+plot(testx,1./(1+exp(-samps')),<span class="string">'k'</span>,<span class="string">'color'</span>,[0.6 0.6 0.6])
+ylim([0 1])
+xlabel(<span class="string">'x'</span>)
+ylabel(<span class="string">'P(T=1|x)'</span>)
+</pre><img vspace="5" hspace="5" src="gpclass_09.png" alt=""> <img vspace="5" hspace="5" src="gpclass_10.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% gpclass.m
+% Performs binary GP classification with one dimensional data
+%
+% From A First Course in Machine Learning
+% Simon Rogers, August 2016 [simon.rogers@glasgow.ac.uk]
+%
+clear all; close all;
+
+%% Binary GP classification (1D) using the Laplace approximation
+clear all;close all;
+
+% If you don't want the exact data from the book, comment the rng line
+% and the two that slightly change x values
+rng(100);
+N = 10;
+x = rand(N,1);
+x = sort(x);
+x(3) = x(3) + 0.05;
+x(10) = x(10) + 0.05;
+
+
+%% Set the covariance parameters
+gamma = 10;
+alpha = 10;
+
+%% Compute the covariance matrix (training)
+for n = 1:N
+    for m = 1:N
+        C(n,m) = alpha*exp(-gamma*(x(n)-x(m))^2);
+    end
+end
+
+%% Generative model - Figure 8.18 in book
+% Change the rng parameter to get different datasets
+rng(84)
+% Sample a function from the GP prior
+f = mvnrnd(repmat(0,N,1),C);
+figure(1);
+hold off;
+% Plot the realisations of the function
+plot(x,f,'r+','markersize',10,'linewidth',2)
+hold on
+xlabel('x')
+ylabel('f(x)')
+yl = ylim;
+yl(1) = yl(1) - 0.2;
+% Plot the data points along the x axis
+plot(x,repmat(yl(1),N,1),'ko','markersize',10,'linewidth',2)
+
+% Convert the function values to probabilities via a sigmoid function
+figure(2);hold off
+p = 1./(1+exp(-f));
+% Plot the probabilities
+plot(x,p,'r+','markersize',10,'linewidth',2)
+ylim([-0.02 1]);
+yl = ylim;
+hold on
+% Get some random numbers
+u = rand(N,1);
+t = zeros(N,1);
+% Set the target class to 1 if the random value is less than the probability
+t(u<=p') = 1;
+% Plot the data agin, coloured according to class
+pos = find(t==0);
+plot(x(pos),repmat(yl(1),length(pos),1),'ko','markersize',10,'linewidth',2,'markerfacecolor',[0.6 0.6 0.6]);
+pos = find(t==1);
+plot(x(pos),repmat(yl(1),length(pos),1),'ko','markersize',10,'linewidth',2,'markerfacecolor',[1 1 1]);
+set(gca,'ytick',[0:0.1:1],'yticklabel',[0:0.1:1])
+xlabel('x')
+ylabel('P(T=1|x)')
+
+
+%% Inference of f
+% We will start with a point estimate obtained through numerical
+% optimisation
+
+%% Newton-Rapshon procedure for finding the MAP estimate of f
+% Initialise f as a vector of zeros
+f = zeros(N,1);
+% Pre-compute the inverse of C (for efficiency)
+invC = inv(C);
+
+% Newton-Raphson procedure (p.300)
+max_its = 10;
+it = 1;
+allf = zeros(max_its,N);
+allf(1,:) = f';
+while it < max_its
+    g = 1./(1+exp(-f));
+    gradient = -invC*f + t - g;
+    hessian = -invC - diag(g.*(1-g));
+    f = f - inv(hessian)*gradient;
+    it = it + 1;
+    allf(it,:) = f';
+end
+hessian = -invC - diag(g.*(1-g));
+
+figure();hold off
+% Plot the inferred optimised f values
+plot(x,f,'r+','markersize',10,'linewidth',2)
+hold on
+% plot the data
+pos = find(t==0);
+yl = ylim;
+plot(x(pos),repmat(-3.5,length(pos),1),'ko','markersize',15,'markerfacecolor',[0.6 0.6 0.6])
+pos = find(t==1);
+yl = ylim;
+plot(x(pos),repmat(-3.5,length(pos),1),'ko','markersize',15,'markerfacecolor',[1 1 1])
+xlim([0 1])
+
+% Plot the evolution of the f values through the optimisation
+figure();
+plot(allf(1:5,:),'k')
+xlabel('Iteration');
+ylabel('f');
+
+%% Predictions with the point estimate
+% Define some test points for vidualisation and compute the test covariance
+testx = [0:0.01:1]';
+Ntest = length(testx);
+% Compute the required covariance functions
+for n = 1:N
+    for m = 1:Ntest
+        R(n,m) = alpha*exp(-gamma*(x(n)-testx(m))^2);
+    end
+end
+
+for n = 1:Ntest
+    for m = 1:Ntest
+        Cstar(n,m) = alpha*exp(-gamma*(testx(n) - testx(m))^2);
+    end
+end
+
+% Compute the latent function at the test points
+fs = R'*invC*f;
+
+% Plot the predictive latent function
+figure();hold off
+plot(testx,fs,'k','color',[0.6 0.6 0.6],'linewidth',2)
+hold on
+pos = find(t==0);
+yl = ylim;
+plot(x(pos),f(pos),'ko','markersize',15,'markerfacecolor',[0.6 0.6 0.6])
+pos = find(t==1);
+plot(x(pos),f(pos),'ko','markersize',15,'markerfacecolor',[1 1 1])
+xlabel('x')
+ylabel('f(x)')
+
+% Plot the predictive probabilities
+figure()
+hold off
+plot(testx,1./(1+exp(-fs)),'k','linewidth',2,'color',[0.6 0.6 0.6])
+hold on
+pos = find(t==0);
+plot(x(pos),1./(1+exp(-f(pos))),'ko','markersize',15,'markerfacecolor',[0.6 0.6 0.6])
+pos = find(t==1);
+plot(x(pos),1./(1+exp(-f(pos))),'ko','markersize',15,'markerfacecolor',[1 1 1])
+ylim([-0.03 1])
+xlabel('x')
+ylabel('P(T=1|x)')
+
+
+
+%% Propogating uncertainty through the sigmoid function
+% In the previous example, we simply pushed the predictive mean through the
+% sigmoid function. We can also account for the predictive variance. Here
+% we do this by generating lots of samples from the latent function,
+% pushing them all through the sigmoid function and then taking the mean
+
+% Comute the predictive variance
+predvar = diag(Cstar - R'*invC*R);
+% Watch out for really small values
+predvar(predvar<1e-6) = 1e-6;
+
+% Generare lots of samples and then average
+Nsamples = 10000;
+u = randn(Ntest,Nsamples).*repmat(sqrt(predvar),1,Nsamples) + repmat(fs,1,Nsamples);
+pavg = mean(1./(1+exp(-u)),2);
+
+% Plot the resulting predictive probabilities
+figure();
+hold off
+plot(testx,pavg,'k','linewidth',2,'color',[0.6 0.6 0.6])
+hold on
+pos = find(t==0);
+plot(x(pos),1./(1+exp(-f(pos))),'ko','markersize',15,'markerfacecolor',[0.6 0.6 0.6])
+pos = find(t==1);
+plot(x(pos),1./(1+exp(-f(pos))),'ko','markersize',15,'markerfacecolor',[1 1 1])
+
+xlabel('x')
+ylabel('P(T==1|x)')
+
+%% Plot the marginal posterior at the training points
+% Plot the posterior of the latent variables at the training points (mean
+% plus and minus standard deviation)
+figure();
+hold off
+
+% Compute the posterior covariance
+covf = -inv(hessian);
+post_sd = sqrt(diag(covf));
+pos = find(t==0);
+errorbar(x(pos),f(pos),post_sd(pos),'ko','markersize',15,'markerfacecolor',[0.6 0.6 0.6],'linewidth',2)
+hold on
+pos = find(t==1);
+errorbar(x(pos),f(pos),post_sd(pos),'ko','markersize',15,'markerfacecolor',[1 1 1],'linewidth',2)
+xlim([-0.02 1])
+xlabel('x')
+ylabel('f')
+
+
+
+%% And the test predictions
+% Add the predictive mean and variance, and some samples to the plots.
+
+% Compute the predictive mean and covariance
+pred_mu = R'*invC*f;
+pred_cov = Cstar - R'*(C\R) + R'*(C\covf)*invC*R;
+pred_cov = pred_cov + 1e-6*eye(Ntest);
+
+figure();
+hold off
+
+% Sample some predictive functions and plot them
+samps = gausssamp(pred_mu,pred_cov,10);
+plot(testx,samps','k','color',[0.6 0.6 0.6])
+hold on
+% Plot the predictive mean and variance
+plot(testx,pred_mu,'k','linewidth',2)
+sd = sqrt(diag(pred_cov));
+plot(testx,pred_mu + sd,'kREPLACE_WITH_DASH_DASH','linewidth',2)
+plot(testx,pred_mu - sd,'kREPLACE_WITH_DASH_DASH','linewidth',2)
+
+% Plot the values at the data
+pos = find(t==0);
+errorbar(x(pos),f(pos),post_sd(pos),'ko','markersize',15,'markerfacecolor',[0.6 0.6 0.6],'linewidth',2)
+hold on
+pos = find(t==1);
+errorbar(x(pos),f(pos),post_sd(pos),'ko','markersize',15,'markerfacecolor',[1 1 1],'linewidth',2)
+xlim([0 1]);
+ylim([-6 6]);
+
+xlabel('x')
+ylabel('f(x)')
+
+% Turn each sample into a probability to plot
+figure()
+hold off
+plot(testx,1./(1+exp(-samps')),'k','color',[0.6 0.6 0.6])
+ylim([0 1])
+xlabel('x')
+ylabel('P(T=1|x)')
+
+
+
+##### SOURCE END #####
+--></body></html>

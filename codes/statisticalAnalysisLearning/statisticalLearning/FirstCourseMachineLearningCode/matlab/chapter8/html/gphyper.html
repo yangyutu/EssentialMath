@@ -1,0 +1,240 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>gphyper</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-08-31"><meta name="DC.source" content="gphyper.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">gphyper.m</a></li><li><a href="#2">Generate the data set, and set the GP hyperparameters</a></li><li><a href="#3">Compute the covariance function</a></li><li><a href="#4">Sample a true latent function</a></li><li><a href="#5">Vary gamma and ss (noise variance) on a grid and see what the marginal likelihood looks like</a></li><li><a href="#6">Compute the predictive function with the true covariance parameters, the ones that maximise the marginal likelihood and the ones from points A and B</a></li></ul></div><h2>gphyper.m<a name="1"></a></h2><p>Performs binary GP classification with two-dimensional data</p><p>From A First Course in Machine Learning Simon Rogers, August 2016 [simon.rogers@glasgow.ac.uk]</p><pre class="codeinput">clear <span class="string">all</span>;close <span class="string">all</span>
+</pre><h2>Generate the data set, and set the GP hyperparameters<a name="2"></a></h2><p>Change rng for different datasets</p><pre class="codeinput">rng(3)
+ss = 0.05;
+alpha = 1.0;
+gamma = 5.0;
+N = 10;
+x = rand(N,1);
+x = sort(x);
+
+<span class="comment">% Dataset hack for nicer visualisation.</span>
+x(end) = x(end) - 0.04;
+</pre><h2>Compute the covariance function<a name="3"></a></h2><pre class="codeinput">Xdi = (repmat(x,1,length(x)) - repmat(x',length(x),1)).^2;
+C = alpha*exp(-gamma*Xdi);
+</pre><h2>Sample a true latent function<a name="4"></a></h2><pre class="codeinput">f = gausssamp(repmat(0,N,1),C,1);
+
+<span class="comment">% Plot the function</span>
+figure()
+plot(x,f,<span class="string">'ko'</span>,<span class="string">'markersize'</span>,10);
+hold <span class="string">on</span>
+f = f';
+y = f + randn(N,1).*sqrt(ss);
+plot(x,y,<span class="string">'ko'</span>,<span class="string">'markersize'</span>,10,<span class="string">'markerfacecolor'</span>,<span class="string">'k'</span>)
+xlabel(<span class="string">'x'</span>);
+ylabel(<span class="string">'y'</span>);
+</pre><img vspace="5" hspace="5" src="gphyper_01.png" alt=""> <h2>Vary gamma and ss (noise variance) on a grid and see what the marginal likelihood looks like<a name="5"></a></h2><pre class="codeinput">[G,SS] = meshgrid(-5:0.01:5,-5:0.05:0);
+ML = zeros(size(G));
+<span class="keyword">for</span> i = 1:prod(size(G))
+    CSS = alpha*exp(-exp(G(i))*Xdi) + exp(SS(i))*eye(N);
+    ML(i) = -(N/2)*log(2*pi) - 0.5*log(det(CSS)) - 0.5*y'*inv(CSS)*y;
+<span class="keyword">end</span>
+
+<span class="comment">% Contour the results</span>
+figure();
+hold <span class="string">off</span>
+[c,h] = contour(G,SS,ML,[-10:-2],<span class="string">'k'</span>,<span class="string">'linewidth'</span>,2,<span class="string">'color'</span>,[0.6 0.6 0.6]);
+clabel(c,h);
+hold <span class="string">on</span>
+plot(log(gamma),log(ss),<span class="string">'ko'</span>,<span class="string">'markersize'</span>,10,<span class="string">'linewidth'</span>,2,<span class="string">'markerfacecolor'</span>,<span class="string">'k'</span>)
+text(log(gamma)+0.2,log(ss),<span class="string">'True'</span>,<span class="string">'fontsize'</span>,18)
+
+<span class="comment">% Plot some points, as used in the book p.313 (these wont make sense if you</span>
+<span class="comment">% use another dataset)</span>
+[r,c] = find(ML == max(ML(:)),1);
+other_points = [3 -4.5;-4.5 -2.5;G(r,c) SS(r,c)];
+names = {<span class="string">'A'</span>,<span class="string">'B'</span>,<span class="string">'Max'</span>};
+styles = {<span class="string">'k'</span>,<span class="string">'k--'</span>,<span class="string">'b-.'</span>};
+<span class="keyword">for</span> i = 1:length(names)
+    plot(other_points(i,1),other_points(i,2),<span class="string">'ks'</span>,<span class="string">'markersize'</span>,10,<span class="string">'linewidth'</span>,2)
+    text(other_points(i,1)+0.2,other_points(i,2),names{i},<span class="string">'fontsize'</span>,18)
+<span class="keyword">end</span>
+xlabel(<span class="string">'$\log{\gamma}$'</span>,<span class="string">'interpreter'</span>,<span class="string">'latex'</span>);
+ylabel(<span class="string">'$\log{\sigma^2}$'</span>,<span class="string">'interpreter'</span>,<span class="string">'latex'</span>);
+</pre><img vspace="5" hspace="5" src="gphyper_02.png" alt=""> <h2>Compute the predictive function with the true covariance parameters, the ones that maximise the marginal likelihood and the ones from points A and B<a name="6"></a></h2><p>Define a fine grid of test points</p><pre class="codeinput">testx = [0:0.01:1]';
+testXdi = (repmat(x,1,length(testx)) - repmat(testx',length(x),1)).^2;
+testC = alpha*exp(-gamma*testXdi);
+<span class="comment">% Plot them all</span>
+figure();
+hold <span class="string">off</span>
+testf = testC'*inv(C + ss*eye(N))*y;
+plot(testx,testf,<span class="string">'k'</span>,<span class="string">'linewidth'</span>,2)
+hold <span class="string">on</span>
+<span class="keyword">for</span> i = 1:length(names)
+    otherC = exp(-exp(other_points(i,1))*Xdi);
+    othertestC = exp(-exp(other_points(i,1))*testXdi);
+    testf = othertestC'*inv(otherC + exp(other_points(i,2))*eye(N))*y;
+    plot(testx,testf,styles{i},<span class="string">'linewidth'</span>,2,<span class="string">'color'</span>,[0.6 0.6 0.6]);
+<span class="keyword">end</span>
+plot(x,f,<span class="string">'ko'</span>,<span class="string">'markersize'</span>,10,<span class="string">'markerfacecolor'</span>,<span class="string">'w'</span>);
+hold <span class="string">on</span>
+plot(x,y,<span class="string">'ko'</span>,<span class="string">'markersize'</span>,10,<span class="string">'markerfacecolor'</span>,<span class="string">'k'</span>)
+ylim([-1 0.1])
+xlabel(<span class="string">'x'</span>)
+ylabel(<span class="string">'f'</span>)
+</pre><img vspace="5" hspace="5" src="gphyper_03.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% gphyper.m
+% Performs binary GP classification with two-dimensional data
+%
+% From A First Course in Machine Learning
+% Simon Rogers, August 2016 [simon.rogers@glasgow.ac.uk]
+%
+clear all;close all
+%% Generate the data set, and set the GP hyperparameters
+% Change rng for different datasets
+rng(3)
+ss = 0.05;
+alpha = 1.0;
+gamma = 5.0;
+N = 10;
+x = rand(N,1);
+x = sort(x);
+
+% Dataset hack for nicer visualisation.
+x(end) = x(end) - 0.04;
+
+%% Compute the covariance function
+Xdi = (repmat(x,1,length(x)) - repmat(x',length(x),1)).^2;
+C = alpha*exp(-gamma*Xdi);
+
+%% Sample a true latent function
+f = gausssamp(repmat(0,N,1),C,1);
+
+% Plot the function
+figure()
+plot(x,f,'ko','markersize',10);
+hold on
+f = f';
+y = f + randn(N,1).*sqrt(ss);
+plot(x,y,'ko','markersize',10,'markerfacecolor','k')
+xlabel('x');
+ylabel('y');
+
+
+%% Vary gamma and ss (noise variance) on a grid and see what the marginal likelihood looks like
+
+[G,SS] = meshgrid(-5:0.01:5,-5:0.05:0);
+ML = zeros(size(G));
+for i = 1:prod(size(G))
+    CSS = alpha*exp(-exp(G(i))*Xdi) + exp(SS(i))*eye(N);
+    ML(i) = -(N/2)*log(2*pi) - 0.5*log(det(CSS)) - 0.5*y'*inv(CSS)*y;
+end
+
+% Contour the results
+figure();
+hold off
+[c,h] = contour(G,SS,ML,[-10:-2],'k','linewidth',2,'color',[0.6 0.6 0.6]);
+clabel(c,h);
+hold on
+plot(log(gamma),log(ss),'ko','markersize',10,'linewidth',2,'markerfacecolor','k')
+text(log(gamma)+0.2,log(ss),'True','fontsize',18)
+
+% Plot some points, as used in the book p.313 (these wont make sense if you
+% use another dataset)
+[r,c] = find(ML == max(ML(:)),1);
+other_points = [3 -4.5;-4.5 -2.5;G(r,c) SS(r,c)];
+names = {'A','B','Max'};
+styles = {'k','kREPLACE_WITH_DASH_DASH','b-.'};
+for i = 1:length(names)
+    plot(other_points(i,1),other_points(i,2),'ks','markersize',10,'linewidth',2)
+    text(other_points(i,1)+0.2,other_points(i,2),names{i},'fontsize',18)
+end
+xlabel('$\log{\gamma}$','interpreter','latex');
+ylabel('$\log{\sigma^2}$','interpreter','latex');
+
+
+
+
+%% Compute the predictive function with the true covariance parameters, the ones that maximise the marginal likelihood and the ones from points A and B
+% Define a fine grid of test points
+testx = [0:0.01:1]';
+testXdi = (repmat(x,1,length(testx)) - repmat(testx',length(x),1)).^2;
+testC = alpha*exp(-gamma*testXdi);
+% Plot them all
+figure();
+hold off
+testf = testC'*inv(C + ss*eye(N))*y;
+plot(testx,testf,'k','linewidth',2)
+hold on
+for i = 1:length(names)
+    otherC = exp(-exp(other_points(i,1))*Xdi);
+    othertestC = exp(-exp(other_points(i,1))*testXdi);
+    testf = othertestC'*inv(otherC + exp(other_points(i,2))*eye(N))*y;
+    plot(testx,testf,styles{i},'linewidth',2,'color',[0.6 0.6 0.6]);
+end
+plot(x,f,'ko','markersize',10,'markerfacecolor','w');
+hold on
+plot(x,y,'ko','markersize',10,'markerfacecolor','k')
+ylim([-1 0.1])
+xlabel('x')
+ylabel('f')
+##### SOURCE END #####
+--></body></html>

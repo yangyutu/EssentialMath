@@ -1,0 +1,26 @@
+%% kernelkmeans.m
+% From A First Course in Machine Learning, Chapter 6.
+% Simon Rogers, 01/11/11 [simon.rogers@glasgow.ac.uk]
+% Kernel K-means
+clear all;close all;
+
+%% Load the data
+load ../data/kmeansnonlindata
+
+%% Plot the data
+figure(1);hold off
+plot(X(:,1),X(:,2),'ko');
+
+%% Compute the kernel
+N = size(X,1);
+K = zeros(N);
+gam = 1;
+for n = 1:N
+    for n2 = 1:N
+        K(n,n2) = exp(-gam*sum((X(n,:)-X(n2,:)).^2));
+    end
+end
+
+%% Run Kernel K-means
+converged = 0;
+Z = 

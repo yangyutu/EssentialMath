@@ -1,0 +1,320 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>gibbs_gp_class</title><meta name="generator" content="MATLAB 8.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-09-01"><meta name="DC.source" content="gibbs_gp_class.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">gibbs_gp_class.m</a></li><li><a href="#2">Generate a dataset</a></li><li><a href="#3">Plot the data</a></li><li><a href="#4">Define a test set for visualisation</a></li><li><a href="#5">Set the hyperparameters and create the covariance matrices</a></li><li><a href="#6">Main sampling loop</a></li><li><a href="#7">Plot the posterior f values</a></li><li><a href="#8">Plot 10 randomly selected samples of f from the posterior</a></li><li><a href="#9">Plot the mean predictive probabilities</a></li></ul></div><h2>gibbs_gp_class.m<a name="1"></a></h2><p>Using gibbs sampling for binary GP classification Gaussian</p><p>From A First Course in Machine Learning Simon Rogers, August 2016 [simon.rogers@glasgow.ac.uk]</p><pre class="codeinput">clear <span class="string">all</span>;close <span class="string">all</span>;
+</pre><h2>Generate a dataset<a name="2"></a></h2><pre class="codeinput">rng(222)
+x = sort(rand(10,1));
+N = length(x);
+t = [repmat(0,5,1);repmat(1,5,1)];
+</pre><h2>Plot the data<a name="3"></a></h2><pre class="codeinput">figure(1);hold <span class="string">off</span>
+pos = find(t==0);
+plot(x(pos),t(pos),<span class="string">'ko'</span>,<span class="string">'markerfacecolor'</span>,[0.6 0.6 0.6],<span class="string">'markersize'</span>,10);
+hold <span class="string">on</span>
+pos = find(t==1);
+plot(x(pos),t(pos),<span class="string">'ko'</span>,<span class="string">'markerfacecolor'</span>,[1 1 1],<span class="string">'markersize'</span>,10);
+xlim([0 1]);
+ylim([-0.05 1.05]);
+set(gca,<span class="string">'ytick'</span>,[0 1])
+</pre><img vspace="5" hspace="5" src="gibbs_gp_class_01.png" alt=""> <h2>Define a test set for visualisation<a name="4"></a></h2><pre class="codeinput">testx = [0:0.01:1]';
+Ntest = length(testx);
+<span class="comment">% Set the number of Gibbs samples to draw</span>
+S = 10000;
+<span class="comment">% Initialise the auxiliary variables, y</span>
+y = randn(size(x));
+y(t==0) = y(t==0) - 2;
+y(t==1) = y(t==1) + 2;
+
+<span class="comment">% Objects to store the sampled values</span>
+allF = zeros(S,N);
+allT = zeros(S,Ntest);
+allFstar = zeros(S,Ntest);
+trainTall = zeros(S,N);
+</pre><h2>Set the hyperparameters and create the covariance matrices<a name="5"></a></h2><pre class="codeinput">gamma = 10.0;
+alpha = 1;
+C = zeros(N);
+R = zeros(N,Ntest);
+<span class="keyword">for</span> n = 1:N
+    <span class="keyword">for</span> m = 1:N
+        C(n,m) = alpha*exp(-gamma*(x(n)-x(m))^2);
+    <span class="keyword">end</span>
+    <span class="keyword">for</span> m = 1:Ntest
+        R(n,m) = alpha*exp(-gamma*(x(n) - testx(m))^2);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><h2>Main sampling loop<a name="6"></a></h2><pre class="codeinput">sif = inv(inv(C) + eye(N));
+Ci = inv(C);
+<span class="comment">% Loop over the number of desired samples</span>
+<span class="keyword">for</span> s = 1:S
+
+    <span class="comment">% Update f</span>
+    f = mvnrnd(sif*y,sif);
+    allF(s,:) = f;
+
+    <span class="comment">% update y (using rejection sampling)</span>
+    <span class="keyword">for</span> n = 1:N
+        finished = 0;
+        <span class="keyword">while</span> ~finished
+            y(n) = randn + f(n);
+            <span class="keyword">if</span> y(n)*(2*t(n)-1) &gt; 0
+                finished = 1;
+            <span class="keyword">end</span>
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+
+    <span class="comment">% Sample a predictive function f^*</span>
+    f_star_mu = R'*Ci*f';
+    f_star_ss = alpha - diag(R'*(C\R));
+
+    <span class="comment">% Look out for -ve values caused by</span>
+
+    f_star = randn(Ntest,1).*sqrt(f_star_ss) + f_star_mu;
+    allFstar(s,:) = f_star';
+
+    <span class="comment">% Use this to make (and store) some predictions</span>
+    y_star = randn(Ntest,1) + f_star;
+    allT(s,:) = (y_star&gt;0)';
+
+    tempy = randn(N,1) + f';
+    trainTall(s,:) = (tempy&gt;0)';
+
+<span class="keyword">end</span>
+</pre><h2>Plot the posterior f values<a name="7"></a></h2><pre class="codeinput">figure();
+hold <span class="string">off</span>
+pos = find(t==0);
+errorbar(x(pos),mean(allF(:,pos)),std(allF(:,pos)),<span class="string">'ko'</span>,<span class="string">'linewidth'</span>,2,<span class="string">'markerfacecolor'</span>,[0.6 0.6 0.6],<span class="string">'markersize'</span>,10)
+hold <span class="string">on</span>
+pos = find(t==1);
+errorbar(x(pos),mean(allF(:,pos)),std(allF(:,pos)),<span class="string">'ko'</span>,<span class="string">'linewidth'</span>,2,<span class="string">'markerfacecolor'</span>,[1 1 1],<span class="string">'markersize'</span>,10)
+xlim([0 1])
+yl = ylim;
+xl = xlim;
+</pre><img vspace="5" hspace="5" src="gibbs_gp_class_02.png" alt=""> <h2>Plot 10 randomly selected samples of f from the posterior<a name="8"></a></h2><pre class="codeinput">nplot = 10;
+order = randperm(S);
+figure();
+hold <span class="string">off</span>
+plot(testx,allFstar(order(1:nplot),:),<span class="string">'k'</span>,<span class="string">'color'</span>,[0.6 0.6 0.6])
+hold <span class="string">on</span>
+<span class="comment">% Add the mean and std to the plot</span>
+plot(testx,mean(allFstar),<span class="string">'k'</span>,<span class="string">'linewidth'</span>,2)
+plot(testx,mean(allFstar)+std(allFstar),<span class="string">'k--'</span>,<span class="string">'linewidth'</span>,2)
+plot(testx,mean(allFstar)-std(allFstar),<span class="string">'k--'</span>,<span class="string">'linewidth'</span>,2)
+pos = find(t==0);
+errorbar(x(pos),mean(allF(:,pos)),std(allF(:,pos)),<span class="string">'ko'</span>,<span class="string">'linewidth'</span>,2,<span class="string">'markerfacecolor'</span>,[0.6 0.6 0.6],<span class="string">'markersize'</span>,10)
+pos = find(t==1);
+errorbar(x(pos),mean(allF(:,pos)),std(allF(:,pos)),<span class="string">'ko'</span>,<span class="string">'linewidth'</span>,2,<span class="string">'markerfacecolor'</span>,[1 1 1],<span class="string">'markersize'</span>,10)
+xlim(xl);
+ylim(yl);
+</pre><img vspace="5" hspace="5" src="gibbs_gp_class_03.png" alt=""> <h2>Plot the mean predictive probabilities<a name="9"></a></h2><pre class="codeinput">figure();
+hold <span class="string">off</span>
+plot(testx,mean(allT),<span class="string">'k'</span>)
+hold <span class="string">on</span>
+traint = mean(trainTall,1);
+pos = find(t==0);
+plot(x(pos),traint(pos),<span class="string">'ko'</span>,<span class="string">'markerfacecolor'</span>,[0.6 0.6 0.6],<span class="string">'markersize'</span>,10);
+pos = find(t==1);
+plot(x(pos),traint(pos),<span class="string">'ko'</span>,<span class="string">'markerfacecolor'</span>,[1 1 1],<span class="string">'markersize'</span>,10);
+</pre><img vspace="5" hspace="5" src="gibbs_gp_class_04.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% gibbs_gp_class.m
+% Using gibbs sampling for binary GP classification
+% Gaussian
+%
+% From A First Course in Machine Learning
+% Simon Rogers, August 2016 [simon.rogers@glasgow.ac.uk]
+%
+clear all;close all;
+
+%% Generate a dataset
+rng(222)
+x = sort(rand(10,1));
+N = length(x);
+t = [repmat(0,5,1);repmat(1,5,1)];
+%% Plot the data
+figure(1);hold off
+pos = find(t==0);
+plot(x(pos),t(pos),'ko','markerfacecolor',[0.6 0.6 0.6],'markersize',10);
+hold on
+pos = find(t==1);
+plot(x(pos),t(pos),'ko','markerfacecolor',[1 1 1],'markersize',10);
+xlim([0 1]);
+ylim([-0.05 1.05]);
+set(gca,'ytick',[0 1])
+
+%% Define a test set for visualisation
+testx = [0:0.01:1]';
+Ntest = length(testx);
+% Set the number of Gibbs samples to draw
+S = 10000;
+% Initialise the auxiliary variables, y
+y = randn(size(x));
+y(t==0) = y(t==0) - 2;
+y(t==1) = y(t==1) + 2;
+
+% Objects to store the sampled values
+allF = zeros(S,N);
+allT = zeros(S,Ntest);
+allFstar = zeros(S,Ntest);
+trainTall = zeros(S,N);
+
+%% Set the hyperparameters and create the covariance matrices
+gamma = 10.0;
+alpha = 1;
+C = zeros(N);
+R = zeros(N,Ntest);
+for n = 1:N
+    for m = 1:N
+        C(n,m) = alpha*exp(-gamma*(x(n)-x(m))^2);
+    end
+    for m = 1:Ntest
+        R(n,m) = alpha*exp(-gamma*(x(n) - testx(m))^2);
+    end
+end
+
+%% Main sampling loop
+
+sif = inv(inv(C) + eye(N));
+Ci = inv(C);
+% Loop over the number of desired samples
+for s = 1:S
+    
+    % Update f
+    f = mvnrnd(sif*y,sif);
+    allF(s,:) = f;
+    
+    % update y (using rejection sampling)
+    for n = 1:N
+        finished = 0;
+        while ~finished
+            y(n) = randn + f(n);
+            if y(n)*(2*t(n)-1) > 0
+                finished = 1;
+            end
+        end
+    end
+    
+    % Sample a predictive function f^*
+    f_star_mu = R'*Ci*f';
+    f_star_ss = alpha - diag(R'*(C\R));
+    
+    % Look out for -ve values caused by 
+    
+    f_star = randn(Ntest,1).*sqrt(f_star_ss) + f_star_mu;
+    allFstar(s,:) = f_star';
+    
+    % Use this to make (and store) some predictions
+    y_star = randn(Ntest,1) + f_star;
+    allT(s,:) = (y_star>0)';
+    
+    tempy = randn(N,1) + f';
+    trainTall(s,:) = (tempy>0)';
+    
+end
+%% Plot the posterior f values
+figure();
+hold off
+pos = find(t==0);
+errorbar(x(pos),mean(allF(:,pos)),std(allF(:,pos)),'ko','linewidth',2,'markerfacecolor',[0.6 0.6 0.6],'markersize',10)
+hold on
+pos = find(t==1);
+errorbar(x(pos),mean(allF(:,pos)),std(allF(:,pos)),'ko','linewidth',2,'markerfacecolor',[1 1 1],'markersize',10)
+xlim([0 1])
+yl = ylim;
+xl = xlim;
+
+%% Plot 10 randomly selected samples of f from the posterior
+nplot = 10;
+order = randperm(S);
+figure();
+hold off
+plot(testx,allFstar(order(1:nplot),:),'k','color',[0.6 0.6 0.6])
+hold on
+% Add the mean and std to the plot
+plot(testx,mean(allFstar),'k','linewidth',2)
+plot(testx,mean(allFstar)+std(allFstar),'kREPLACE_WITH_DASH_DASH','linewidth',2)
+plot(testx,mean(allFstar)-std(allFstar),'kREPLACE_WITH_DASH_DASH','linewidth',2)
+pos = find(t==0);
+errorbar(x(pos),mean(allF(:,pos)),std(allF(:,pos)),'ko','linewidth',2,'markerfacecolor',[0.6 0.6 0.6],'markersize',10)
+pos = find(t==1);
+errorbar(x(pos),mean(allF(:,pos)),std(allF(:,pos)),'ko','linewidth',2,'markerfacecolor',[1 1 1],'markersize',10)
+xlim(xl);
+ylim(yl);
+
+
+%% Plot the mean predictive probabilities
+figure();
+hold off
+plot(testx,mean(allT),'k')
+hold on
+traint = mean(trainTall,1);
+pos = find(t==0);
+plot(x(pos),traint(pos),'ko','markerfacecolor',[0.6 0.6 0.6],'markersize',10);
+pos = find(t==1);
+plot(x(pos),traint(pos),'ko','markerfacecolor',[1 1 1],'markersize',10);
+
+##### SOURCE END #####
+--></body></html>

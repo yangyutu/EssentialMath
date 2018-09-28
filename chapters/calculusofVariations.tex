@@ -1,0 +1,143 @@
+
+\begin{refsection}
+\startcontents[chapters]
+\chapter{Calculus of variations}\label{ch:calculus-of-variations}
+	
+\printcontents[chapters]{}{1}{}
+\section{Fundamentals}
+\subsection{Basic concepts}
+\begin{definition}[functional]
+\cite[109]{kirk2012optimal}
+A functional $J$ is a function mapping from a set of functions defined on a common domain to $\R$.
+\end{definition}
+
+\begin{example}
+$$J(x) = \int_{a}^b x(t)dt$$
+where $x(t)$ is a continuous function defined as $[a,b]$. $J$ is a functional with the domain of all continuous functions defined on $[a,b]$.
+\end{example}
+
+\begin{definition}[variations of a functional]
+\cite[117]{kirk2012optimal} 
+If the increment of a functional $J$ can be written as
+$$\Delta J(x,\delta x) = J(x+\delta x) - J(x) = \delta J(x,\delta x) + g(x,\delta x)\norm{\delta x}$$ 
+where $\delta J$ is \textbf{linear} in $\delta x$ and $$\lim_{\norm{\delta x}\to 0} g(x,\delta x) = 0$$
+then $J$ is said to be differentiable on $x$ and $\delta J$ is variation of $J$ at $x$.
+\end{definition}
+
+\begin{remark}
+The variation of $x$ is written as $\delta x$, which is also an element in the original function spaces. 
+\end{remark}
+
+
+\begin{definition}[Gateaux differential]\index{Gateaux differential}
+\cite[172]{luenberger1969optimization}Let $T$ be a functional defined on $D\subset X$, let $x\in D$, let $h\in X$. If the limit 
+$$\delta T(x;h) = \lim_{a\to 0}\frac{1}{a}(T(x+ah) - T(x)$$
+exists, it is called the Gateaux differential of $T$ at $x$ with increment $h$. If the limit exists for each $h\in X$, $T$ is said to be Gateaux differentiable at $x$.
+\end{definition}
+
+\begin{remark}
+The Gateaux differential generalize the concept of directional derivative in finite dimensional space.
+\end{remark}
+
+\begin{remark}
+The Gateaux differential enables a way to calculate differentials for functionals.
+\end{remark}
+
+\begin{example}
+Let $X = C^0[0,1]$ and let $f(x) = \int_0^1 g(x(t),t)dt$ and it is assumed that the function $g, g_x$ continuous. Then
+$$\delta f(x;h) = \lim_a\to 0 \frac{1}{a} \int_0^1 (g(x + ah(t),t) - g) / a dt|_{\alpha = 0}  = \int_0^1 g_x h(t) dt$$
+where we exchange the integral and differentiation based on conditions given.
+\end{example}
+
+
+\subsection{Optimality of functionals}
+\begin{theorem}[fundamental theorem of calculus of variations, necessary condition]
+\cite[121]{kirk2012optimal}
+If $x^*$ is an extremal, then $$\delta J(x^*,\delta x) = 0 ~\text{for all admissible } ~\delta x$$
+\end{theorem}
+Proof: Suppose $x^*$ is a maximal but there is an admissible $\delta x$ such that $\delta J(x^*,\delta x) > 0 $. Then $J(x^*+a\delta x) = J(x^*) + a\delta J(x^*,\delta x) + g(x^*,a \delta x)\norm{a\delta x}$
+When $a>0$ is small enough, the second terms dominates, and we have $J(x^*+a\delta x) > J(x^*)$, which is contradiction. 
+
+
+\begin{lemma}[fundamental lemma of calculus of variations]\label{ch:calculus-of-variations:th:fundamentallemmaofcalculusofvariations}
+\cite[126]{kirk2012optimal}If a functional $h$ is continuous and 
+$$\int_{t_0}^{t_f} h(t)\delta x(t) dt = 0$$
+for every function $x(t)$ that is continuous in the interval $[t_0,t_f]$, then $h$ must be zero everywhere.
+\end{lemma}
+Proof: assume $h(t_0) > 0$, then because of the continuity of the $h$, there will be a neighborhood $B(t_0,\delta)$ such that $h(t)>0,t\in B(t_0,\delta)$. Therefore, we can construct a function $x(t)$ which is greater than 0 at $B(t_0,\delta)$, then we have contradiction of $\int_{t_0}^{t_f} h(t)\delta x(t) dt \neq 0$
+
+
+\begin{theorem}[Euler Equation]
+Let $$J(x(t))=\int_{t_0}^{t_f} g(x(t),\dot{x}(t),t)dt$$
+the necessary condition for extreme is
+$$\delta J(x^*,\delta x) = 0 \Rightarrow \frac{\partial }{\partial x}g - \frac{\partial}{\partial t}[\frac{\partial}{\partial \dot{x}}g] = 0 $$
+if $x(t_0)$ and $x(t_f)$ are fixed. 
+\end{theorem}
+Proof:
+\begin{align*}
+    \delta J(x^*,\delta x) &= \int_{t_0}^{t_f} \frac{\partial }{\partial x}g \delta x dt + \int_{t_0}^{t_f} \frac{\partial }{\partial \dot{x}}g \delta \dot{x} dt \\
+    & = \int_{t_0}^{t_f} \frac{\partial }{\partial x}g \delta x dt + \frac{\partial }{\partial \dot{x}}g \delta x |^{\delta x(t_f)}_{\delta x(t_0)} - \int_{t_0}^{t_f} \frac{\partial}{\partial t}[\frac{\partial}{\partial \dot{x}}g] \delta x dt = 0
+\end{align*}
+Use the fundamental lemma and the condition $\delta x(t_f) = \delta x(t_0) = 0$ to prove.  
+
+
+\begin{remark}The important facts in the derivation:
+\begin{itemize}
+    \item $\delta x$ is a function parameterized by $t$;
+    \item $\delta \dot{x}$ is not independent of $\delta x$, and they are related via
+    $$\frac{d}{dt} \delta x = \delta \dot{x}$$
+    \item $\int_{t_0}^{t_f} \frac{\partial }{\partial x}g \delta x dt$ can be view as dot product between $\frac{\partial }{\partial x}g $ and $\delta x$
+\end{itemize}
+\end{remark}
+
+
+
+\subsection{Convex analysis for functionals}
+\begin{definition}[convex functional]
+A real-valued functional $f$ defined a convex subset $C$ of a linear vector space is convex if $$f(\lambda x_1 + (1-\lambda)x_2) \leq \lambda f(x_1) + (1-\lambda) f(x_2) \forall x_1,x_2 \in C, \lambda \in [0,1]$$
+\end{definition}
+
+\begin{example}
+On $L^2[0,1]$, the functional 
+$$f(x) = \int_0^1 x^2(t) dt$$
+is convex. It can be showed that
+$$\int_0^1 (\lambda x_1 + (1 - \lambda) x_2)^2 dt - \lambda \int_0^1 x_1^2 dt - (1 - \lambda) (1- \lambda) \int_0^1 x_2^2 dt \leq 0 $$
+\end{example}
+
+
+\section{Constrained minimization of functionals}
+\subsection{Equality constraint optimization}
+\begin{definition}[Equality constrained minimization of functional]
+The target problem is to seek a function $w(t)$ to minimize
+$$\min_{w(t)} J(w) = \int_{t_0}^{t_f} g(w(t),\dot{w}(t),t)dt$$	
+where $w(t)\in\R^{n+m}$ is required to satisfy $n$ relationships of the form
+$$f_i(w(t),\dot{w}(t),t) = 0, i = 1,2,...,n.$$
+\end{definition}
+
+\begin{lemma}[first-order necessary condition]\cite[171]{kirk2012optimal}\label{ch:calculus-of-variations:th:firstOrderNecessaryConditionEqualityConstraint}
+Let $\dot{w}(t)$ be the minimizer of the functional optimization problem. Then there exists a function $p^*(t)$ such that 	
+	\begin{align*}
+	&f(w^*(t),\dot{w^*}(t),t) = 0, \forall t\in [t_0,t_f]\\
+	&\frac{\Pa g}{\Pa w}(w^*(t),\dot{w^*}(t),t) + [\frac{\Pa f}{\Pa w}(w^*(t),\dot{w^*}(t),t)]^Tp^*(t) \\
+	& - \frac{d}{dt}[\frac{\Pa g}{\Pa \dot{w}}(w^*(t),\dot{w^*}(t),t) + [\frac{\Pa f}{\Pa \dot{w}}(w^*(t),\dot{w^*}(t),t)]^Tp^*(t)]  
+	\end{align*}
+
+The second equation can be equivalently written as
+$$\frac{\Pa g_a}{\Pa \dot{w}}(w^*(t),\dot{w^*}(t),t) -\frac{d}{dt}[\frac{\Pa g_a}{\Pa w}(\dot{w}(t),\dot{w^*}(t),t)]^Tp^*(t) = 0,$$
+where
+$$g_a(w^*(t),\dot{w^*}(t),t) \triangleq g(w^*(t),\dot{w^*}(t),t) + p^T(t)[f(w^*(t),\dot{w^*}(t),t)]$$
+\end{lemma}
+
+ 
+\begin{remark}[some simplifications]
+If $g$ and $f$ does not depend on $\dot{w}(t)$, then the second equation can be simplified as
+$$\frac{\Pa g}{\Pa w}(w^*(t),\dot{w^*}(t),t) + [\frac{\Pa f}{\Pa w}(w^*(t),\dot{w^*}(t),t)]^Tp^*(t) = 0 
+$$	
+\end{remark} 
+ 
+\section{Notes on bibliography}
+For introductory materials, see \cite{luenberger1969optimization}\cite{kirk2012optimal}.
+
+
+\printbibliography
+\end{refsection}

@@ -1,0 +1,148 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>regls.m</title><meta name="generator" content="MATLAB 7.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2011-10-31"><meta name="DC.source" content="regls.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><h1>regls.m</h1><!--introduction--><p>From A First Course in Machine Learning, Chapter 1. Simon Rogers, 31/10/11 [simon.rogers@glasgow.ac.uk] An example of regularised least squares Data is generated from a linear model and then a fifth order polynomial is fitted. The objective (loss) function that is minimisied is</p><p><img src="regls_eq34991.png" alt="$${\cal L} = \lambda \mathbf{w}^T\mathbf{w} + \sum_{n=1}^N (t_n - f(x_n;\mathbf{w}))^2  $$"></p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Generate the data</a></li><li><a href="#2">Create targets by adding noise</a></li><li><a href="#3">Plot the data</a></li><li><a href="#4">Build up the data so that it has up to fifth order terms</a></li><li><a href="#5">Fit the model with different values of the regularization parameter</a></li></ul></div><h2>Generate the data<a name="1"></a></h2><pre class="codeinput">x = [0:0.2:1]';
+y = 2*x-3;
+</pre><h2>Create targets by adding noise<a name="2"></a></h2><pre class="codeinput">noisevar = 3;
+t = y + sqrt(noisevar)*randn(size(x));
+</pre><h2>Plot the data<a name="3"></a></h2><pre class="codeinput">plot(x,t,<span class="string">'b.'</span>,<span class="string">'markersize'</span>,25);
+</pre><img vspace="5" hspace="5" src="regls_01.png" alt=""> <h2>Build up the data so that it has up to fifth order terms<a name="4"></a></h2><pre class="codeinput">plotX = [0:0.01:1]';
+X = [];
+plotX = [];
+<span class="keyword">for</span> k = 0:5
+    X = [X x.^k];
+    plotX =[plotX plotx.^k];
+<span class="keyword">end</span>
+</pre><h2>Fit the model with different values of the regularization parameter<a name="5"></a></h2><p><img src="regls_eq28643.png" alt="$$\lambda$$"></p><pre class="codeinput">lam = [0 1e-6 1e-2 1e-1];
+<span class="keyword">for</span> l = 1:length(lam)
+</pre><pre class="codeinput">    lambda = lam(l);
+    N = size(x,1);
+    w = inv(X'*X + N*lambda*eye(size(X,2)))*X'*t;
+    figure(1);hold <span class="string">off</span>
+    plot(x,t,<span class="string">'b.'</span>,<span class="string">'markersize'</span>,20);
+    hold <span class="string">on</span>
+    plot(testX,TestX*w,<span class="string">'r'</span>,<span class="string">'linewidth'</span>,2)
+    xlim([-0.1 1.1])
+    xlabel(<span class="string">'$x$'</span>,<span class="string">'interpreter'</span>,<span class="string">'latex'</span>,<span class="string">'fontsize'</span>,15);
+    ylabel(<span class="string">'$f(x)$'</span>,<span class="string">'interpreter'</span>,<span class="string">'latex'</span>,<span class="string">'fontsize'</span>,15);
+    ti = sprintf(<span class="string">'$\\lambda = %g$'</span>,lambda);
+    title(ti,<span class="string">'interpreter'</span>,<span class="string">'latex'</span>,<span class="string">'fontsize'</span>,20)
+</pre><img vspace="5" hspace="5" src="regls_02.png" alt=""> <img vspace="5" hspace="5" src="regls_03.png" alt=""> <img vspace="5" hspace="5" src="regls_04.png" alt=""> <img vspace="5" hspace="5" src="regls_05.png" alt=""> <pre class="codeinput"><span class="keyword">end</span>
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.12<br></p></div><!--
+##### SOURCE BEGIN #####
+%% regls.m
+% From A First Course in Machine Learning, Chapter 1.
+% Simon Rogers, 31/10/11 [simon.rogers@glasgow.ac.uk]
+% An example of regularised least squares
+% Data is generated from a linear model and then a fifth order polynomial
+% is fitted.
+% The objective (loss) function that is minimisied is
+% 
+% 
+% $${\cal L} = \lambda \mathbf{w}^T\mathbf{w} + \sum_{n=1}^N (t_n - f(x_n;\mathbf{w}))^2  $$
+% 
+
+%% Generate the data
+x = [0:0.2:1]';
+y = 2*x-3;
+
+%% Create targets by adding noise
+noisevar = 3;
+t = y + sqrt(noisevar)*randn(size(x));
+
+%% Plot the data
+plot(x,t,'b.','markersize',25);
+
+%% Build up the data so that it has up to fifth order terms
+plotX = [0:0.01:1]';
+X = [];
+plotX = [];
+for k = 0:5
+    X = [X x.^k];
+    plotX =[plotX plotx.^k];
+end
+
+%% Fit the model with different values of the regularization parameter
+%% 
+% $$\lambda$$
+lam = [0 1e-6 1e-2 1e-1];
+for l = 1:length(lam)
+    %%
+    lambda = lam(l);
+    N = size(x,1);
+    w = inv(X'*X + N*lambda*eye(size(X,2)))*X'*t;
+    figure(1);hold off
+    plot(x,t,'b.','markersize',20);
+    hold on
+    plot(testX,TestX*w,'r','linewidth',2)
+    xlim([-0.1 1.1])
+    xlabel('$x$','interpreter','latex','fontsize',15);
+    ylabel('$f(x)$','interpreter','latex','fontsize',15);
+    ti = sprintf('$\\lambda = %g$',lambda);
+    title(ti,'interpreter','latex','fontsize',20)
+end
+
+##### SOURCE END #####
+--></body></html>

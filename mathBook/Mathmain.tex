@@ -1,0 +1,528 @@
+% book example for classicthesis.sty
+\documentclass[oneside,hidelinks,12pt,letterpaper]{scrbook} %KOMA-Script book
+%\documentclass[oneside,hidelinks,12pt,letterpaper,footinclude=true,headinclude=true]{scrbook} % KOMA-Script book
+\usepackage[T1]{fontenc}                
+\usepackage{lipsum}
+%\usepackage[utf8x]{inputenc} 
+\usepackage[makeindex]{imakeidx}
+\usepackage{titletoc}
+
+\usepackage[linedheaders,parts,pdfspacing,manychapters]{classicthesis}
+%http://ctan.mackichan.com/macros/latex/contrib/classicthesis/ClassicThesis.pdf here for the classicthesis manual
+\usepackage[letterpaper,inner=2.5cm,outer=2.5cm,top=3cm,bottom=3cm,bindingoffset=0cm]{geometry}
+
+
+\usepackage{graphicx} % graphics https://www.sharelatex.com/learn/Inserting_Images
+\usepackage[export]{adjustbox}%https://tex.stackexchange.com/questions/57418/crop-an-inserted-image
+
+\graphicspath{ {../figures/}{../}{figures/} }
+\usepackage{chngcntr}
+% https://texblog.org/2014/12/04/continuous-figuretable-numbering-in-latex/
+% number figure and table by chapter
+\counterwithin{figure}{section}
+\counterwithin{table}{section}
+
+
+\usepackage{sgame, tikz} % Game theory packages http://people.tamu.edu/~nsthiago/GameTheory(TNSilva).tex
+\usepackage{caption}
+\captionsetup[figure]{position=top} 
+
+\usepackage{subcaption}%https://tex.stackexchange.com/questions/37581/latex-figures-side-by-side
+
+\setlength{\parindent}{1cm}
+\setlength{\parskip}{0.5em}
+
+\usepackage{savesym}
+%%savesym – Redefine symbols where names conflict
+%% http://tex.stackexchange.com/questions/18541/two-conflicting-packages-in-one-document-doable
+
+\savesymbol{cfoot}
+\savesymbol{chead}
+% this is solve the name conflict problem in fancyhr
+%\usepackage{tocbibind}
+\usepackage[linesnumbered,ruled]{algorithm2e}
+% http://ctan.sharelatex.com/tex-archive/macros/latex/contrib/algorithm2e/doc/algorithm2e.pdf for the algorithm manual
+%\newcommand{\listofalgorithmes}{\tocfile{\listalgorithmcfname}{loa}}
+% http://tex.stackexchange.com/questions/45538/list-of-algorithms-using-algorithm2e
+
+\title{\huge \textbf{Essential Mathematical Modeling Methods}}
+\author{Yuguang Yang \\
+Johns Hopkins University \\yangyutu123@gmail.com }
+\date{September 2015}
+
+\usepackage{mdframed}
+
+
+\usepackage{pgfplots} % https://www.sharelatex.com/learn/Pgfplots_package
+%examples http://pgfplots.sourceforge.net/gallery.html
+\pgfplotsset{width=8cm,compat=1.9}
+
+%https://tex.stackexchange.com/questions/300669/how-can-i-change-font-size-on-x-y-labels
+% https://tex.stackexchange.com/questions/303213/how-to-set-plot-box-aspect-ratio/303273
+\def\axisdefaultwidth{6cm}
+\def\axisdefaultheight{6cm}
+\pgfplotsset{every axis/.append style={
+		label style={font=\Large},
+		tick label style={font=\large} ,
+		axis line style = thick,
+		minor x tick num=4,
+		minor y tick num=4,
+	}
+	%          every axis plot/.append style={very thick}
+}
+\pgfplotsset{every axis plot/.append style={very thick}}
+\pgfplotsset{tick style={thick,black}} % modifies the style ‘every tick’
+\pgfplotsset{minor tick style={thin,black}}
+
+\usepackage{mathtools}
+\usepackage{graphicx}
+
+\usepackage{amssymb}
+\usepackage{amsmath,esint}
+\usepackage{yfonts}
+\usepackage{mathrsfs}
+\usepackage{multirow}
+%\usepackage{biblatex}
+\usepackage[backend=biber,style=nature,sorting=none,refsection=chapter]{biblatex}
+\usepackage{hyperref}
+\hypersetup{
+	colorlinks = true,
+	citecolor=blue,
+	urlcolor=blue
+}
+\makeindex[columns=2, title=Alphabetical Index, intoc]
+\usepackage{marginnote}
+\addbibresource{../references.bib}
+%\bibliography{references.bib}
+%\bibliographystyle{apalike}
+
+\usepackage{nomencl}% for Nomenclatures
+\makenomenclature
+
+\usepackage{shorttoc} % for short table of contents
+
+\usepackage{enumitem}
+%\usepackage{physics}
+%
+\usepackage{float}
+%\restylefloat{table}
+\usepackage[section]{placeins}
+
+\usepackage{rotating}% for vertical table
+\renewcommand{\arraystretch}{1.5} % for table row spacing
+% https://en.wikibooks.org/wiki/LaTeX/Tables
+\setlist{nosep} % or \setlist{noitemsep} to leave space around whole list
+
+\renewcommand*\contentsname{Contents (detailed)}
+\setcounter{tocdepth}{3}
+\setcounter{secnumdepth}{4}
+\usepackage{indentfirst}
+\usepackage{commath}
+\usepackage{bm}  %this is bold and italic
+%\usepackage{lmodern,bm} % this is bold but not italic
+\usepackage{accents}
+\usepackage{xcolor}
+
+% this is for making mini table of contents for each chaper
+\usepackage{minitoc}      
+\setcounter{tocdepth}{5}
+\setcounter{minitocdepth}{4}   
+%\newcommand\cpart[1]{\part[\\sffamily\bfserieshfill#1\hfill]{#1}}
+% this is to change fonts in table of contents
+\renewcommand\cftpartfont{\sffamily\bfseries\large\color{red}}
+\renewcommand\cftpartpagefont{\normalfont\color{blue}}
+
+
+
+
+
+\newcommand{\ubar}[1]{\underaccent{\bar}{#1}}
+\newcommand{\field}[1]  {\mathbb{#1}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\RE}{\bar{\mathbb{R}}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\PP}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\N}         {\field N}
+\newcommand{\Z}         {\field Z}
+\newcommand{\C}         {\field C}
+\newcommand{\Q}         {\field Q}
+\newcommand{\cF}{\mathcal{F}}
+\newcommand{\cG}{\mathcal{G}}
+\newcommand{\cE}{\mathcal{E}}
+\newcommand{\cJ}{\mathcal{J}}
+\newcommand{\cV}{\mathcal{V}}
+\newcommand{\cL}{\mathcal{L}}
+\newcommand{\cH}{\mathcal{H}}
+\newcommand{\cA}{\mathcal{A}}
+\newcommand{\cB}{\mathcal{B}}
+\newcommand{\cC}{\mathcal{C}}
+\newcommand{\cP}{\mathcal{P}}
+\newcommand{\cR}{\mathcal{R}}
+\newcommand{\cN}{\mathcal{N}}
+\newcommand{\cM}{\mathcal{M}}
+\newcommand{\cD}{\mathcal{D}}
+\newcommand{\cX}{\mathcal{X}}
+\newcommand{\cQ}{\mathcal{Q}}
+\newcommand{\cY}{\mathcal{Y}}
+\newcommand{\cW}{\mathcal{W}}
+\newcommand{\cT}{\mathcal{T}}
+\newcommand{\cS}{\mathcal{S}}
+\newcommand{\cI}{\mathcal{I}}
+\newcommand{\cZ}{\mathcal{Z}}
+\newcommand{\cK}{\mathcal{K}}
+\newcommand{\pArrow}{\xrightarrow[ ]{P}}
+
+\newcommand{\sV}{\mathscr{F}}
+\newcommand{\sL}{\mathscr{L}}
+\newcommand*\conj[1]{\overline{#1}}
+\newcommand*\mean[1]{\overline{#1}}
+
+
+
+
+\newcommand{\Pa}{\partial}
+\newcommand{\ip}[1]             {{\left< \, #1 \, \right>}}
+%\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\usepackage{amsthm}
+
+%\usepackage{amsthm}
+\makeatletter
+\def\th@plain{%
+  \thm@notefont{}% same as heading font
+  \itshape % body font
+}
+\def\th@definition{%
+  \thm@notefont{}% same as heading font
+  \normalfont % body font
+}
+\makeatother
+
+
+%\newtheorem{theorem}{Theorem}[section]
+%\newtheorem{mdtheorem}{Theorem}[section]
+
+
+% for these highlighted env using mdframed, search fro The mdframed package handbook for references
+\newmdtheoremenv[%
+linecolor=black,leftmargin=3,%
+linewidth=1pt,%
+rightmargin=3,
+backgroundcolor=gray!40,%
+innertopmargin=0pt,%
+ntheorem]{theorem}{Theorem}[section]
+
+\newmdtheoremenv[%
+linecolor=black,leftmargin=3,%
+linewidth=1pt,%
+rightmargin=3,
+backgroundcolor=gray!40,%
+innertopmargin=0pt,%
+ntheorem]{assumption}{Assumption}[chapter]
+
+\newmdtheoremenv[%
+linecolor=black,leftmargin=3,%
+linewidth=1pt,%
+rightmargin=3,
+backgroundcolor=gray!40,%
+innertopmargin=0pt,%
+ntheorem]{fact}{Fact}[section]
+
+\newmdtheoremenv[%
+linecolor=gray!10,leftmargin=3,%
+rightmargin=3,
+backgroundcolor=gray!5,%
+innertopmargin=0pt,%
+ntheorem]{corollary}{Corollary}[theorem]
+
+\newmdtheoremenv[%
+linecolor=gray!20,leftmargin=3,%
+rightmargin=3,
+backgroundcolor=gray!10,%
+innertopmargin=0pt,%
+ntheorem]{lemma}{Lemma}[section]
+
+\newmdtheoremenv[%
+linecolor=gray!20,leftmargin=3,%
+rightmargin=3,
+backgroundcolor=gray!10,%
+innertopmargin=0pt,%
+ntheorem]{method}{Methodology}[section]
+
+%\newtheorem{lemma}[theorem]{Lemma}
+\newmdtheoremenv[%
+linecolor=green!20,leftmargin=3,%
+rightmargin=3,
+backgroundcolor=green!20,%
+innertopmargin=0pt,%
+ntheorem]{definition}{Definition}[section]
+
+\newmdtheoremenv[%
+linecolor=green!20,leftmargin=3,%
+rightmargin=3,
+backgroundcolor=green!20,%
+innertopmargin=0pt,%
+ntheorem]{problem}{Problem}[section]
+
+\theoremstyle{remark}
+\newmdtheoremenv[%
+linecolor=red!15,leftmargin=3,%
+rightmargin=3,
+backgroundcolor=red!15,%
+innertopmargin=4pt,%
+ntheorem]{example}{Example}[section]
+
+
+
+
+
+% declare a new theorem style https://tex.stackexchange.com/questions/283578/how-to-produce-theorems-in-which-the-color-of-heading-and-body-of-the-theorem-my
+\newtheoremstyle{coloredRemark}%
+{3pt}% Space above
+{3pt}% Space below 
+{\color{black}}% Body font
+{}% Indent amount
+{\bfseries\color{BurntOrange}}% Theorem head font
+{.}% Punctuation after theorem head
+{.5em}% Space after theorem head
+{}% Theorem head spec (can be left empty, meaning ‘normal’)
+
+\theoremstyle{coloredRemark}
+\newtheorem{remark}{Remark}[section]
+
+\newtheoremstyle{coloredNote}%
+{3pt}% Space above
+{3pt}% Space below 
+{\color{black}}% Body font
+{}% Indent amount
+{\bfseries\color{RubineRed}}% Theorem head font
+{.}% Punctuation after theorem head
+{.5em}% Space after theorem head
+{}% Theorem head spec (can be left empty, meaning ‘normal’)
+%\theoremstyle{remark}
+%\newtheorem{example}{Example}[section]
+\theoremstyle{coloredNote}
+\newmdtheoremenv[%
+linecolor=black,leftmargin=3,%
+linewidth=1pt,%
+rightmargin=3,
+backgroundcolor=gray!5,%
+innertopmargin=4pt,%
+ntheorem]{note}{Note}[section]
+
+\newcommand{\lemmaautorefname}{Lemma}
+\newcommand{\corollaryautorefname}{Corollary}
+\newcommand{\definitionautorefname}{Definition}
+\newcommand{\remarkautorefname}{Remark}
+% for header and footer https://www.sharelatex.com/learn/Headers_and_footers
+\usepackage{fancyhdr}
+ \fancypagestyle{plain}{%
+ \fancyhf{}
+\fancyfoot[LO, RE]{\slshape Yuguang Yang  }
+\fancyfoot[RO, LE]{\slshape Essential Mathematical Modeling Methods}}
+\pagestyle{fancy}
+\fancyhf{}
+%\fancyhead[LE,RO]{Essential Mathematical Methods}
+%\fancyhead[RE,LO]{Yuguang Yang}
+\fancyfoot[CE,CO]{\leftmark}
+\fancyfoot[LE,RO]{\thepage}
+\renewcommand{\headrulewidth}{2pt}
+\renewcommand{\footrulewidth}{2pt}
+%\renewcommand{\sectionmark}[1]{\markright{#1}}
+
+\fancyhead[RE,CO]{\fontsize{11}{12}\selectfont\nouppercase\rightmark}
+
+\def\layersep{2.5cm}%neural network http://www.texample.net/tikz/examples/neural-network/
+
+% create a background image
+\usepackage[pages=some]{background}
+\backgroundsetup{
+	scale=1,
+	angle=0,
+	opacity=.4,  %% adjust
+	contents={\includegraphics[width=\paperwidth,height=\paperheight]{coverImg}}
+}
+
+
+\newcommand{\sectionbreak}{\clearpage}% start a new page for each section
+\titleformat{\section}
+{\normalfont\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}
+{\normalfont\normalsize\mdseries}{\thesubsection}{1em}{}
+
+
+%\renewcommand\qedsymbol{$\blacksquare$}
+
+\begin{document}
+
+
+\sloppy
+
+% This declaration makes TeX less fussy about line breaking. This can prevent overfull boxes, but may leave too much space between words. Lasts until a \fussy command is issued. \fussy.
+
+\begin{titlepage}
+%\maketitle
+	\BgThispage
+    \begin{center}
+        \vspace*{1cm}
+        
+        {\huge \textbf{Essential Mathematical Modeling Methods}}
+        
+        \vspace{0.5cm}
+       
+       version 2.0 \\
+%        \textbf{An evolving online book at}\\
+%        \href{      https://github.com/yangyutu/NotesOnMathMethods
+%        }{https://github.com/yangyutu/NotesOnMathMethods}\\
+        \vspace{1.8cm}
+       
+        
+        \vspace{1.5cm}
+         \vspace{2.8cm}
+        {\Large\textbf{Yuguang Yang}}\\
+
+
+        
+    
+        \vspace{3cm}
+   
+        
+    \end{center}
+
+
+
+
+
+\end{titlepage}
+
+
+
+\newpage
+
+\begin{center}
+	\Large
+	\textbf{\huge Notations}
+	
+	\vspace{0.4cm}
+	\large
+	
+	\vspace{0.4cm}
+\end{center}
+
+
+\begin{center}
+	\Large
+	\textbf{Mathematical notation}
+	
+	\vspace{0.4cm}
+	\large
+	
+	\vspace{0.4cm}
+\end{center}
+
+\begin{itemize}
+	\item $\R$: real numbers.
+	\item $\R_+$: nonnegative real numbers.
+	\item $\R_{++}$: positive real numbers.
+	\item $\RE$: extended real numbers.
+	\item $\C$: complex numbers.
+	\item $\F$:real or complex numbers.
+	\item $\Q$: rational numbers.
+	\item $\Z$:integer numbers.
+	\item $\PP$:positive numbers.
+	\item $\cP(\PP)$:positive numbers.
+	\item $\cP_n$: polynomial of degree of n.
+	\item $\N$:natural numbers.
+	\item $\cR(A)$: the range of matrix $A$.
+	\item $\cN(A)$: the null space of matrix $A$. 
+		\item $V$: vector space.
+		\item $det(A)$:the determinant of matrix $A$.
+		\item $rank(A)$:the rank of matrix $A$.
+		\item $\rho(A)$:the spectral radius of matrix $A$.
+		\item $Tr(A)$:the trace of matrix $A$.	
+		\item $L^2[a,b]$:Lebesgue integrable function on $[a,b]$.
+		\item $L^1[a,b]$:Lebesgue integrable function on $[a,b]$.
+		\item $N(0,1)$: standard Gaussian distribution.
+		\item $N(\mu,\sigma^2)$: Gaussian distribution with mean $\mu$ and variance $\sigma^2$.
+		\item $MN(\mu,\Sigma)$: multivariate Gaussian distribution with mean vector $\mu$ and covariance matrix $\Sigma$.
+\end{itemize}
+
+
+
+\newpage
+
+\hypersetup{colorlinks=false}
+\shorttoc{Contents}{0}
+
+\newpage
+
+\listofalgorithms
+\listoffigures
+\listoftables
+
+\dominitoc
+\tableofcontents 
+
+
+
+\hypersetup{
+	colorlinks=true,
+	linkcolor=blue}
+
+\mainmatter
+
+\printnomenclature
+
+
+
+
+
+\part{Mathematical Foundations}
+%\input{../chapers/realAnalysis}
+\input{../chapters/linearAlgebra}
+%\input{chapters/functionalAnalysis}
+%\input{chapters/DifferentialGeometry}
+%\input{chapters/Groups}
+%\input{chapters/probabilityTheory}
+\input{../chapters/statistics}
+
+\input{../chapters/optimization}
+
+\part{Classic Modeling Methods}
+
+
+%\input{../chapters/dynamicalSystem}
+%\input{../chapters/numericalDifferentialEquations}
+%\input{../chapters/optimalControl}
+%\input{../chapters/calculusofVariations}
+%\input{../chapters/gameTheory}
+
+
+
+
+
+\part{Stochastic Modeling Methods}
+
+
+\input{../chapters/stochasticProcess}
+%\input{chapters/MarkovChains}
+%\input{chapters/MonteCarlo}
+\input{../chapters/statisticalModeling}
+%\input{chapters/timeseries}
+
+\part{Statistical Learning}
+\input{../chapters/statisticalLearning}
+\input{../chapters/neutralNetwork}
+%\input{../chapters/naturalLanguageProcessing}
+
+
+
+
+\appendix
+\input{../chapters/appendixContent}
+
+
+
+%\printbibliography[title={Whole bibliography}]
+\printindex
+\end{document}

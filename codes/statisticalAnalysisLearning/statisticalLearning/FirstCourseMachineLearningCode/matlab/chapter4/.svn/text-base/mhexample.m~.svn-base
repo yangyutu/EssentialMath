@@ -1,0 +1,19 @@
+%% mhexample.m
+% From A First Course in Machine Learning, Chapter 4.
+% Simon Rogers, 01/11/11 [simon.rogers@glasgow.ac.uk]
+% Example of Metropolis-Hastings
+clear all;close all;
+
+%% Define the true density as a Gaussian
+mu = [2;3];
+si = [1 0.6;0.6 1];
+
+%% Initialise sampler
+x = rand(2,1);
+
+%% Do N steps
+N = 20;
+for n = 1:N
+    % Propose a new value
+    xs = gausssamp(x,jump_si,1)';
+    

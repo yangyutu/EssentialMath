@@ -1,0 +1,514 @@
+
+\begin{refsection}
+\startcontents[chapters]	
+\chapter{Microhydrodynamics}\label{ch:microhydrodynamics}
+%\minitoc
+	
+\printcontents[chapters]{}{1}{}
+
+
+\section{Fundamental principles}
+
+
+\begin{theorem}[continuity equation, the conservation of mass]\index{continuity equation}\label{ch:numerical-methods:th:continuityequation}
+	The continuity resulted from conservation of mass is given as
+	$$\frac{\Pa \rho}{\Pa t} + \nabla \cdot (\rho  V) = 0.$$
+	
+	Then $\rho$ is a constant,( i.e., incompressible fluid), then
+	we have
+	$$\nabla \cdot V = 0$$
+\end{theorem}
+\begin{proof}
+	Let $M$ be a control volume, the conservation of mass is given as
+	$$\frac{\Pa}{\Pa t}\int_M \rho dv + \int_{\Pa M} \rho V\cdot n ds = 0.$$
+	Then use divergence theorem(\autoref{appendix:th:divergencetheorem}). 
+\end{proof}
+
+
+\begin{theorem}[conservation of momentum, Newton's second law]\label{ch:numerical-methods:th:conservationofmomentum}
+	$$\rho \frac{DV}{dt} = \rho f + \nabla\cdot \tau$$	
+	where $V\in \R^3, f\in \R^3, \tau \in \R^{3\times 3}$
+	In component form we have, 
+	\begin{align*}
+	\rho \frac{Du}{dt} &= \rho f_x + \frac{\Pa \tau_{xx}}{\Pa x} + \frac{\Pa \tau_{yx}}{\Pa y}+\frac{\Pa \tau_{zx}}{\Pa z} \\
+	\rho \frac{Dv}{dt} &= \rho f_y + \frac{\Pa \tau_{xy}}{\Pa x} + \frac{\Pa \tau_{yy}}{\Pa y}+\frac{\Pa \tau_{zy}}{\Pa z} \\
+	\rho \frac{Dw}{dt} &= \rho f_z + \frac{\Pa \tau_{xz}}{\Pa x} + \frac{\Pa \tau_{yz}}{\Pa y}+\frac{\Pa \tau_{zz}}{\Pa z} \\
+	\end{align*}
+\end{theorem}
+
+\begin{remark}[tensor stress model]\label{ch:numerical-methods:remark:tensorstressmodel}
+	The stress tensor $\tau$ can be decompose as
+	$$\tau_{ij} = -p\delta_{ij} + \sigma_{ij}, p\in \R$$
+	and we further \textbf{assume}
+	$$\sigma_{ij} = \lambda \delta_{ij}(\nabla \cdot V) + \mu (\frac{\Pa u_i}{\Pa x_j}+\frac{\Pa u_j}{\Pa x_i}), \lambda = -\frac{2}{3}\mu.$$
+	The fluid whose behavior satisfy above model is called Newtonian.	
+\end{remark}
+
+
+\begin{remark}[Thermodynamic closure, the need of equation of state]
+	Assuming the temperature of the system is constant, then we have three unknowns $v,\rho$ and $p$ with two equations(from conservation of mass and momentum). To close the system, we need to add an equation of state connecting thermodynamic variables $p,\rho$ and $T$. For example, 
+	$$P = \rho ZkT$$
+	where $Z$ is the compressibility and $k$ is the Boltzmann constant. 	
+\end{remark}
+
+\begin{remark}[numerical method for constant temperature(isothermal) compressible fluid]\label{ch:numerical-methods:remark:numericalmethodisothermalcompressiblefluid}
+	For isothermal fluid, we will have initial condition on $v, \rho$ and $p$(calculated from thermodynamic equation). Then the mass and momentum conservation equations will enable us to forward $v, \rho$ and $p$(calculated from thermodynamic equation). 
+\end{remark}
+
+
+
+\begin{lemma}[incompressible Navier-Stokes equation]\index{Euler equation}\cite[19]{zikanov2010essential}
+	The special cases of an incompressible fluid with constant viscosity coefficient $\mu$, the Navier-Stokes equation becomes
+	$$\rho \frac{DV}{Dt} = -\nabla p + \mu \nabla^2 V + \rho f$$
+	$$\nabla \cdot V = 0$$
+	where $V\in \R^3, p\in \R, f\in \R^3,\rho\in \R$.
+	The goal is to solve $v,p$ profile with boundary conditions given only on $v$.
+\end{lemma}
+\begin{proof}
+	From constant density assumption, the continuity equation in \autoref{ch:numerical-methods:th:continuityequation} will reduce to $\nabla \cdot V = 0$. And then use the stress model with constant $\lambda$ in \autoref{ch:numerical-methods:remark:tensorstressmodel} will give us the result.
+\end{proof}
+
+
+\begin{lemma}[pressure equation for incompressible flow]\label{ch:numerical-methods:th:pressureequationincompressibleflow}
+	$$\nabla^2 p = \rho\nabla \cdot (f - V\cdot \nabla V) = \rho \nabla \cdot F,$$
+	where $F = (f - V\cdot \nabla V). $
+\end{lemma}
+
+
+\begin{remark}[The role of pressure in incompressible flow]\cite[197]{zikanov2010essential}
+	\begin{itemize}
+		\item In incompressible flow(which is an un-physical assumption to simply the problem), the thermodynamic closure is not applicable. As a result, we cannot use the same numerical strategy to solve incompressible flow(\autoref{ch:numerical-methods:remark:numericalmethodisothermalcompressiblefluid}).
+		\item The pressure is constructed such that $\nabla p$ will enforce the incompressibility condition $\nabla \cdot V = 0$.
+		\item Apply the divergence operator to the momentum equation, we get
+		$$\nabla^2 p = \rho\nabla \cdot (f - V\cdot \nabla V).$$
+		This is a Poisson equation. From initial condition of $V$, we can solve for initial $P$. 
+	\end{itemize}
+\end{remark}
+
+
+
+\begin{definition}[Euler equation]\index{Euler equation}\cite[19]{zikanov2010essential}
+	The special cases of an incompressible fluid with  $\mu = \lambda = 0$, the Navier-Stokes equation becomes
+	$$\rho \frac{DV}{Dt} = -\nabla p + \rho f, \nabla \cdot V = 0$$
+	where $V\in \R^3, p\in \R, f\in \R^3,\rho\in \R$.
+	
+	The goal is to solve $v,p$ profile with boundary conditions given only on $v$.
+\end{definition}
+
+
+\begin{theorem}[conservation of energy]\cite[25]{zikanov2010essential}
+	The energy conservation equation for fluids is given as
+	$$\frac{\Pa \rho E}{\Pa t} + \nabla \cdot (\rho E\bm{V}) = -\nabla \cdot \bm{q} - \nabla \cdot (p \bm{V}) + \dot{Q} + \rho\cdot \bm{f}\cdot \bm{V}$$
+	where $E$ is the scalar energy field, $\rho$ is the density field, $\bm{V}$ is the velocity field, $\dot{Q}$ is the heat source/sink, $\bm{f}$ is the external forces, and $\bm{q}$ is the heat flux field. 
+\end{theorem}
+
+\subsection{Numerical methods}
+\begin{lemma}[explicit projection scheme for incompressible fluid]\cite[209]{zikanov2010essential}\hfill
+	With given initial condition on $V^0$, we can forward $V,p$ using the following scheme:
+	\begin{itemize}
+		\item Calculate the new pressure $p^{n+1}$ using
+		$$\nabla^2 p^{n+1} = \rho \nabla \cdot F^n$$
+		where $F^n = (f - V^n\cdot \nabla V^n)$
+		\item Predictor:
+		$$V^* = V^n + \Delta t F^n - \frac{\Delta t}{\rho} \nabla p^n$$
+		
+		\item Corrector:
+		$$V^{n+1} = V^* - \frac{\Delta t}{\rho} \nabla (p^{n+1} - p^n)$$
+	\end{itemize}
+	Moreover, it can be showed that the divergence free constraint is enforced every step, i.e., 
+	$$\nabla \cdot V^{n+1} = 0.$$
+\end{lemma}
+\begin{proof}
+	\begin{align*}
+	\nabla \cdot V^{n+1} & = \nabla \cdot V^* - \frac{\Delta t}{\rho} (\nabla^2 p^{n+1} - \nabla^2 p^n) \\
+	&= \nabla \cdot (V^n + \Delta t F^n  - \frac{\Delta t}{\rho} \nabla p^n ) - \frac{\Delta t}{\rho} (\nabla^2 p^{n+1} - \nabla^2 p^n) \\
+	&=\Delta t \nabla \cdot F^n - \frac{\Delta t}{\rho} \nabla^2 p^n - \frac{\Delta t}{\rho} \nabla^2 p^{n+1} + \frac{\Delta t}{\rho} \nabla^2 p^{n} \\
+	&=\Delta t \nabla \cdot F^n - \frac{\Delta t}{\rho} \nabla^2 p^n - \frac{\Delta t}{\rho} \nabla^2 p^{n+1} + \frac{\Delta t}{\rho} \nabla^2 p^{n} = 0.
+	\end{align*}
+\end{proof}
+
+\begin{remark}\hfill
+	\begin{itemize}
+		\item Solve the pressure is the most expensive step.
+		\item The explicit scheme will suffer from the stability issue, which can be solved by implicit method(see references). 
+	\end{itemize}
+\end{remark}
+
+\begin{lemma}\cite[26]{zikanov2010essential}
+	The compressible flow governing equation can be written as the following form:
+	$$\frac{\Pa U}{\Pa t} + \frac{\Pa A}{\Pa x} + \frac{\Pa B}{\Pa y} + \frac{\Pa C}{\Pa z} = Q,$$
+	where
+	\begin{align*}
+	U = \begin{bmatrix}
+	\rho\\
+	\rho u \\
+	\rho v\\
+	\rho w\\
+	\rho E
+	\end{bmatrix},
+	Q = \begin{bmatrix}
+	0\\
+	\rho f_x \\
+	\rho f_y\\
+	\rho f_z\\
+	\dot{Q} + \rho(\bm{f}\cdot \bm{V})
+	\end{bmatrix},
+	A = \begin{bmatrix}
+	\rho u\\
+	\rho u^2 + p -\sigma_{xx} \\
+	\rho uv - \sigma_{xy}\\
+	\rho uw - \sigma_{xz}\\
+	(\rho E + p) u + q_x
+	\end{bmatrix},\\
+	B = \begin{bmatrix}
+	\rho v\\
+	\rho uv -\sigma_{xy} \\
+	\rho v^2 + p - \sigma_{yy}\\
+	\rho vw - \sigma_{yz}\\
+	(\rho E + p) u + q_y
+	\end{bmatrix},
+	C = \begin{bmatrix}
+	\rho w\\
+	\rho uw  -\sigma_{xz} \\
+	\rho vw - \sigma_{zy}\\
+	\rho w^2 + p - \sigma_{zz}\\
+	(\rho E + p) w + q_z
+	\end{bmatrix}.
+	\end{align*}
+	Note that we have seven unknowns $\rho,u,v,w,p,E, T$ and only five governing equations, and we need two thermodynamic equations \cite[21]{zikanov2010essential}  of
+	$$p = \rho ZkT, E = E(T).$$
+\end{lemma}
+
+\begin{remark}[initial condition and boundary conditions]\hfill
+	\begin{itemize}
+		\item The initial conditions are the initial $\rho, u,v, w, E, p, T$ scalar field. 
+		\item The boundary conditions $x,y,z$ should impose on $\rho, u,v, w, E, p, T$ scalar field.  
+		\item See \cite[26]{zikanov2010essential} for detailed discussion.
+	\end{itemize}
+\end{remark}
+
+\begin{remark}[numerical method]
+	We can simply use first-order wave equation numerical method to solve it numerically.
+\end{remark}
+
+\section{Stokes flow}
+\subsection{Basic properties}
+\begin{definition}[Stokes flow equation]\index{Stokes flow equation}
+	$$\rho \frac{\Pa u}{\Pa t} + \rho u\cdot \nabla u  = -\nabla p + \eta \nabla^2 u, u\in\R^3$$
+	rewritten in non-dimensional form in which the pressure is normalized by $\eta U/l$, given as
+	$$Re\rho \frac{\Pa u}{\Pa t} + Re\rho u\cdot \nabla u  = -\nabla p + \eta \nabla^2 u, u\in\R^3$$
+	where $Re = \rho U l /\eta$, $U,l$ are quantities coming from the boundary conditions. 
+	When $Re \ll 1$, we have
+	$$\nabla p = \eta \nabla^2 u, \nabla \cdot u = 0, u\in \R^3.$$
+\end{definition}
+
+
+\begin{remark}
+	The Navier-Stokes equation reduce to the Stokes flow equation when
+	\begin{itemize}
+		\item viscous forces dominates over inertial forces.
+		\item flow speed is slow.
+		\item dimension is small. 
+	\end{itemize}
+\end{remark}
+
+
+\begin{remark}[boundary condition]
+	Note that the boundary condition is usually given as $u = U,\forall x\in \Pa D$. We usually do not have boundary condition for $p$. As a result, $p$ is usually only unique up to an additive constant. 
+\end{remark}
+
+
+
+
+
+
+
+\begin{lemma}[linearity and reversibility of Stokes flow equation]\cite[11]{barthes2012microhydrodynamics}\hfill
+	\begin{itemize}
+		\item \textbf{linearity}.Let $u^1,p^1$ and $u^2,p^2$ be two solutions of Stokes flow equation satisfying the boundary conditions as
+		$$u^1 = U^1, u^2 = U^2, \forall x\in \Pa D.$$
+		Then the flow field $u = \lambda_1 u^1 + \lambda_2 u^2, p = \lambda_1 p^1 + \lambda_2 p^2$ will satisfy the Stokes flow equation 
+		\item \textbf{reversibility}.Let $u, p$ be the solution associated with the boundary condition $U$, then $-u,-p$ will the be solution associated with the boundary condition of $-U$.
+	\end{itemize}
+\end{lemma}
+\begin{proof}
+	(1) Direct plug in to verify. (2) If we set $\lambda_1 = -1, \lambda_2 = 0$, then we can prove it.
+\end{proof}
+
+\begin{lemma}[uniqueness of solution to Stokes flow equation]\cite[12]{barthes2012microhydrodynamics}
+	Let $u^1,p^1$ and $u^2,p^2$ be two solutions of the Stokes flow equation that both satisfy the same boundary condition, i.e., 
+	$$u^1 = U,u^2 = U,\forall x\in \Pa D$$, then 
+	$$u^1 = u^2, p^1-p^2 = C$$
+\end{lemma}
+
+
+
+\begin{lemma}
+	The pressure $p$ of the Stokes flow equation is governed
+	$$\nabla^2 p = 0.$$
+	
+\end{lemma}
+\begin{proof}
+	From
+	$$\nabla p = \eta \nabla^2 u$$
+	take divergence on both sides, we have
+	$$\nabla^2 p = \eta \nabla \cdot \nabla^2 u = \eta \nabla^2 (\nabla \cdot  u) = 0$$
+	due to continuity equation (the exchange of $\nabla^2$ and $\nabla \cdot$ can be directly verified).  
+\end{proof}
+
+
+
+
+
+
+\subsection{Singularity solutions}
+
+
+\begin{theorem}[point force solution, stokelet]\cite[129]{barthes2012microhydrodynamics}
+	A point force $F\in \R^3$ is located at point $y$ in a fluid domain $D$ at rest at infinity. The flow flow field at position $x$ created by this force is governed by
+	$$  \eta \nabla^2 u - \nabla p = F\delta(x-y),u,F\in \R^3$$
+	and 
+	$$\nabla \cdot u = 0$$
+	with boundary condition $u = 0, x\to \infty$.
+	
+	The solution is given as
+	$$u_i(x) = \sum_k \frac{1}{8\pi\mu} G_{ik}(x-y) F_k$$
+	with 
+	$$G_{ik}(x-y) = \frac{\delta_{ik}}{\norm{x-y}} + \frac{(x_i - y_i)(x_k - y_k)}{\norm{x-y}^3}.$$
+More compactly, $$G(x) = \frac{\bm{I}}{r} + \frac{\bm{xx}}{r^3}.$$	
+	The pressure is given as	
+	$$p = \sum_k \frac{1}{8\pi} \frac{2(x_k-y_k)}{\norm{x-y}^3} F_k.$$
+\end{theorem}
+\begin{proof}
+	It can be showed that $p$ satisfying the Poisson equation:
+	$$\nabla^2  p = \nabla \cdot F \delta(x-y).$$ 
+\end{proof}
+
+
+\begin{lemma}[property of Oseen tensor]\cite[130]{barthes2012microhydrodynamics}\cite[50]{kim2013microhydrodynamics}\index{Oseen tensor}\label{ch:microhydrodynamics:th:OseenTensorProperties}
+Given the Oseen tensor defined as
+	$$G(\bm{x}) = \frac{\bm{I}}{r} + \frac{\bm{xx}}{r^3}.$$
+We have: $G$ is symmetric, and	
+	$$\nabla\cdot G(x) = \bm{0}_{3\times 1}$$
+
+	$$\nabla^2 G(x) = \frac{2I}{r^3} - \frac{6\bm{xx}}{r^5}.$$
+	
+	$$(\nabla G)_{ij,k} = \frac{1}{r^3}(-\delta_{ij}x_k + \delta_{jk}x_i + \delta_{ik}x_j) - \frac{3}{r^5}x_ix_jx_k$$
+	$$(\nabla G)_{ij,k} - (\nabla G)_{ik,j} = \frac{2}{r^3}(-\delta_{ij}x_k  + \delta_{ik}x_j) $$
+\end{lemma}
+\begin{proof}
+(1) To show $\nabla\cdot G = 0$, we have
+\begin{align*}
+\frac{\Pa G_{ik}}{\Pa x_i} = \frac{-\delta_{ik}x_i}{r^3} + \frac{\delta_{ii}x_k + \delta_{ik}x_i}{r^3} - \frac{3 x_ix_ix_k}{r^5}  = 0
+\end{align*}
+Note that $\delta_{ii}=3$.
+\end{proof}
+
+
+
+\begin{lemma}[singular solution due to dipole point force]\cite[133]{barthes2012microhydrodynamics}
+Consider two equal and opposite forces $-F$ and $F$ centered near the origin at $-\frac{A}{2}$ and $\frac{A}{2}$. Then at $\norm{x}\gg \norm{A/2}$, we have
+$$\mu(x) = \frac{1}{8\pi \mu} A^T (\nabla G) F.$$
+\end{lemma}
+
+
+\begin{lemma}[singular solution due to point torque force, rotlet]\cite[133]{barthes2012microhydrodynamics}
+	Consider two equal and opposite forces $-F$ and $F$ centered near the origin at $-\frac{A}{2}$ and $\frac{A}{2}$. Then at $\norm{x}\gg \norm{A/2}$, we have
+	$$\bm{u}(x) = \frac{1}{8\pi \mu} A^T \nabla G F = \frac{1}{2}(\nabla G - \nabla G) L.$$
+\end{lemma}
+
+\begin{lemma}[singular solution due to point stresslet force]\cite[133]{barthes2012microhydrodynamics}
+	Consider two equal and opposite forces $-F$ and $F$ centered near the origin at $-\frac{A}{2}$ and $\frac{A}{2}$. Then at $\norm{x}\gg \norm{A/2}$, we have
+	$$\bm{u}(x) = \frac{1}{8\pi \mu} A^T \nabla G F = \frac{1}{2}(\nabla G + \nabla G).$$
+\end{lemma}
+
+\begin{remark}[decompose point force dipole to point stresslet and rotlet]\cite[29]{kim2013microhydrodynamics}
+Given a point force dipole characterized by the distance vector $\bm{A}$ and the force vector $\bm{F}$, we have decompose $$\bm{A}\bm{F} = \bm{S} + \bm{T}$$
+where
+$$\bm{S} = \frac{1}{2}(\bm{AF}+\bm{AF}^T), \bm{T} = \frac{1}{2}(\bm{AF}-\bm{AF}^T).$$c
+\end{remark}
+
+
+
+\begin{lemma}[point source potential flow]\cite[135]{barthes2012microhydrodynamics}
+	A flow 
+	\begin{itemize}
+		\item created by a point source with intensity $4\pi T_0$ centered on the origin
+		\item satisfied Stokes equation
+		$$\eta \nabla^2 \bm{u} - \nabla p = 0, \nabla \cdot \bm{u} = 4\pi T_0\delta(x), T_0 \in \R$$
+	\end{itemize} 
+	is given by
+	$$u_i = T_0\frac{x_i}{r^3}, p=p_0.$$ 
+Note that we have constant pressure field.
+\end{lemma}
+\begin{proof}
+(1)For $\bm{x}\neq 0$, we have
+$$\nabla \cdot u = T_0( \frac{3}{r^3} - \frac{3r^2}{r^5}) = 0.$$
+
+To verify the solution holds at $\bm{x} = 0$, we consider the ball $B$ with radius $R$ containing $\bm{x} = 0$. Integrate within this volume(use \autoref{appendix:th:divergencetheorem}), we have
+$$\int_B \nabla \cdot \bm{u} dV = \int_{\Pa B} T_0 \frac{\bm{x}}{r^3}\cdot \bm{n} dS.$$
+Plug in $$\bm{n} = \frac{\bm{r}}{r}, \bm{x} = \bm{r},$$ we can show
+$$\int_B \nabla \cdot \bm{u} dV = 4\pi T_0.$$
+(2) To show pressure, we know that $\nabla^2 \bm{u} = 0$ due to \autoref{ch:microhydrodynamics:th:commonsolutiontoLaplaceEquation}, then $\nabla p = 0, p = const$.
+
+\end{proof}
+
+
+\begin{lemma}[dipole point source potential flow]\cite[135]{barthes2012microhydrodynamics}\hfill
+	A flow generated from a dipole point source around origin represented by a vector $\bm{T}\in \R^3$
+	$$u_i = -\frac{T_i}{r^3} + \frac{3T_lx_lx_i}{r^5}, p=p_0.$$
+More compactly, 
+$$u = T\cdot \nabla \frac{x}{r^3}$$ 
+\end{lemma}
+\begin{proof}
+Use Taylor expansion:
+$$u^+ = T_0\frac{\bm{x}}{r^3} + \frac{\bm{T}}{2}\cdot \nabla \frac{\bm{x}}{r^3}$$
+$$u^- = -T_0\frac{\bm{x}}{r^3}  -\frac{\bm{T}}{2}\cdot \nabla \frac{\bm{x}}{r^3}.$$
+Add together, we have
+$$\bm{u} = \bm{T} \cdot \frac{\bm{x}}{r^3}.$$
+\end{proof}
+
+\subsection{Boundary integral representation}
+\begin{lemma}[integral representation]\cite[59]{guazzelli2011physical}
+The boundary integral representation is given as
+	$$u_i(x) - u_i(x)^\infty = \int_{S_p} \frac{G_{ij}(x-y)}{8\pi\mu}(-\sigma_{jk}n_k)(y)dS(y),i=1,2,3$$
+where $u^\infty$ is the flow field without disturbance.
+\end{lemma}
+
+
+\begin{lemma}[multiple expansion representation]\index{multiple expansion}
+Use Taylor expansion on $y$, we have
+$$G_{ij}(x-y) = G_{ij}(x) - y_k \frac{\Pa G_{ij}}{\Pa x_k}(x) + \cdots $$
+
+Then
+$$u_i(x) - u_i^\infty(x) = \frac{-F_j^h}{8\pi\mu}G_{ij}(x) +\frac{-M_{jk}^h}{8\pi\mu}\frac{\Pa G_{ij}(x)}{\Pa x_k}$$
+where the zero moment
+$$F_j = \int_{S_p} (\sigma_{jl}n_l)(y)dS(y)$$
+and the first moment
+$$M_{jk} = \int_{S_p} (\sigma_{jl}n_l)(y)y_kdS(y).$$
+\end{lemma}
+\begin{proof}
+straight forward.
+\end{proof}
+
+
+\begin{definition}[stresslet and torque as the decomposition of first force moment]\cite[41,42]{guazzelli2011physical}\index{stresslet}
+Let $M_{ij} = \int_{S_p} \sigma_{ik}n_k x_j dS$.
+Decompose $M$ into symmetric and antisymmetric part such that
+$$M = S + A, S = (M + M^T)/2, A = (M - M^T)/2.$$
+The symmetric portion $S$ is called \textbf{stresslet}, given explicitly as
+$$S_{ij} = \int_{S_p} (\sigma_{ik} x_j + \sigma_{jk} x_i) n_kdS$$
+The antisymetric portion $A$ is called the \textbf{torque}, given explicitly as
+$$A_{ij} = \int_{S_p} (\sigma_{ik} x_j - \sigma_{jk} x_i) n_kdS.$$
+Note that the torque is also defined as
+$$T^h = \int_{S_P} \bm{x}\times\bm{\sigma}\cdot \bm{n}dS.$$
+\end{definition}
+
+\begin{remark}[equivalence of two definitions of torque]
+	
+\end{remark}
+
+\subsection{Solutions for spherical particles }
+
+\begin{lemma}\cite[33,43,53]{guazzelli2011physical}
+Assume the ambient flow is $\bm{u}^\infty = 0$ The flow field generated by a moving sphere located at origin with velocity $\bm{U}$ is given as 
+	$$u = \frac{3a\bm{U}}{4}(\frac{I}{r} + \frac{\bm{xx}}{r^3}) + \frac{a^3\bm{U}}{4}(\frac{I}{r^3} - 3\frac{xx}{r^5}) = \frac{3}{4}a(1+\frac{a^2}{6}\nabla^2)G(\bm{x})\cdot \bm{U}.$$
+The hydrodynamic drag is $\bm{F}^h = -6\pi\eta a \bm{U}$.
+
+The flow field generated by a rotating sphere with angular velocity $\bm{\omega}$ is given as
+$$u = \bm{\omega}\times \bm{x}\frac{a^3}{r^3}.$$
+There is no induced pressure. The hydrodynamic torque is $\bm{T}^h = -8\pi\eta a^3 \bm{\omega}$.
+
+For a sphere of radius $a$ in a straining flow, the sphere does not experience a force or torque, but experience a stresslet 
+$$S_{ij} = \frac{20\pi}{3}\mu a^3 E_{ij}^\infty$$
+\end{lemma}
+\begin{proof}
+(1)Use Oseen Tensor property(\autoref{ch:microhydrodynamics:th:OseenTensorProperties}).
+$$G(x) = \frac{\bm{I}}{r} + \frac{\bm{xx}}{r^3}.$$
+	
+$$\nabla^2 G(x) = \frac{2I}{r^3} - \frac{6\bm{xx}}{r^5}.$$
+\end{proof}
+
+
+
+
+\begin{remark}[connection to singular solutions]\cite[54]{guazzelli2011physical}
+	
+\end{remark}
+
+
+
+\begin{definition}[first order approximation of fluid field]
+	$$u^\infty(x) = u^\infty(x_0) + \nabla u^\infty(x_0) \cdot (x - x_0) + O((x-x_0)^2).$$
+	
+	$$\nabla u^\infty = \Omega^\infty + E^\infty,$$
+where
+$$\Omega^\infty_{ij} = \frac{1}{2}[\frac{\Pa u_i^\infty}{\Pa x_j} -\frac{\Pa u_j^\infty}{\Pa x_i}], E^\infty_{ij} = \frac{1}{2}[\frac{\Pa u_i^\infty}{\Pa x_j} +\frac{\Pa u_j^\infty}{\Pa x_i}].$$
+Note that $\Omega$ is antisymmetric and only contains three independent components.
+\end{definition}
+
+\begin{lemma}[common solutions to Laplace equation]\label{ch:microhydrodynamics:th:commonsolutiontoLaplaceEquation}
+\begin{align*}
+\phi_1 &= \frac{1}{r}\\
+\phi_2 &= \frac{\Pa}{\Pa x_i}(\frac{1}{r})=\frac{x_i}{r^3}\\
+\phi_3 &= \frac{\Pa^2}{\Pa x_i\Pa x_j}(\frac{1}{r})= \frac{\delta_{ij}}{r^3}  - 3\frac{x_ix_j}{r^5}
+\end{align*}
+are solutions to Laplace equation $$\nabla^2 \phi = 0.$$
+\end{lemma}
+
+
+\begin{lemma}[Faxen law]\index{Faxen law}\cite[46]{guazzelli2011physical}\cite[51]{kim2013microhydrodynamics}
+Consider a spherical particle translate and rotate with velocity $\bm{U}^p$ and $\bm{\omega}^p$ in an ambient flow field characterized by $\bm{u}^\infty, \bm{\omega}^\infty, \bm{E}^\infty$. Then, the force $\bm{F}$, torque $\bm{T}$, and stresslet $\bm{S}$ the sphere experiences are given by
+\begin{align*}
+\bm{F} &= 6\pi\mu a[(1 + \frac{a^2}{6})\bm{u}^\infty(\bm{x} = 0) - \bm{U^p}]\\
+\bm{T} &= 8\pi\mu a^3[\bm{\omega}^\infty(\bm{x} = 0) - \bm{\omega^p}]\\
+\bm{S} &= \frac{20}{3}\pi\mu a^3(1 + \frac{a^2}{10}\nabla^2)\bm{E}^\infty(\bm{x} = 0)\\
+\end{align*}
+where $\bm{\omega}^\infty$ is the angular velocity field(not the vorticity field), sometimes written as $\bm{\omega}^\infty = \frac{1}{2}\nabla \times \bm{u}$.
+
+The flow field generated by a spherical particle experienced force $\bm{F}$ is given as
+$$(1+\frac{a^2}{6})J(r^\alpha,r^\beta)\cdot F^\beta$$
+
+The flow field generated by a spherical particle experienced torque $\bm{T}$ is given as
+$$\bm{u}=\frac{\bm{T}}{8\pi \mu)}\times \frac{\bm{x}}{r^3}.$$
+
+
+The fixed sphere in a straining field may be represented by a point stresslet of strength $\frac{20}{3}\pi\mu a^3 E^\infty$ and a degenerate octupole $a^2(S\cdot \nabla) \nabla^2 \delta(x)$.
+\end{lemma}
+
+
+
+
+
+
+\subsection{Hydrodynamic interactions between spheres}
+\begin{lemma}[hydrodynamic interaction between multiple spherical particles]\cite{durlofsky1987dynamic}
+	$$U_i^\alpha = \frac{F_i^\alpha}{6\pi\mu a} + (1 + \frac{a^2}{6}\nabla^2_{\alpha})u_i(r^\alpha)$$
+	$$\Omega_i^\alpha = \frac{L_i^\alpha}{8\pi\mu a^3} + (\frac{1}{2}\nabla_{\alpha}\times u_i(r^\alpha)$$
+where $u(r^\alpha)$ is the disturbance velocity field at the position of sphere $\alpha$ caused by the motion all the other spheres, given by
+$$u(r^\alpha) = \sum_{\beta,\beta\neq \alpha}^{N}((1+\frac{a^2}{6})J(r^\alpha,r^\beta)\cdot F^\beta + \frac{1}{2}\nabla_\beta J(r^\alpha,r^\beta)\cdot L^\beta) + \frac{1}{2}(1 + \frac{a^2}{10}\nabla^2_\beta)K:E$$
+where
+$$K = \frac{1}{2}(\nabla_\alpha J(r^\alpha,r^\beta) + (\nabla_\beta J(r^\alpha,r^\beta))^T)$$
+\end{lemma}
+
+\section{Boundary integral method}
+\begin{lemma}[boundary integral method]\cite[81]{guazzelli2011physical}
+	
+	
+	$$u(x_i)  = u^\infty - \sum_{j=1}^M G(x_i-x_j)$$
+\end{lemma}
+
+
+\section{Notes on Bibliography}
+
+
+Introductory level treatment, see \cite{guazzelli2011physical}.
+
+Advanced level treatment, see \cite{kim2013microhydrodynamics}
+
+For treatment on singular method, see \cite{pozrikidis1992boundary}.
+
+For boundary element integral method software, see \href{link}{http://dehesa.freeshell.org/BEMLIB/}\cite{pozrikidis2002practical}.
+
+\printbibliography
+\end{refsection}

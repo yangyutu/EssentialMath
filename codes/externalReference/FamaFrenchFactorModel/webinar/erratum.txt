@@ -1,0 +1,6 @@
+Using MATLAB to Develop Asset Pricing Models - ERRATUM
+------------------------------------------------------
+
+In the original presentation on Slide 9, the HML and SMB labels are switched on the plot of factor returns.
+This was my error.
+The factor returns are correctly identified and labeled in the data and MATLAB code.

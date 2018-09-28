@@ -1,0 +1,49 @@
+%% logmh.m
+% From A First Course in Machine Learning, Chapter 4.
+% Simon Rogers, 01/11/11 [simon.rogers@glasgow.ac.uk]
+% Metropolis-Hastings for Logistic Regression
+clear all;close all;
+
+%% Load the classification data
+load ../data/logregdata;
+
+
+%% Initialise w
+w = randn(2,1);
+
+%% Generate N Samples
+ss = 10;
+N = 1000;
+jumpvar = 1; % Jumping variance for each parameter
+w_all = zeros(N,2);
+for n = 1:N
+    % Propose a new sample
+    ws = w + randn(2,1).*sqrt(jumpvar);
+    % Compute ratio of new to old priors (constants cancel)
+    priorrat = -(1/(2*ss))*ws'*ws;
+    priorrat = priorrat + (1/(2*ss))*w'*w; % Subtract old prior
+    % Compute ratio of new to old likelihoods
+    prob = 1./(1+exp(-X*w));
+    newprob = 1./(1+exp(-X*ws));
+    like = sum(t.*log(prob) + (1-t).*log(1-prob));
+    newlike = sum(t.*log(newprob) + (1-t).*log(1-newprob));
+    rat = newlike - like + priorrat;
+    if rand<=exp(rat)
+        % Accept
+        w = ws;
+    end
+    w_all(n,:) = w; 
+end
+    
+
+%% Plot the contours and the samples
+[w1,w2] = meshgrid(-5:0.1:5,-5:0.1:5);
+logprior = -0.5*log(2*pi) - 0.5*log(ss) - (1/(2*ss))*w1.^2;
+logprior = logprior + (-0.5*log(2*pi) - 0.5*log(ss) - (1/(2*ss))*w2.^2);
+prob_t = 1./(1+exp(-[w1(:) w2(:)]*X'));
+loglike = sum(log(prob_t).*repmat(t',prod(size(w1)),1),2);
+loglike = loglike + sum(log(1-prob_t).*repmat(1-t',prod(size(w1)),1),2);
+logpost = logprior + reshape(loglike,size(w1));
+contour(w1,w2,exp(logpost),'k','color',[0.6 0.6 0.6])
+xlabel('$w1$','interpreter','latex');
+xlabel('$w2$','interpreter','latex');
