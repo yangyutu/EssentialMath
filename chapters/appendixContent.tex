@@ -342,14 +342,13 @@ use the fact the $f(y) = y^x$ is continuous, such that function evaluation and l
 
 
 
-\section{Some useful identity for matrix}
+\section{Useful properties of matrix}
 \begin{remark}[references]
 	The most important reference for this section is the "The Matrix Cookbook".\cite{petersen3274matrix}
 \end{remark}
 
-\begin{itemize}
-    \item $\norm{A}_F^2 = Tr(AA^T)$
-\end{itemize}
+\subsection{Matrix derivatives}
+
 
 \begin{mdframed}
 For $A\in \R^{m\times n},x\in \R^n$, we have:
@@ -358,8 +357,6 @@ $$\frac{\Pa Ax}{\Pa x} = A $$
 $$\frac{\Pa BAx}{\Pa x} = BA $$
 $$\frac{\Pa x^TAx}{\Pa x} = (A+A^T)x $$
 $$\frac{\Pa x^TAx}{\Pa x} = 2A $$
-
-
 \end{mdframed}
 
 \begin{lemma}
@@ -371,6 +368,7 @@ $$\frac{\Pa x^TAx}{\Pa x} = 2A $$
 \end{lemma}
 
 
+\subsection{Matrix inversion lemma}
 
 \begin{lemma}[matrix inversion lemma]
 \cite[120]{murphy2012machine}
@@ -380,6 +378,53 @@ $$\frac{\Pa x^TAx}{\Pa x} = 2A $$
 \end{itemize}
 \end{lemma}
 Proof: (1) can be verified (2) expand the parenthesis using (1).
+
+
+
+\subsection{Block matrix}
+
+\begin{lemma}
+Given an $(m\times p)$ matrix $A$ with q row partions and s colun partitions and a $(p\times n)$ matrix $B$ with s row partions and r colun partitions,
+$$A= \begin{matrix}
+A_{11} & A_{12} & \cdots & A_{1s}\\ 
+A_{21} & A_{22} & \cdots & A_{2s}\\ 
+\vdots & \vdots & \ddots & \vdots\\ 
+A_{q1} & A_{q2} & \cdots & A_{qs}
+\end{matrix}, B = \begin{matrix}
+B_{11} & B_{12} & \cdots & B_{1r}\\ 
+B_{21} & B_{22} & \cdots & B_{2r}\\ 
+\vdots & \vdots & \ddots & \vdots\\ 
+B_{s1} & B_{s2} & \cdots & B_{sr}
+\end{matrix},$$
+then the matrix product $$C = AB$$
+can be formed blockwise, giving $C$ as an $(m\times n)$ matrix with $q$ row partitions and $r$ column partitions. 
+In particular, 
+$$C_{\alpha \beta} = \sum_{\gamma = 1}^{s} A_{\alpha \gamma} B_{\gamma \beta}.$$
+	
+\end{lemma}
+
+
+\begin{lemma}[sum of vector product to matrix product]\label{appendix:SumVectorProductToMatrixProduct}
+Consider column vectors $x_1,x_2,...,x_N \in \R^d$ and column vectors 	$x_1,x_2,...,x_N \in \R^d$. 
+It follows that
+\begin{itemize}
+	\item $$\sum_{i=1}^N x^T_iy_i = X_C^TY_C,$$
+	where $X_C \in \R^{Nd}$ is a vector stacking all the $x_1,...,x_N$ (similarly $Y_C$).
+	\item $$\sum_{i=1}^N x_iy_i^T = X_R^TY_R,$$
+	where $X_R \in \R^{N\times d}$ is a matrix stacking all the $x_1^T,...,x_N^T$ (similarly $Y_R$).
+\end{itemize}
+\end{lemma}
+
+
+\subsection{Matrix trace}
+
+
+\begin{lemma}
+	\begin{itemize}
+		\item $\norm{A}_F^2 = Tr(AA^T)$
+	\end{itemize}
+\end{lemma}
+
 
 \begin{lemma}[matrix trace]\index{matrix trace}\label{appendix:th:matrixtraceproperty}\hfill
 	\begin{itemize}
@@ -403,6 +448,10 @@ Proof: (1) can be verified (2) expand the parenthesis using (1).
 \begin{proof}
 (1) Use cyclic rule. (2) Use invariance under transposition and commutative rule.
 \end{proof}
+
+
+
+\subsection{Matrix elementary operator}
 
 \begin{lemma}[elementary operator matrix]\index{elementary matrix} Left multiply a matrix $A$ by an elementary matrix is equivalent to performing row operation. The elementary operator matrix is given by	
 	
@@ -460,6 +509,9 @@ Proof: (1) can be verified (2) expand the parenthesis using (1).
 	\end{itemize}	
 \end{lemma}
 
+
+
+\subsection{Matrix determinant}
 
 \begin{lemma}[properties of determinant]\label{appendix:th:matrixDeterminantProperties} \hfill
 \begin{itemize}

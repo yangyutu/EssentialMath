@@ -2152,7 +2152,7 @@ A symmetric matrix might contain zero eigenvalues, in this case, there are diago
 \begin{corollary}[generalized Rayleigh quotients]\label{ch:linearalgebra:th:GeneralizedRaylleighquotient}
 	Given a symmetric matrix $A\in \R^{n\times n}$ and positive symmetric matrix $\Sigma\in \R^{n\times n}$, it holds that 
 	$$\lambda_{min}(\Sigma^{-1/2} A\Sigma^{-1/2})\leq \frac{x^TAx}{x^T\Sigma x} \leq \lambda_{max}(\Sigma^{-1/2} A\Sigma^{-1/2}),\forall x\neq 0, x\in \R^n,$$
-	where $\Sigma = \Sigma^{1/2}\Sigma^{1/2}$, and $\Sigma^{1/2}$ is a non-negative symmetric matrix and the matrix square root of $\Sigma$ (\autoref{ch:linearalgebra:th:matrixSquareRoot}). 
+	where $\Sigma = \Sigma^{1/2}\Sigma^{1/2}$, and $\Sigma^{1/2}$ is a positive semi-definite symmetric matrix and the matrix square root of $\Sigma$ (\autoref{ch:linearalgebra:th:matrixSquareRoot}). 
 	
 	The maximium/minimum value is achieved at $x^* = \Sigma^{-1/2}u^*$, where $u^*$ is the unit eigenvector associated with the maximum/minimum eigenvalue of matrix $\Sigma^{-1/2} A\Sigma^{-1/2}$.
 	
@@ -3410,12 +3410,12 @@ Orthogonal projectors $P$ are nonnegative/semi-positive definite.
 \subsubsection{Maximization of Quadratic forms}
 
 \begin{theorem}[maximization of Quadratic forms on the unit sphere]\label{ch:linearalgebra:th:MaximizingQuadraticFormsOnUnitSpheres}
-Let $B\in \R^{n\times n}$ be a positive definite matrix with eigenvalues $\lambda_1\geq\lambda_2\geq \cdots\geq \lambda_n \geq 0$ and associated unit eigenvectors $e_1,e_2,...,e_n$. Then
+Let $B\in \R^{n\times n}$ be a positive semi-definite matrix with eigenvalues $\lambda_1\geq\lambda_2\geq \cdots\geq \lambda_n \geq 0$ and associated unit eigenvectors $e_1,e_2,...,e_n$. Then
 \begin{itemize}
 	\item $$\max_{x\neq 0} \frac{x^TBx}{x^Tx} = \lambda_1,$$
 	where $x^*=e_1$.
-	\item $$\min_{x\neq 0} \frac{x^TBx}{x^Tx} = \lambda_n,$$
-	where $x^*=e_p$.
+	\item $$\min_{x\neq 0, x\perp e_1} \frac{x^TBx}{x^TAx} = \lambda_2,$$
+	where $x^*=e_2$.
 	\item Moreover, $$\max_{x\neq 0, x\perp e_1,...,e_k} \frac{x^TBx}{x^Tx} = \lambda_{k+1},$$
 	where $x^*=e_{k+1}$.
 \end{itemize}
@@ -3429,6 +3429,28 @@ Taking $y_{k+1} = 1, y_{k+2} = ... = y_n = 0$ will give the maximum value of the
 Then $x = e_{k+1}$.
 \end{proof}
 
+\begin{corollary}[maximization of general Quadratic forms on the unit sphere]\label{ch:linearalgebra:th:MaximizingGeneralizedQuadraticFormsOnUnitSpheres}
+	Let $B\in \R^{n\times n}$ be a positive semi-definite matrix. Let $A \in \R^{n\times n}$ be a positive definite matrix with decompostion $A = \Sigma^{1/2}\Sigma^{1/2}$, where $\Sigma^{1/2}$ is a positive semi-definite symmetric matrix and the matrix square root of $A$ (\autoref{ch:linearalgebra:th:matrixSquareRoot}).
+	
+	Let $\Sigma^{-1/2}B\Sigma^{1/2}$ have eigenvalues $\lambda_1\geq\lambda_2\geq \cdots\geq \lambda_n \geq 0$ and associated unit eigenvectors $e_1,e_2,...,e_n$. Then
+	\begin{itemize}
+		\item $$\max_{x\neq 0} \frac{x^TBx}{x^TAx} = \lambda_1,$$
+		where $x^*= \Sigma^{-1/2}u_1, u_1 = e_1$.
+		\item $$\min_{x\neq 0, x\perp e_1} \frac{x^TBx}{x^TAx} = \lambda_2,$$
+		where $x^*= \Sigma^{-1/2}u_2, u_2 = e_2$.
+		\item Moreover, $$\max_{x\neq 0, x\perp e_1,...,e_k} \frac{x^TBx}{x^TAx} = \lambda_{k+1},$$
+		where $x^*= \Sigma^{-1/2} u_{k+1}, u_{k+1} = e_{k+1}$.
+	\end{itemize}
+\end{corollary}
+\begin{proof}
+ Note that	
+\begin{align*}
+\frac{x^TBx}{x^TAx} &= \frac{x^TBx}{x^T\Sigma^{1/2}\Sigma^{1/2}x} \\
+&= \frac{x^TAx}{x^T\Sigma^{1/2}\Sigma^{1/2}x} \\
+&= \frac{u^T\Sigma^{-1/2}B\Sigma^{-1/2}u}{u^Tu} \quad(use~u = \Sigma^{1/2}x) 
+\end{align*}
+Then we use \autoref{ch:linearalgebra:th:MaximizingQuadraticFormsOnUnitSpheres}.
+\end{proof}
 
 
 \subsubsection{Gramian matrix}
