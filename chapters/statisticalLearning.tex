@@ -1471,6 +1471,70 @@ Using the DCM as the class conditional density gives much better results than us
 \subsubsection{Basics}
 
 
+\begin{method}[Hunt's generic algorithm for decision tree construction]\cite[152]{tan2013introduction}
+Hunt's algorithm is a recursive algorithm that grows a decision tree in a recursive fashion by partitioning the training examples into successively purer subsets. Let $\cD_t$ be the set of training examples that are associated with node $t$ and $y = {y1, y2, . . . , yc}$ be
+the class labels. The following is a recursive definition of Hunt's algorithm.
+\begin{itemize}
+	\item If all the records in Dt belong to the same class yt, then t is a leaf node labeled as yt.
+	\item If Dt contains records that belong to more than one class, an attribute test condition is selected to partition the records into smaller subsets. A child node is created for each outcome of the test condition and the records in Dt are distributed to the children based on the outcomes. The algorithm is then recursively applied to each child node
+\end{itemize}	
+\end{method}
+
+\begin{definition}[impurity measures]
+Common impurity measures for examples in node are given by
+\begin{itemize}
+	\item $$Entropy = -\sum_{i=1}^K p_i\ln p_i.$$
+	\item $$Gini = -\sum_{i=1}^K p_i\ln p_i.$$
+	\item $$Classifying~error = 1 - \max (p_1, p_2,...,p_K).$$
+\end{itemize}	
+where $p_i$ is the fraction examples with class label $i$ (there are totally $K$ classes).
+\end{definition}
+
+
+\begin{example}
+Consider the following computation examples:
+\begin{itemize}
+	\item A node contains 4 examples with label 1 and 6 examples with label 0. Then
+	\begin{align*}
+	Gini &= 1 - 0.4^2 - 0.6^2 = 0.48 \\
+	Entropy &= -0.4\ln(0.4) - 0.6\ln(0.6) = 0.673 \\
+	Error &= 1 - \max(0.4,0.6) = 0.4 
+	\end{align*}
+	\item A node contains 9 examples with label 1 and 1 example with label 0. Then
+	\begin{align*}
+	Gini &= 1 - 0.1^2 - 0.9^2 = 0.18 \\
+	Entropy &= -0.1\ln(0.1) - 0.9\ln(0.9) = 0.326 \\
+	Error &= 1 - \max(0.1,0.9) = 0.1 
+	\end{align*}
+\end{itemize}
+\end{example}
+
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\linewidth]{../figures/statisticalLearning/treeMethods/impurityMeasure}
+	\caption{Different types of impurity measure. Entropy function, Gini function and classification error function.}
+	\label{ch:statistical-learning:fig:impuritymeasure}
+\end{figure}
+
+
+
+\begin{figure}[H]
+	\centering	
+	\begin{subfigure}[b]{0.42\textwidth}
+		\centering
+		\includegraphics[width=0.7\linewidth]{../figures/statisticalLearning/treeMethods/decisionTreeMultiwaySplit}
+		\caption{Multi-way split in a node on one attribute with three types values.}
+	\end{subfigure}\\
+	\begin{subfigure}[b]{1.0\textwidth}
+		\centering
+		\includegraphics[width=0.7\linewidth]{../figures/statisticalLearning/treeMethods/decisionTreeBinarySplit}
+		\caption{A recursive tree representation of the partition.}
+	\end{subfigure}
+	\caption{Demonstration of a tree and input space partition.}
+\end{figure}
+
+
 \begin{method}[decision tree classifier splitting methods]
 Consider a set of items of $K$ classes. Let $p_i$ be the fraction of items labeled with class $i$. 
 
@@ -1645,6 +1709,25 @@ where $R_1,...,R_m$ represent a partition of the feature space $\cX$.
 
 \subsubsection{Examples}
 
+
+\begin{example}
+Consider the following training samples
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+	\hline 
+	$x_i$ & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 \\ 
+	\hline 
+	$y_i$ & 5.56 & 5.70 & 5.91 & 6.40 & 6.80 & 7.05 & 8.90 & 8.70 & 9.00 & 9.05 \\ 
+	\hline 
+\end{tabular} 	
+To get the split point $s$ such that we have partitions on $\R$ given by
+$$R_1\in \{x|x\geq s\}, R_2=\{x > s\}.$$
+
+We then iterate over split point candidates of $\{1.5, 2.5, 3.5, ..., 9.5 \}$, such that
+$$m(s) = \sum_{x_i\in R_1}(y_i - c_1)^2 + \sum_{x_i\in R_2}(y_i - c_2)^2,$$
+where $$c_1 = \frac{1}{N_1}\sum_{x_i\in R_1}y_i, c_2 = \frac{1}{N_2}\sum_{x_i\in R_2}y_i. $$
+
+Then we can find when $s = 6.5$, $m(s)$ has a minimum value; that is $s=6.5$ is selected as the first split point.
+\end{example}
 
 \subsection{Tree pruning}
 

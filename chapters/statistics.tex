@@ -1,7 +1,7 @@
 
 \begin{refsection}
 \startcontents[chapters]	
-\chapter{Theory of Statistics}\label{ch:theory-of-statistics}
+\chapter{Theory of Statistical Distribution}\label{ch:theory-of-statistics}
 %\minitoc
 
 \printcontents[chapters]{}{1}{}
@@ -1037,6 +1037,18 @@ a quadratic form of random vector  $X$.
 Note that $Q$ is also a random variable.
 \end{definition}
 
+\begin{lemma}
+Let $X$ be a $m$-dimensional random vector with multivariate Gaussian distribution, i.e., $X\sim N(\mu, \Sigma)$. It follows that
+\begin{itemize}
+	\item $$\Sigma^{1/2}(x-\mu)\sim N(0, I).$$
+	\item $$(x-\mu)\Sigma^{-1}(x-\mu)\sim \chi^2(m).$$
+\end{itemize}	
+\end{lemma}
+\begin{proof}
+(1) Directly from affine transformation property of multivariate Gaussian random variable (\autoref{ch:theory-of-statistics:th:affinetransformmultivariatenormal}). 
+(2) Use the definition that sum of iid normal random variable square is chi-square random variable.
+\end{proof}
+
 
 \begin{theorem}[chi-square orthogonal decomposition]\label{ch:theory-of-statistics:th:chi-squareOrthogonalDecomposition}
 Let $X_1,X_2,...,X_n$ be independent standard normal variables such that 
@@ -1627,6 +1639,35 @@ Gaussian
 Bionomial
 \fi
 
+
+\section{Notes on bibliography}
+For decision theory, \cite{young2005essentials}\cite{moon2000mathematical}
+For overall graduate level treatment, see \cite{casella2002statistical}\cite{hoggintroduction}.
+For likelihood based methods, see \cite{pawitan2001all}
+For large sample theory(asymptote analysis), see \cite{lehmann1999elements}.
+
+For introductory level Bayesian statistics, see \cite{hoff2009first}.
+
+For good treatment on statistical estimation theory, see \cite{kay1993fundamentals}.
+
+
+For linear regression models, see \cite{kutner2003applied}\cite{seber2012linear}.
+
+For multivariate statistical analysis, see \cite{johnson2007applied}.
+
+For mixed models, see \cite{mcculloch2001generalized}.
+
+For an informal but deep treatment on robust statistics, see \cite{wilcox2010fundamentals}.
+
+For an extensive discussion on statistical distribution, see \cite{forbes2011statistical}\cite{krishnamoorthy2016handbook}.
+
+\printbibliography
+\end{refsection}
+
+\begin{refsection}
+	\startcontents[chapters]
+
+\chapter{Statistical Estimation Theory}
 \section{Estimator theory}
 
 \subsection{Concepts \& definitions}
@@ -2086,6 +2127,23 @@ where use $Var[\chi^2(n)] = 2n$ in \autoref{ch:theory-of-statistics:th:propertyc
 	(2) use the fact $Es(\theta,\bm{X}) = 0$ in above lemma.
 \end{proof}
 
+
+\begin{example}
+Consider a series of independent Bernoulli trials with success probability $\theta$ such that we have probability mass function given by	
+$$Pr(Y_i = y) = (1-\theta)^y \theta, y\in \{0,1 \}.$$
+
+\begin{itemize}
+	\item 
+	The log-likelihood function based on $n$ observations $Y=\{Y_1,...,Y_N\}$ can be written by
+	$$\log L(\theta; Y) = \sum_{i=1}^n (y_i \log(1-\theta) + \log \theta) = n(\mean{y}\log(1-\theta) + \log(\theta)),$$
+	where $\mean{y}$ is the sample mean.
+	\item 
+	The score function for $n$ observations from a geometric distribution is
+	$$s(\theta) = \frac{d \log L}{d \theta} = n(\frac{1}{\theta} - \frac{\mean{y}}{1-\theta}).$$
+\end{itemize}
+\end{example}
+
+
 \subsection{Fisher information characterization}
 \begin{definition}[Fisher information]
 The covariance matrix of the score function is called \textbf{Fisher information matrix}, denoted as $J(\theta)$, given as
@@ -2107,9 +2165,49 @@ $$E(\hat{\theta}-\theta)(\hat{\theta}-\theta)^T = J^{-1}$$
 
 \end{proof}
 
+\begin{example}
+	Let the pmf of Bernoulli distribution parameterized by $f(x;\theta) = \theta^x(1-\theta)^{1-x},x\in\{0,1\}$. Then
+\begin{align*}
+I(\theta) &= -E[\frac{\Pa^2 \log(f(x;\theta))}{\Pa \theta^2}] \\
+&= E[\frac{x}{\theta^2} + \frac{1-x}{(1-\theta)^2}]\\
+&= \theta (1/\theta^2) + (1-\theta)(1/(1-\theta)^2) \\
+&= \frac{1}{\theta(1-\theta)}
+\end{align*}
+\end{example}
+
+
 
 \subsection{Asymptotic properties}
 
+\begin{definition}[asymptotic efficiency]\cite[542]{greene2017econometric}
+An estimator is asymptotically efficient if it is consistent, asymptotically normally distributed, and has an asymptotic covariance matrix that is not larger than the asymptotic covariance matrix of any other consistent, asymptotically normally distributed estimators.	
+\end{definition}
+
+
+\begin{example}[information matrix for normal distributions]\cite[548]{greene2017econometric}
+
+\begin{align*}
+\frac{\Pa^2 \ln L}{\Pa \mu^2} &= -\frac{n}{\sigma^2} \\
+\frac{\Pa^2 \ln L}{\Pa (\sigma^2)^2} &= \frac{n}{2\sigma^4} - \frac{1}{\sigma^6}\sum_{i=1}^n (x_i - \mu)^2 \\
+\frac{\Pa^2 \ln L}{\Pa \mu \Pa \sigma^2} &= -\frac{1}{\sigma^4}\sum_{i=1}^n (x_i - \mu)
+\end{align*}	
+
+For the asymptotic variance of the maximum likelihood estimator, we need the expectations of these derivatives. Using $E[X_i] = \mu$, we have
+$$[-E_0[\frac{\Pa^2 \ln L(\theta_0)}{\Pa \theta_0 \Pa \theta_0^T}]]^{-1} = \begin{bmatrix}
+\sigma^2/n & 0 \\
+0 & 2\sigma^4/n
+\end{bmatrix}.$$
+\end{example}
+
+
+
+Let $\hat{\theta}$ be the maximum-likelihood estimator, then the gradient of the log-likelihood function equals zero at $\hat{\theta}$; that is,
+$$g(\hat{\theta}) = 0.$$
+
+Expand this equation in a second-order Taylor series around $\theta_0$, we have
+$$ 0 = g(\hat{\theta}) = g(\theta_0) + H(\mean{\theta})(\hat{\theta} - \theta_0),$$
+where $\theta_0$ is the true value, and $\mean{\theta} = w\hat{\theta} + (1-w)\theta_0$ for some $0<w<1$. Rearranging this function and multiply it by $n$ and we get
+$$\sqrt{n}(\hat{\theta} - \theta_0) = [-H(\mean{\theta})]^{-1}(\sqrt{n}g(\theta_0))$$
 
 
 
@@ -2510,6 +2608,36 @@ Therefore, if we can find $d^*$ that minimizes $\int_{\Theta}L(\theta,d(x))\pi(\
 	\end{itemize}
 \end{remark}
 
+
+
+\section{Notes on bibliography}
+For decision theory, \cite{young2005essentials}\cite{moon2000mathematical}
+For overall graduate level treatment, see \cite{casella2002statistical}\cite{hoggintroduction}.
+For likelihood based methods, see \cite{pawitan2001all}
+For large sample theory(asymptote analysis), see \cite{lehmann1999elements}.
+
+For introductory level Bayesian statistics, see \cite{hoff2009first}.
+
+For good treatment on statistical estimation theory, see \cite{kay1993fundamentals}.
+
+
+For linear regression models, see \cite{kutner2003applied}\cite{seber2012linear}.
+
+For multivariate statistical analysis, see \cite{johnson2007applied}.
+
+For mixed models, see \cite{mcculloch2001generalized}.
+
+For an informal but deep treatment on robust statistics, see \cite{wilcox2010fundamentals}.
+
+For an extensive discussion on statistical distribution, see \cite{forbes2011statistical}\cite{krishnamoorthy2016handbook}.
+
+\printbibliography
+\end{refsection}
+
+\begin{refsection}
+\startcontents[chapters]
+
+\chapter{Hypothesis testing}
 
 \section{Hypothesis testing}
 \subsection{Basics}

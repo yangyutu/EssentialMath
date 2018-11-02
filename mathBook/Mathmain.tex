@@ -314,6 +314,9 @@ ntheorem]{note}{Note}[section]
 \newcommand{\corollaryautorefname}{Corollary}
 \newcommand{\definitionautorefname}{Definition}
 \newcommand{\remarkautorefname}{Remark}
+
+\DeclareMathOperator*{\plim}{plim}
+
 % for header and footer https://www.sharelatex.com/learn/Headers_and_footers
 \usepackage{fancyhdr}
  \fancypagestyle{plain}{%
@@ -483,10 +486,9 @@ ntheorem]{note}{Note}[section]
 %\input{chapters/functionalAnalysis}
 %\input{chapters/DifferentialGeometry}
 %\input{chapters/Groups}
-%\input{chapters/probabilityTheory}
-\input{../chapters/statistics}
 
-\input{../chapters/optimization}
+
+%\input{../chapters/optimization}
 
 \part{Classic Modeling Methods}
 
@@ -504,15 +506,23 @@ ntheorem]{note}{Note}[section]
 \part{Stochastic Modeling Methods}
 
 
-\input{../chapters/stochasticProcess}
-%\input{chapters/MarkovChains}
-%\input{chapters/MonteCarlo}
+%\input{../chapters/stochasticProcess}
+%\input{../chapters/MarkovChains}
+%\input{../chapters/MonteCarlo}
+
+\part{Classical Statistical Methods}
+\input{../chapters/probabilityTheory}
+\input{../chapters/statistics}
+
 \input{../chapters/statisticalModeling}
-%\input{chapters/timeseries}
+\input{../chapters/RegressionAnalysis}
+\input{../chapters/timeseries}
+
+
 
 \part{Statistical Learning}
 \input{../chapters/statisticalLearning}
-\input{../chapters/neutralNetwork}
+%\input{../chapters/neutralNetwork}
 %\input{../chapters/naturalLanguageProcessing}
 
 
