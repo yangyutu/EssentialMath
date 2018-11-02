@@ -2057,10 +2057,22 @@ Because $L^p$ space are normed vector space, we can prove this using triangle in
 \begin{theorem}[Cauchy-Schwarz inequality]\cite{rosenthal2006first}\cite[187]{casella2002statistical}\index{Cauchy-Schwarz inequality}\label{ch:theory-of-probability:th:Cauchy-SchwarzInequality}
 	Let $X$ and $Y$ be random variables with $E[X^2] < \infty, E[Y^2]<\infty$. Then $$\abs{E[XY]}\leq \sqrt{E[X^2]E[Y^2]}.$$
 	The equality holds when there exists real numbers $\alpha,\beta >0$ such that $\alpha \abs{X}^2 = \beta \abs{Y}^2$ almost everywhere.
+	
+Further more,
+$$(Cov(X, Y))^2 \leq Var[X]\cdot Var[Y].$$	
 \end{theorem}
 \begin{proof}
 (1)	define inner product between two random variable as $\ip{X,Y} = \int xy\rho(x,y)dxdy$, since each random variable can be viewed as a functional. 
 (2) Similarly we can use Holder's inequality.(\autoref{ch:theory-of-probability:th:HolderInequality})
+
+A simple derivation:
+Since the covariance matrix of random vector $(X, Y)$ much be positive semi-definite, we have
+$$\abs{Cov([X Y])} = \begin{vmatrix}
+Var[X] & Cov(X,Y) \\
+Cov(X,Y) & Var[Y]
+\end{vmatrix} \geq 0.$$
+Expand the determinant, we have
+$$Cov(X,Y)^2 \leq Var[X]\cdot Var[Y].$$
 \end{proof}
 
 \begin{corollary}[bounds on correlations]\label{ch:theory-of-probability:th:Cauchy-SchwarzInequalityBoundsOnCorrelations}\hfill

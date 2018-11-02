@@ -1670,12 +1670,7 @@ For an extensive discussion on statistical distribution, see \cite{forbes2011sta
 \chapter{Statistical Estimation Theory}
 \section{Estimator theory}
 
-\subsection{Concepts \& definitions}
-
-
-
-
-
+\subsection{Statistic}
 
 \begin{definition}[statistic]\index{statistic}
 Let $X_1,X_2,..X_n$ denote a random sample on a random variable $X$. Let 
@@ -1721,7 +1716,8 @@ We have
 \end{remark}
 
 
-\subsection{Estimator}
+\subsection{Different types of estimators}
+\subsubsection{Basic concepts}
 \begin{definition}[unbiased Estimator]\index{unbiased estimator}
 Let $X_1,X_2,..X_n$ denote a random sample on a random variable $X$ with pdf $f(x;\theta),\theta \in \Omega$. Let $T=T(X_1,X_2,...,X_n)$ be a statistic. We say that $T$ is an unbiased estimator of $\theta$ if $E(T)=\theta$.
 \end{definition}
@@ -1751,6 +1747,11 @@ where $\theta$ is the true value. If $Bias(\hat{\theta}) = 0$, then estimator $\
 The mean squared error(MSE) of an estimator is $$E[(\hat{\theta}-\theta)^2].$$
 \end{definition}
 
+
+
+
+
+\subsubsection{Variance-bias decomposition}
 \begin{theorem}[variance bias decomposition]\index{variance bias decomposition}
 The MSE of an estimator is related to its variance and bias via
 \begin{equation}
@@ -1789,297 +1790,65 @@ Overall, we can use \autoref{ch:theory-of-probability:th:convergenceMSimpliescon
 \end{remark}
 
 
-\subsection{Efficiency of estimators}
-\begin{definition}[relative efficiency]
-The relative efficiency of two \textbf{unbiased} estimators $\hat{\theta}_1$ and $\hat{\theta}_2$ is the ratio of their variance $$\frac{Var(\hat{\theta}_1)}{Var(\hat{\theta}_2)}$$.
-\end{definition}
-
-\begin{remark}
-The more efficient estimator is that: \textbf{given fixed number of samples}, it has a lower MSE/variance. 
-\end{remark}
-
-\begin{definition}[Fisher information]\index{Fisher information}
-For one dimensional parametric family of pdf or pmf $f(x;\theta)$, we define the Fisher information for $\theta\in \R$ as
-$$I(\theta) = E[(\frac{d}{d\theta}\log f(x;\theta))^2] = -E[\frac{\Pa^2 \log(f(x;\theta))}{\Pa \theta^2}].$$
-In particular, if $\theta \in \R^N$, we have Fisher information matrix defined as
-$$I(\theta)_{ij} =-E[\frac{\Pa^2 \log(f(x;\theta))}{\Pa \theta_i\theta_j}] $$ or 
-$$I(\theta) = E[\frac{\Pa \log(f(x;\theta))}{\Pa \theta}(\frac{\Pa \log(f(x;\theta))}{\Pa \theta})^T] = -E[\frac{\Pa^2 \log(f(x;\theta))}{\Pa \theta\theta^T}]$$
-\end{definition}
-
-\begin{remark}
-The equivalence of these two expressions can be showed as:
-$$E[\frac{d}{d\theta} \log f(x;\theta)] = \int \frac{df(x;\theta)/d\theta}{f(x;\theta)} f(x;\theta) dx = 0$$
-Differentiate both sides with respect to $\theta$, and we can get
-$$ 0 = E[(\frac{d}{d\theta}\log f(x;\theta))^2] + E[\frac{\Pa^2 \log(f(x;\theta))}{\Pa \theta^2}]$$
-\end{remark}
-
-
-\begin{remark}
-This definition holds both for discrete or continuous random variables, as long as $f$  is differentiable respect to $\theta$. 
-\end{remark}
-
-\begin{lemma}[some useful results] \label{ch:theory-of-statistics:th:usefulresult}
-	 Let $f(x;\theta)$ be a pdf parameterized by $\theta\in \R$, then 
-\begin{itemize}
-    \item $$E[\frac{d}{d\theta} \log f(x;\theta)] = 0$$
-    \item $$I(\theta) = Var[\frac{d}{d\theta} \log f(x;\theta)]$$   
-\end{itemize}
-\end{lemma}
-\begin{proof}
-(1) 
-\begin{align*}
-E[\frac{d}{d\theta} \log f(x;\theta)] &= E[\frac{df(x;\theta)/d\theta}{f(x;\theta)}] &= \int \frac{df(x;\theta)/d\theta}{f(x;\theta)} f(x;\theta) dx\\
-&=\int df(x;\theta)/d\theta dx =d\int df(x;\theta) dx /d\theta = 0
-\end{align*}
-(2) directly from $$E[(\frac{d}{d\theta} \log f(x;\theta))^2] = 0.$$
-\end{proof}
 
 
 
+\section{Method of moments}
 
-\subsection{Uniformly minimum-variance unbiased estimator}
-\begin{definition}\index{minimum-variance unbiased estimator}
-Consider a statistic $\theta$ as a function of iid random samples $X_1,X_2,...,X_n$ with pdf $f(x,\theta)$. The estimator is a \textbf{uniformly minimum-variance unbiased estimator(UMVUE)} if 
-\begin{itemize}
-    \item it is unbiased, i.e., $\hat{\theta} = \theta$
-    \item $\forall \theta \in \Theta$, we have $$var(\hat{\theta}) \leq var(\hat{\theta'})$$ for any other unbiased estimator $\hat{\theta'}$.
-\end{itemize}
-\end{definition}
-
-\begin{remark} [interpretation]
-In terms of efficiency in using data to reduce uncertainty, UMVUE has the optimal estimation efficiency.
-\end{remark}
-
-
-
-
-
-\begin{theorem}[existence of UMVUE]\cite[62]{keener2010theoretical}
-
-
-\end{theorem}
-
-
-
-\begin{mdframed}
-\textbf{How to find UMVUE?}
-	
-There is no simple, general procedure for finding the MVUE
-estimator. Here are some several
-approaches:
-\begin{itemize}
-	\item Find a sufficient statistic and apply the Rao-Blackwell theorem.
-	\item Determine the so-called Cramer-Rao Lower Bound (CRLB)
-	and verify that the estimator achieves it.
-	\item Further restrict the estimator to a class of estimators (e.g.,
-	linear or polynomial functions of the data)
-\end{itemize}
-\end{mdframed}
-
-
-
-\begin{lemma}[normal distribution estimators]
-For a normal distribution with unknown mean and variance, the sample mean and the unbiased sample variance are the MUVEs for the population mean and population variance.
-\end{lemma}
-\begin{proof}
-TODO
-
-\end{proof}
-
-\begin{theorem}[Cramer-Rao lower bound]\index{Cramer-Rao lower bound}
-For an arbitrary estimator for $\theta\in \R$, 
-$$Var(\hat{\theta}) \geq \frac{(\frac{d}{d\theta}E[\hat{\theta}])^2}{nI(\theta)}$$
-Particularly, if $E[\hat{\theta}] = \theta$, we have
-$$Var(\hat{\theta}) \geq \frac{1}{nI(\theta)}$$
-\end{theorem}
-
-
-
-
-\begin{definition}[efficient estimator]\index{efficient estimator}
-An estimator $\hat{\theta}$ if variance achieves equality in the Cramer Rao lower bound for all $\theta\in \Theta$.
-\end{definition}
-
-\begin{remark}
-An efficient estimator is optimal in the sense of using information to reduce uncertainty.
-\end{remark}
-
-\begin{example}
-	Let the pmf of Bernoulli distribution parameterized by $f(x;\theta) = \theta^x(1-\theta)^{1-x},x\in\{0,1\}$. Then
+\begin{definition}[moments of the random sample]\cite[312]{casella2002statistical} Let $X_1,X_2,...,X_n$ be a sample from a population with pdf or pmf $f(x|\theta_1,...,\theta_k)$. The first $k$ moments are given by
 	\begin{align*}
-	I(\theta) &= -E[\frac{\Pa^2 \log(f(x;\theta))}{\Pa \theta^2}] \\
-	&= E[\frac{x}{\theta^2} + \frac{1-x}{(1-\theta)^2}]\\
-	&= \theta (1/\theta^2) + (1-\theta)(1/(1-\theta)^2) \\
-	&= \frac{1}{\theta(1-\theta)}
-	\end{align*}
-	
-Consider the estimator $\hat{\theta} = \mean{X}$, then $$E[\hat{\theta}] = E[\mean{X}] = E[\sum_{i=1}^n X_i/n] = \theta$$
-and
-$$Var[\hat{\theta}] = E[\mean{X}^2] - E[\hat{\theta}]^2 = \theta/n + \theta^2(n-1)/n - \theta^2 = \theta(1-\theta)/n$$
-
-Therefore, the variance of the estimator is achieving the lower bound.
-\end{example}
-
-\begin{lemma}
-	An efficient estimator is UMVUE; that is, an unbiased estimator with variance achieving the Cramer-Rao lower bound is UMVUE. The converse might not be true.
-\end{lemma}
-\begin{proof}
-	If the variance achieve the lower bound, then it has unformly minimum variance, and therefore it is UMVUE. On the other hand, it is likely that for some estimator the lower bounded is not achieved, but it has smaller variance than any other competing estimators.
-\end{proof}
-
-\begin{remark}[implications and practical issues]\hfill
-	\begin{itemize}
-		\item The Cramer-Rao lower Bound enables us to judge whether one estimator is efficient: the closer to lower bound, the more efficient.
-		\item Efficient estimators are usually difficult to find in practice.
-	\end{itemize}
-\end{remark}
-
-
-
-\begin{theorem}[Rao-Blackwell theorem]\index{Rao-Blackwell theorem}
-	Let $\hat{\theta}(X_1,...,X_n)$ be an estimator, and $T$ be any sufficient statistic. Then the new estimator $\hat{\theta}^* = E[\hat{\theta}(X_1,...,X_n)|T(X_1,...,X_n)]$ will satisfy
-	$$MSE(\hat{\theta}^*) \leq MSE(\hat{\theta}),\forall \theta.$$
-	Particularly, if both estimators are unbiased, we have
-		$$Var(\hat{\theta}^*) \leq Var(\hat{\theta}),\forall \theta .$$
-	The process of creating a new improved estimator via conditioning is called \textbf{Rao-Blackwellization}.
-\end{theorem}
-\begin{proof}
-Since $Var(X) \geq 0$ implies $E[X^2]\geq E[X]^2$, we have
-\begin{align*}
-	E[(\hat{\theta} - \theta)^2|T] \geq (E[\hat{\theta - \theta}|T])^2 = (E[\hat{\theta}|T] - \theta)^2 = (\hat{\theta}^* - \theta)^2
-\end{align*}	
-Take expectation on both sides and use the Tower property of conditional expectation, we have
-$$E[(\hat{\theta}^* - \theta)^2] \leq E[(\hat{\theta} - \theta)^2]$$
-\end{proof}
-
-
-\begin{lemma}[unbiasedness inheritance]
-The improved estimator is unbiased if and only if the original estimator is unbiased. 	
-\end{lemma}
-\begin{proof}
-	$$E[E[\hat{\theta}(X_1,...,X_n)|T(X_1,...,X_n)]]=E[\hat{\theta}(X_1,...,X_n)]$$
-\end{proof}
-
-
-\begin{lemma}[idempotent operation]
-Rao-Blackwellization is an idempotent operation. More precisely, let Rao-Blackwellization operator denoted as $R$, let $\hat{\theta}$ be the original estimator, then
-$$R^2[\hat{\theta}] = R[\hat{\theta}]$$	
-\end{lemma}
-\begin{proof}
-		$$E[E[\hat{\theta}|T]|T]=E[\hat{\theta}|T]$$
-		via the law of iterated expectation.
-\end{proof}
-
-
-\begin{remark}[Rao-Blackwell theorem vs. Cramer-Rao lower bound]\hfill
-\begin{itemize}
-	\item An estimator achieving the Cramer-Rao lower bound is performing better than any other estimators in all the possible $\theta$.
-	\item Rao-Blackwellization provides a way to improve current estimator such that the improved estimator is no worst than the current estimator in all the possible $\theta$. The improved estimator cannot guarantee to achieve the Cramer-Rao lower bound, i.e., being better than any other estimators. 
-\end{itemize}
-\end{remark}
-
-
-\subsection{Sufficiency and data reduction}
-
-\begin{mdframed}
-\textbf{Motivation for sufficient statistic:}\\
-	\begin{itemize}
-		\item When we estimate a model parameter $\theta$, \textbf{not all the information in the data are relevant} to the estimation procedure. For example, if we want to estimate the mean, then the order of the sample is irrelevant.
-		\item A sufficient statistic for a model parameter $\theta$ represents the \textbf{summary of all information from the data that are useful} for estimation of $\theta$.
-		\item \textbf{A statistic sufficient for one parameter $\theta_1$ might not be sufficient for other parameters $\theta_2$.}
-	\end{itemize}
-\end{mdframed}
-
-
-\begin{definition}[sufficient statistics]
-	Let $X$ be a random sample of size $n$. A statistic $T(X)$ is a sufficient statistic for $\theta$ if the conditional distribution of the sample $X$ given the value of $T(X)$ does not depend on $\theta$; that is
-	$$P(X|T,\theta) = P(X|T)$$
-	In otherwise, $X$ and $\theta$ are conditional independent given $T$.
+	m_1 &= \frac{1}{n}\sum_{i=1}^n X_i \\
+	m_2 &= \frac{1}{n}\sum_{i=1}^n X_i^2 \\
+	&\cdots \\
+	m_k &= \frac{1}{n}\sum_{i=1}^n X_i^k 
+	\end{align*}	
 \end{definition}
 
 
-%\begin{theorem}[sufficient criterion]
-%\cite[274]{casella2002statistical}\cite[391]{hoggintroduction}
-%Let $X$ be a random sample. Let $p(X|\theta)$ be the joint pdf or pmf of $X$ and $p(T(X)|\theta)$ be the pdf or pmf of $T(X)$, then $T(X)$ is a sufficient statistic for $\theta$ if, 
-%$$\frac{p(X|\theta}{p(T(X)|\theta} = H(X)$$
-%and does not depend on $\theta$.
-%\end{theorem}
-%proof: 
-
-\begin{remark}[\textbf{sufficient statistic as a lossless data compression}]
-	A statistic is sufficient means that $T(X)$ itself can capture all the information useful in estimating $\theta$; the sample $X$ might contain more information than $T(X)$(since $T(X)$ is usually not 1-1), but this additional information does not provide additional usefulness in estimating $\theta$.
-\end{remark}
-
-\begin{remark}[\textbf{trivial sufficient statistic}]
-	The statistic $T(X_1,...,X_n)=(X_1,...,X_n)$ is always sufficient for any estimation task.
-\end{remark}
-
-
-\begin{theorem}[Neyman-Fisher Factorization theorem]\index{factorization theorem}
-	\cite[276]{casella2002statistical} Let $f(\bm{x}|\theta)$ denote the joint pdf or pmf of a sample $\bm{X}$. A statistic $T(\bm{X})$ is a sufficient statistic for $\theta$ if and only if there exist functions $g(T(\bm{x}|\theta))$ such that for all sample points $\bm{x}\in \cX$ and all parameter points $\theta \in\Theta$, we have
-	$$f(\bm{x}|\theta) = g(T(\bm{x})|\theta)h(\bm{x})$$
-\end{theorem}
-\begin{proof}
-	(1) Assume $T(\bm{X})$ is sufficient, then we have $f(x|T(x),\theta) = f(x|T(x))$. Then we have
+\begin{definition}[moments of the random sample]\cite[312]{casella2002statistical} Let $X_1,X_2,...,X_n$ be a random sample of $X$ from a population with pdf or pmf $f(x|\theta_1,...,\theta_k)$. Define $\mu_i = E[X^i],i=1,2,...,k$. The method of moments is aimed at solving $\theta_1,\theta_2,...,\theta_k$ from the $k$ equations
 	\begin{align*}
-	f(x|\theta) = f(x|\theta) f(T(x)|x,\theta) &= f(x,T(x)|\theta) = f(T(x)|\theta) f(x|T(x),\theta)\\
-	&= f(T(x)|\theta)f(x|T(x)) (\text{use sufficiency})\\
-	&=h(x) g(T(x)|\theta)
+	m_1 &= \mu_1(\theta_1,...,\theta_k) \\
+	m_2 &= \mu_2(\theta_1,...,\theta_k) \\
+	&\cdots \\
+	m_k &= \mu_k(\theta_1,...,\theta_k) 
 	\end{align*}
-	(2)	
-	
-	
-\end{proof}
-
-\cite[451]{moon2000mathematical} for sufficient statistic examples
-
-
-
-
-
-
-
-\begin{definition}[minimal sufficient]\index{minimal sufficient}\cite[48]{keener2010theoretical}
-	A sufficient statistic is minimal sufficient if it can be represented as a function of any other sufficient statistic. That is, if $S(X)$ is minimal sufficient, then there exists a function $f$ such that $S(X) = f(T(X))$, where $T(X)$ is another sufficient statistic.
+	where $m_i,i=1,2,...,k$ are the $k$ moments of the sample.			
 \end{definition}
 
 
-
-
-\begin{remark}\hfill
+\begin{lemma}[estimating normal distribution parameter via method of moments]\cite[312]{casella2002statistical}
+	Suppose $X_1,X_2,...,X_n$ are iid random variable with $N(\mu, \sigma^2)$. It follows that
 	\begin{itemize}
-		\item The minimal sufficient statistic represents \textbf{the smallest amount of information yet still sufficient for estimation of the parameter.} Therefore, a minimal sufficient statistic can be represented by any other sufficient statistic, which always contains more information.
-		\item A minimal sufficient statistic represents the maximal (and hence optimal) lossless compression of data.
-	\end{itemize}
-\end{remark}
-
-\begin{definition}[complete statistic]\cite[48]{keener2010theoretical}
-\end{definition}
-
-\begin{theorem}\cite[49]{keener2010theoretical}
-	If statistic $T$ is complete and sufficient, then $T$ is minimal sufficient. 
-\end{theorem}
-
-\subsection{One sample estimation}
-
-
-\begin{lemma}[mean and variance estimator of normal samples]\cite{sciacchitano2015collaborative}
-Let $X_1,X_2,...,X_n$ be a random sample from $N(\mu, \sigma^2)$. Define two statistics
-$$\mean{X} = \frac{1}{n}\sum_{i=1}^n X_i, S^2 = \frac{1}{n-1}\sum_{i=1}^n (X_i - \mean{X})^2.$$
-\begin{itemize}
-	\item $\mean{X}$ is the \textbf{uniformly minimum variance unbiased }(UMVU) estimator of $\mu$. And
-	$$E[\mean{X}] = \mu, Var[\mean{X}] = \frac{\sigma^2}{n}.$$
-	\item $\mean{X}$ is the uniformly minimum variance unbiased (UMVU) estimator of $\mu$. And
-	$$E[S] = \sigma^2, Var[S^2] = \sigma^4\frac{2}{n-1}.$$
-\end{itemize}	
+		\item $m_1 = \mu, \mu^2 + \sigma^2 = m_2$.
+		\item The moment of method estimators for $(\mu, \sigma)$ are
+		$$\hat{\mu} = m_1, \hat{\sigma}^2 = \frac{1}{n}\sum_{i=1}^n (X_i - \bar{X})^2.$$
+	\end{itemize}	
 \end{lemma}
 \begin{proof}
-To prove UMVU, see reference. Note that from \autoref{ch:theory-of-statistics:th:studentTheorem},
-$$\frac{(n-1)S^2}{\sigma^2}\sim \chi^2({n-1}),$$
-and
-$$Var[\frac{(n-1)S^2}{\sigma^2}] = \frac{(n-1)^2}{\sigma^4}Var[S^2] = 2(n-1),$$
-where use $Var[\chi^2(n)] = 2n$ in \autoref{ch:theory-of-statistics:th:propertychisquare}.
+	(1) note that $E[X^2] = Var[X] + E[X]^2$.
+	(2) note that 
+	$$\hat{\sigma}^2 = \frac{1}{n}\sum_{i=1}^n X_i^2 - \bar{X}^2 = \frac{1}{n}\sum_{i=1}^n (X_i - \bar{X})^2.$$
 \end{proof}
+
+
+
+\begin{lemma}[estimating t distribution parameter via method of moments]\label{ch:theory-of-statistics:th:methodOfMomentsStudentTEstimation}
+	Suppose $X_1,X_2,...,X_n$ are iid random variable with $t_v(\mu, \sigma^2),v > 2$. It follows that
+	\begin{itemize}
+		\item $m_1 = \mu, \mu^2 + \sigma^2\frac{v}{v-2} = m_2$.
+		\item The moment of method estimators for $(\mu, \sigma)$ are
+		$$\hat{\mu} = m_1, \hat{\sigma}^2 = \frac{1}{n}\sum_{i=1}^n (X_i - \bar{X})^2 \frac{v-2}{v}.$$
+	\end{itemize}		
+	
+\end{lemma}
+\begin{proof}
+	(1)(2)From \autoref{ch:theory-of-statistics:sec:studentTdistribution} note that $E[X] = \mu$, $E[X^2] = Var[X] + E[X]^2 = \sigma^2\frac{v}{v-2} + \mu^2$.
+	note that 
+	$$\hat{\sigma}^2\frac{v}{v-2} = \frac{1}{n}\sum_{i=1}^n X_i^2 - \bar{X}^2 = \frac{1}{n}\sum_{i=1}^n (X_i - \bar{X})^2.$$
+\end{proof}
+
+
+
 
 \section{Maximum likelihood estimation}
 \subsection{Basic concepts}
@@ -2102,6 +1871,9 @@ where use $Var[\chi^2(n)] = 2n$ in \autoref{ch:theory-of-statistics:th:propertyc
 \end{definition}
 
 
+
+
+
 \begin{definition}[score function]\cite[548]{moon2000mathematical}
 	
 	$$s(\theta,\bm{X}) = \frac{\Pa \log L}{\Pa \theta}$$
@@ -2111,7 +1883,7 @@ where use $Var[\chi^2(n)] = 2n$ in \autoref{ch:theory-of-statistics:th:propertyc
 	$$Es(\theta,\bm{X}) = 0$$
 \end{lemma}
 \begin{proof}
-	This is a restatement of \autoref{ch:theory-of-statistics:th:usefulresult}
+	This is a restatement of \autoref{ch:theory-of-statistics:th:BasicPropertiesFisherInformation}
 \end{proof}
 
 \begin{lemma}[useful properties of score function]\cite[550]{moon2000mathematical}
@@ -2209,63 +1981,432 @@ $$ 0 = g(\hat{\theta}) = g(\theta_0) + H(\mean{\theta})(\hat{\theta} - \theta_0)
 where $\theta_0$ is the true value, and $\mean{\theta} = w\hat{\theta} + (1-w)\theta_0$ for some $0<w<1$. Rearranging this function and multiply it by $n$ and we get
 $$\sqrt{n}(\hat{\theta} - \theta_0) = [-H(\mean{\theta})]^{-1}(\sqrt{n}g(\theta_0))$$
 
+\section{Information and efficiency}
+
+\subsection{Fish information}\index{Fisher information}
+\begin{assumption}[Fisher information regularity assumption]\label{ch:theory-of-statistics:assumption:FisherInformationRegularityAssumption}
+	For a pdf $f(x;\theta)$ of random variable $X$ with parameter $\theta$. We make the following regularity assumptions:
+	\begin{itemize}
+		\item The set $A = \{x|p(x;\theta) > 0\}$ does not depend on $\theta$. For all $x\in A, \theta\in \Theta$, $\frac{\Pa }{\Pa \theta}\log p(x;\theta)$ exists and is finite. Here $\Theta$ is the parameter space.
+		\item If $T$ is any statistic of $X$ such that $E[\abs{T}] < \infty$ for all $\theta\in \Theta$, then integration and differentiation by $\theta$ can be interchanged in the following way:
+		$$\frac{\Pa }{\Pa \theta}[\int T(x)f(x;\theta)dx] = \int T(x)\frac{\Pa }{\Pa \theta} f(x;\theta)dx,$$
+		whenever the right-hand side is finite.
+	\end{itemize}	
+\end{assumption}
 
 
-\section{Method of moments}
 
-\begin{definition}[moments of the random sample]\cite[312]{casella2002statistical} Let $X_1,X_2,...,X_n$ be a sample from a population with pdf or pmf $f(x|\theta_1,...,\theta_k)$. The first $k$ moments are given by
-\begin{align*}
-m_1 &= \frac{1}{n}\sum_{i=1}^n X_i \\
-m_2 &= \frac{1}{n}\sum_{i=1}^n X_i^2 \\
-&\cdots \\
-m_k &= \frac{1}{n}\sum_{i=1}^n X_i^k 
-\end{align*}	
+\begin{definition}[Fisher information]
+	For one dimensional parametric family of pdf or pmf $f(x;\theta)$, we define the Fisher information for $\theta\in \R$ as
+	$$I(\theta) = E[(\frac{d}{d\theta}\log f(x;\theta))^2],$$
+	where the expectation is taken with respect to $x$.
+	In particular, if $\theta \in \R^N$, we have Fisher information matrix defined as
+	$$I(\theta)_{ij} =-E[\frac{\Pa^2 \log(f(x;\theta))}{\Pa \theta_i\theta_j}].$$
 \end{definition}
 
+\begin{remark}
+	This definition holds both for discrete or continuous random variables, as long as $f$  is differentiable respect to $\theta$. 
+\end{remark}
 
-\begin{definition}[moments of the random sample]\cite[312]{casella2002statistical} Let $X_1,X_2,...,X_n$ be a random sample of $X$ from a population with pdf or pmf $f(x|\theta_1,...,\theta_k)$. Define $\mu_i = E[X^i],i=1,2,...,k$. The method of moments is aimed at solving $\theta_1,\theta_2,...,\theta_k$ from the $k$ equations
-	\begin{align*}
-	m_1 &= \mu_1(\theta_1,...,\theta_k) \\
-	m_2 &= \mu_2(\theta_1,...,\theta_k) \\
-	&\cdots \\
-	m_k &= \mu_k(\theta_1,...,\theta_k) 
-	\end{align*}
-where $m_i,i=1,2,...,k$ are the $k$ moments of the sample.			
-\end{definition}
-
-
-\begin{lemma}[estimating normal distribution parameter via method of moments]\cite[312]{casella2002statistical}
-Suppose $X_1,X_2,...,X_n$ are iid random variable with $N(\mu, \sigma^2)$. It follows that
-\begin{itemize}
-	\item $m_1 = \mu, \mu^2 + \sigma^2 = m_2$.
-	\item The moment of method estimators for $(\mu, \sigma)$ are
-	$$\hat{\mu} = m_1, \hat{\sigma}^2 = \frac{1}{n}\sum_{i=1}^n (X_i - \bar{X})^2.$$
-\end{itemize}	
-\end{lemma}
+\begin{theorem}[Basic properties of Fisher information]\label{ch:theory-of-statistics:th:BasicPropertiesFisherInformation}
+	Let $f(x;\theta)$ be a pdf parameterized by $\theta\in \R$ with \autoref{ch:theory-of-statistics:assumption:FisherInformationRegularityAssumption} holds, then 
+	\begin{itemize}
+		\item $$E[\frac{d}{d\theta} \log f(x;\theta)] = 0$$
+		\item $$I(\theta) = Var[\frac{d}{d\theta} \log f(x;\theta)].$$
+		\item Further assume $f(x;\theta)$ is twice differentiable and interchange between integration and differentiation is permitted. Then
+		$$I(\theta) = E[(\frac{d}{d\theta}\log f(x;\theta))^2] = -E[\frac{\Pa^2 \log(f(x;\theta))}{\Pa \theta^2}].$$
+		
+		\item For $\theta \in \R^N$, 
+		$$I(\theta) = E[\frac{\Pa \log(f(x;\theta))}{\Pa \theta}(\frac{\Pa \log(f(x;\theta))}{\Pa \theta})^T] = -E[\frac{\Pa^2 \log(f(x;\theta))}{\Pa \theta\theta^T}].$$   
+	\end{itemize}	
+\end{theorem}
 \begin{proof}
-(1) note that $E[X^2] = Var[X] + E[X]^2$.
-(2) note that 
-$$\hat{\sigma}^2 = \frac{1}{n}\sum_{i=1}^n X_i^2 - \bar{X}^2 = \frac{1}{n}\sum_{i=1}^n (X_i - \bar{X})^2.$$
+	(1)	
+	The equivalence of these two expressions can be showed as:
+	\begin{align*}
+	E[\frac{d}{d\theta} \log f(x;\theta)] &= \int \frac{1}{f(x;\theta)} \frac{d}{d\theta} f(x;\theta) f(x;\theta) dx \\
+	&= \int  \frac{d}{d\theta} f(x;\theta)  dx \\
+	&= \frac{d}{d\theta} \int f(x;\theta)  dx \\
+	& = \frac{d}{d\theta} 1 \\
+	&= 0
+	\end{align*}
+	(2) Based on definition, we have
+	\begin{align*}
+	Var[\frac{d}{d\theta}\log f(x;\theta)] &= E[(\frac{d}{d\theta}\log f(x;\theta))^2] - E[\frac{d}{d\theta}\log f(x;\theta)]^2 \\
+	&= E[(\frac{d}{d\theta}\log f(x;\theta))^2] - 0 \\
+	&= I(\theta)
+	\end{align*}
+	
+(3)
+\begin{align*}
+\frac{\Pa^2}{\Pa \theta^2} \log f(x;\theta) &= \frac{\Pa}{\Pa \theta}\frac{1}{f(x;\theta)}\frac{\Pa}{\Pa \theta} f(x;\theta) \\
+&= -\frac{\Pa}{\Pa \theta}\frac{1}{f(x;\theta)^2}\frac{\Pa}{\Pa \theta} f(x;\theta) + \frac{1}{f(x;\theta)}\frac{\Pa^2}{\Pa \theta^2} f(x;\theta)  \\
+&= -(\frac{\Pa}{\Pa \theta} \log f(x;\theta))^2 + \frac{1}{f(x;\theta)}\frac{\Pa^2}{\Pa \theta^2} f(x;\theta)  
+\end{align*}	
+Take expectation with respect to $x$ on both sides and note that
+$$E[\frac{1}{f(x;\theta)}\frac{\Pa^2}{\Pa \theta^2} f(x;\theta)]=\int \frac{\Pa^2}{\Pa \theta^2} f(x;\theta) dx = \frac{\Pa^2}{\Pa \theta^2} \int  f(x;\theta) dx =   \frac{\Pa^2}{\Pa^2 \theta} 1 = 0
+$$
+	
+
+	
+	
+	
+	
 \end{proof}
 
 
+\begin{example}
+	Consider a sample $X_1,X_2,...,X_n$ of iid normal random variable with unknown mean and variance. 
+	Consider two variance estimator $$S_1^2 = \frac{\sum_{i=1}^{n} (X_i - \mean{X})}{n-1}, S_2^2 = \frac{\sum_{i=1}^{n} (X_i - \mean{X})}{n}.$$
+	Then
+	\begin{itemize}
+		\item The MSE for $S_1^2$ is
+		\begin{align*}
+		MSE[S_1^2] &= Var[S_1^2] + [Bias]^2 \\
+		&= \frac{2\sigma^4}{n-1} + 0 = \frac{2\sigma^4}{n-1}
+		\end{align*}
+		where we use the fact that 
+		$$\frac{(n-1)S^2}{\sigma^2}\sim \chi^2({n-1}),$$
+		from \autoref{ch:theory-of-statistics:th:studentTheorem} and
+		$$Var[\frac{(n-1)S^2}{\sigma^2}] = \frac{(n-1)^2}{\sigma^4}Var[S^2] = 2(n-1),$$
+		where use $Var[\chi^2(n)] = 2n$ in \autoref{ch:theory-of-statistics:th:propertychisquare}.
+		\item The MSE for $S_2^2$ is
+		\begin{align*}
+		MSE[S_2^2] &= (Var[S_2^2] + [Bias])^2 \\
+		&= \frac{2(n-1)\sigma^4}{n} + (E[S_2^2] - \sigma^2)^2 \\
+		&= \frac{2(n-1)\sigma^4}{n} + (\frac{(n-1)\sigma^2}{n} - \sigma^2)^2 \\
+		&= \frac{2n-1}{n^2}\sigma^4
+		\end{align*}
+		\item $MSE[S_2^2] < MSE[S_1^2]$. That is, the maximum-likelihood estimator has smaller MSE than the unbiased estimator.
+		
+	\end{itemize}
+	
+\end{example}
 
-\begin{lemma}[estimating t distribution parameter via method of moments]\label{ch:theory-of-statistics:th:methodOfMomentsStudentTEstimation}
-Suppose $X_1,X_2,...,X_n$ are iid random variable with $t_v(\mu, \sigma^2),v > 2$. It follows that
-\begin{itemize}
-	\item $m_1 = \mu, \mu^2 + \sigma^2\frac{v}{v-2} = m_2$.
-	\item The moment of method estimators for $(\mu, \sigma)$ are
-	$$\hat{\mu} = m_1, \hat{\sigma}^2 = \frac{1}{n}\sum_{i=1}^n (X_i - \bar{X})^2 \frac{v-2}{v}.$$
-\end{itemize}		
+\subsection{Information matrix for common distributions}
+
+\subsubsection{Bernoulli distribution}
+\begin{lemma}[Fisher information for Bernoulli distribution]
+	Let the pmf of Bernoulli distribution parameterized by $f(x;\theta) = \theta^x(1-\theta)^{1-x},x\in\{0,1\}$. Then
+	$$I(\theta) =  \frac{1}{\theta(1-\theta)}.$$
+\end{lemma}
+\begin{proof}
+	\begin{align*}
+I(\theta) &= -E[\frac{\Pa^2 \log(f(x;\theta))}{\Pa \theta^2}] \\
+&= E[\frac{x}{\theta^2} + \frac{1-x}{(1-\theta)^2}]\\
+&= \theta (1/\theta^2) + (1-\theta)(1/(1-\theta)^2) \\
+&= \frac{1}{\theta(1-\theta)}
+\end{align*}
+\end{proof}
+
+\subsubsection{Normal distribution}
+
+\begin{lemma}
 	
 \end{lemma}
+
+
+\subsubsection{Multivariate Gaussian distribution}
+
+\subsection{Cramer-Rao lower bound}
+\subsubsection{Information inequality}
+
+\begin{theorem}[information inequality]
+Let $T(X)$ be any statistic such that $Var[T(X)] < \infty$ for all $\theta$. Denote $E[T(X)]$ by $\phi(\theta)$. Suppose \autoref{ch:theory-of-statistics:assumption:FisherInformationRegularityAssumption} holds and $0 < I(\theta) < \infty$. Then \textbf{for all} $\theta$
+$$Var[T(X)] \geq \frac{[\phi'(\theta)]^2}{I(\theta)}.$$	
+\end{theorem}
 \begin{proof}
-(1)(2)From \autoref{ch:theory-of-statistics:sec:studentTdistribution} note that $E[X] = \mu$, $E[X^2] = Var[X] + E[X]^2 = \sigma^2\frac{v}{v-2} + \mu^2$.
-note that 
-$$\hat{\sigma}^2\frac{v}{v-2} = \frac{1}{n}\sum_{i=1}^n X_i^2 - \bar{X}^2 = \frac{1}{n}\sum_{i=1}^n (X_i - \bar{X})^2.$$
+Based on the \autoref{ch:theory-of-statistics:assumption:FisherInformationRegularityAssumption}, ,we have
+$$\phi'(\theta) = \int T(x)\frac{\Pa }{\Pa \theta} f(x;\theta) dx = \int T(x)\frac{\Pa \log f(x;\theta) }{\Pa \theta}  dx.$$
+Therefore, we can view
+$$\phi'(\theta) = E[T(X)\frac{\Pa \log f(x;\theta) }{\Pa \theta}] = Cov[T(X),\frac{\Pa \log f(x;\theta) }{\Pa \theta}],$$
+since $E[\frac{\Pa \log f(x;\theta) }{\Pa \theta}] = 0 \implies E[T(X)]E[\frac{\Pa \log f(x;\theta) }{\Pa \theta}] = 0$.
+
+Using Cauchy-Schwartz inequality (\autoref{ch:theory-of-probability:th:Cauchy-SchwarzInequality}), we have
+$$\abs{\phi'(\theta)}^2 = Cov[T(X),\frac{\Pa \log f(x;\theta) }{\Pa \theta}]^2 \leq Var[T(X)]Var[\frac{\Pa \log f(x;\theta) }{\Pa \theta}].$$
+At last, use the fact (\autoref{ch:theory-of-statistics:th:BasicPropertiesFisherInformation}) that $I(\theta) = Var[\frac{\Pa \log f(x;\theta) }{\Pa \theta}]$, we can get the final result. 	
 \end{proof}
 
 
+
+\begin{corollary}[information lower bound for general estimators]
+Let $T(X)$ be a (generally biased) estimator of $\theta$ such that
+$$\phi(\theta) \triangleq E[T(X)] = \theta + \underbrace{b(\theta)}_{bias}.$$
+Then
+\begin{itemize}
+	\item the variance of $T(X)$ is
+	$$Var[T(X)] \geq \frac{\abs{1 + b'(\theta)}}{I(\theta)}.$$
+	\item the MSE of $T(X)$ is
+	$$MSE[T(X)] \geq \frac{\abs{1 + b'(\theta)}}{I(\theta)} + b(\theta)^2.$$
+\end{itemize}
+\end{corollary}
+
+
+
+
+\begin{theorem}[Cramer-Rao lower bound]\index{Cramer-Rao lower bound}
+	For an arbitrary estimator for $\theta\in \R$, 
+	$$Var(\hat{\theta}) \geq \frac{(\frac{d}{d\theta}E[\hat{\theta}])^2}{nI(\theta)}$$
+	Particularly, if the estimator $\hat{\theta}$ is unbiased (that is $E[\hat{\theta}] = \theta$), we have
+	$$Var(\hat{\theta}) \geq \frac{1}{nI(\theta)}.$$
+\end{theorem}
+
+
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.5\linewidth]{../figures/statisticalModeling/estimationTheory/fisherInformationDemo}
+	\caption{}
+	\label{fig:fisherinformationdemo}
+\end{figure}
+
+
+\subsubsection{Uniformly minimum-variance unbiased estimator}
+\begin{definition}\index{minimum-variance unbiased estimator}
+	Consider a statistic $\theta$ as a function of iid random samples $X_1,X_2,...,X_n$ with pdf $f(x,\theta)$. The estimator is a \textbf{uniformly minimum-variance unbiased estimator(UMVUE)} if 
+	\begin{itemize}
+		\item it is unbiased, i.e., $\hat{\theta} = \theta$
+		\item $\forall \theta \in \Theta$, we have $$var(\hat{\theta}) \leq var(\hat{\theta'})$$ for any other unbiased estimator $\hat{\theta'}$.
+	\end{itemize}
+\end{definition}
+
+\begin{remark} [interpretation]
+	In terms of efficiency in using data to reduce uncertainty, UMVUE has the optimal estimation efficiency.
+\end{remark}
+
+\begin{mdframed}
+	\textbf{How to find UMVUE?}
+	
+	There is no simple, general procedure for finding the MVUE
+	estimator. Here are some several
+	approaches:
+	\begin{itemize}
+		\item Find a sufficient statistic and apply the Rao-Blackwell theorem.
+		\item Determine the so-called Cramer-Rao Lower Bound (CRLB)
+		and verify that the estimator achieves it.
+		\item Further restrict the estimator to a class of estimators (e.g.,
+		linear or polynomial functions of the data)
+		\item The existence of UMVUE is in discussed \cite[62]{keener2010theoretical}.
+	\end{itemize}
+\end{mdframed}
+
+
+
+\begin{lemma}[normal distribution estimators]
+	For a normal distribution with unknown mean and variance, the sample mean and the unbiased sample variance are the MUVEs for the population mean and population variance.
+\end{lemma}
+\begin{proof}
+	TODO
+	
+\end{proof}
+
+
+
+
+\begin{definition}[efficient estimator]\index{efficient estimator}
+	An estimator $\hat{\theta}$ if variance achieves equality in the Cramer Rao lower bound for all $\theta\in \Theta$.
+\end{definition}
+
+\begin{remark}
+	An efficient estimator is optimal in the sense of using information to reduce uncertainty.
+\end{remark}
+
+\begin{example}
+	Let the pmf of Bernoulli distribution parameterized by $f(x;\theta) = \theta^x(1-\theta)^{1-x},x\in\{0,1\}$. Then
+	\begin{align*}
+	I(\theta) &= -E[\frac{\Pa^2 \log(f(x;\theta))}{\Pa \theta^2}] \\
+	&= E[\frac{x}{\theta^2} + \frac{1-x}{(1-\theta)^2}]\\
+	&= \theta (1/\theta^2) + (1-\theta)(1/(1-\theta)^2) \\
+	&= \frac{1}{\theta(1-\theta)}
+	\end{align*}
+	
+	Consider the estimator $\hat{\theta} = \mean{X}$, then $$E[\hat{\theta}] = E[\mean{X}] = E[\sum_{i=1}^n X_i/n] = \theta$$
+	and
+	$$Var[\hat{\theta}] = E[\mean{X}^2] - E[\hat{\theta}]^2 = \theta/n + \theta^2(n-1)/n - \theta^2 = \theta(1-\theta)/n$$
+	
+	Therefore, the variance of the estimator is achieving the lower bound.
+\end{example}
+
+\begin{lemma}
+	An efficient estimator is UMVUE; that is, an unbiased estimator with variance achieving the Cramer-Rao lower bound is UMVUE. The converse might not be true.
+\end{lemma}
+\begin{proof}
+	If the variance achieve the lower bound, then it has unformly minimum variance, and therefore it is UMVUE. On the other hand, it is likely that for some estimator the lower bounded is not achieved, but it has smaller variance than any other competing estimators.
+\end{proof}
+
+\begin{remark}[implications and practical issues]\hfill
+	\begin{itemize}
+		\item The Cramer-Rao lower Bound enables us to judge whether one estimator is efficient: the closer to lower bound, the more efficient.
+		\item Efficient estimators are usually difficult to find in practice.
+	\end{itemize}
+\end{remark}
+
+
+
+\begin{theorem}[Rao-Blackwell theorem]\index{Rao-Blackwell theorem}
+	Let $\hat{\theta}(X_1,...,X_n)$ be an estimator, and $T$ be any sufficient statistic. Then the new estimator $\hat{\theta}^* = E[\hat{\theta}(X_1,...,X_n)|T(X_1,...,X_n)]$ will satisfy
+	$$MSE(\hat{\theta}^*) \leq MSE(\hat{\theta}),\forall \theta.$$
+	Particularly, if both estimators are unbiased, we have
+	$$Var(\hat{\theta}^*) \leq Var(\hat{\theta}),\forall \theta .$$
+	The process of creating a new improved estimator via conditioning is called \textbf{Rao-Blackwellization}.
+\end{theorem}
+\begin{proof}
+	Since $Var(X) \geq 0$ implies $E[X^2]\geq E[X]^2$, we have
+	\begin{align*}
+	E[(\hat{\theta} - \theta)^2|T] \geq (E[\hat{\theta - \theta}|T])^2 = (E[\hat{\theta}|T] - \theta)^2 = (\hat{\theta}^* - \theta)^2
+	\end{align*}	
+	Take expectation on both sides and use the Tower property of conditional expectation, we have
+	$$E[(\hat{\theta}^* - \theta)^2] \leq E[(\hat{\theta} - \theta)^2]$$
+\end{proof}
+
+
+\begin{lemma}[unbiasedness inheritance]
+	The improved estimator is unbiased if and only if the original estimator is unbiased. 	
+\end{lemma}
+\begin{proof}
+	$$E[E[\hat{\theta}(X_1,...,X_n)|T(X_1,...,X_n)]]=E[\hat{\theta}(X_1,...,X_n)]$$
+\end{proof}
+
+
+\begin{lemma}[idempotent operation]
+	Rao-Blackwellization is an idempotent operation. More precisely, let Rao-Blackwellization operator denoted as $R$, let $\hat{\theta}$ be the original estimator, then
+	$$R^2[\hat{\theta}] = R[\hat{\theta}]$$	
+\end{lemma}
+\begin{proof}
+	$$E[E[\hat{\theta}|T]|T]=E[\hat{\theta}|T]$$
+	via the law of iterated expectation.
+\end{proof}
+
+
+\begin{remark}[Rao-Blackwell theorem vs. Cramer-Rao lower bound]\hfill
+	\begin{itemize}
+		\item An estimator achieving the Cramer-Rao lower bound is performing better than any other estimators in all the possible $\theta$.
+		\item Rao-Blackwellization provides a way to improve current estimator such that the improved estimator is no worst than the current estimator in all the possible $\theta$. The improved estimator cannot guarantee to achieve the Cramer-Rao lower bound, i.e., being better than any other estimators. 
+	\end{itemize}
+\end{remark}
+
+
+
+\subsection{Efficiency}
+
+\begin{definition}[relative efficiency]
+	The relative efficiency of two \textbf{unbiased} estimators $\hat{\theta}_1$ and $\hat{\theta}_2$ is the ratio of their variance $$\frac{Var(\hat{\theta}_1)}{Var(\hat{\theta}_2)}$$.
+\end{definition}
+
+\begin{remark}
+	The more efficient estimator is that: \textbf{given fixed number of samples}, it has a lower MSE/variance. 
+\end{remark}
+
+
+
+
+\subsection{One sample estimation}
+
+
+\begin{lemma}[mean and variance estimator of normal samples]\cite{sciacchitano2015collaborative}
+	Let $X_1,X_2,...,X_n$ be a random sample from $N(\mu, \sigma^2)$. Define two statistics
+	$$\mean{X} = \frac{1}{n}\sum_{i=1}^n X_i, S^2 = \frac{1}{n-1}\sum_{i=1}^n (X_i - \mean{X})^2.$$
+	\begin{itemize}
+		\item $\mean{X}$ is the \textbf{uniformly minimum variance unbiased }(UMVU) estimator of $\mu$. And
+		$$E[\mean{X}] = \mu, Var[\mean{X}] = \frac{\sigma^2}{n}.$$
+		\item $S^2$ is the uniformly minimum variance unbiased (UMVU) estimator of $\sigma^2$. And
+		$$E[S^2] = \sigma^2, Var[S^2] = \sigma^4\frac{2}{n-1}.$$
+	\end{itemize}	
+\end{lemma}
+\begin{proof}
+	(1) To prove UMVU, see reference. Note that from \autoref{ch:theory-of-statistics:th:studentTheorem},
+	$$\frac{(n-1)S^2}{\sigma^2}\sim \chi^2({n-1}),$$
+	and
+	$$Var[\frac{(n-1)S^2}{\sigma^2}] = \frac{(n-1)^2}{\sigma^4}Var[S^2] = 2(n-1),$$
+	where use $Var[\chi^2(n)] = 2n$ in \autoref{ch:theory-of-statistics:th:propertychisquare}.
+	
+	The information matrix is given by
+	$$I_1()$$
+\end{proof}
+
+\section{Sufficiency and data reduction}
+
+\begin{mdframed}
+	\textbf{Motivation for sufficient statistic:}\\
+	\begin{itemize}
+		\item When we estimate a model parameter $\theta$, \textbf{not all the information in the data are relevant} to the estimation procedure. For example, if we want to estimate the mean, then the order of the sample is irrelevant.
+		\item A sufficient statistic for a model parameter $\theta$ represents the \textbf{summary of all information from the data that are useful} for estimation of $\theta$.
+		\item \textbf{A statistic sufficient for one parameter $\theta_1$ might not be sufficient for other parameters $\theta_2$.}
+	\end{itemize}
+\end{mdframed}
+
+
+\begin{definition}[sufficient statistics]
+	Let $X$ be a random sample of size $n$. A statistic $T(X)$ is a sufficient statistic for $\theta$ if the conditional distribution of the sample $X$ given the value of $T(X)$ does not depend on $\theta$; that is
+	$$P(X|T,\theta) = P(X|T)$$
+	In otherwise, $X$ and $\theta$ are conditional independent given $T$.
+\end{definition}
+
+
+%\begin{theorem}[sufficient criterion]
+%\cite[274]{casella2002statistical}\cite[391]{hoggintroduction}
+%Let $X$ be a random sample. Let $p(X|\theta)$ be the joint pdf or pmf of $X$ and $p(T(X)|\theta)$ be the pdf or pmf of $T(X)$, then $T(X)$ is a sufficient statistic for $\theta$ if, 
+%$$\frac{p(X|\theta}{p(T(X)|\theta} = H(X)$$
+%and does not depend on $\theta$.
+%\end{theorem}
+%proof: 
+
+\begin{remark}[\textbf{sufficient statistic as a lossless data compression}]
+	A statistic is sufficient means that $T(X)$ itself can capture all the information useful in estimating $\theta$; the sample $X$ might contain more information than $T(X)$(since $T(X)$ is usually not 1-1), but this additional information does not provide additional usefulness in estimating $\theta$.
+\end{remark}
+
+\begin{remark}[\textbf{trivial sufficient statistic}]
+	The statistic $T(X_1,...,X_n)=(X_1,...,X_n)$ is always sufficient for any estimation task.
+\end{remark}
+
+
+\begin{theorem}[Neyman-Fisher Factorization theorem]\index{factorization theorem}
+	\cite[276]{casella2002statistical} Let $f(\bm{x}|\theta)$ denote the joint pdf or pmf of a sample $\bm{X}$. A statistic $T(\bm{X})$ is a sufficient statistic for $\theta$ if and only if there exist functions $g(T(\bm{x}|\theta))$ such that for all sample points $\bm{x}\in \cX$ and all parameter points $\theta \in\Theta$, we have
+	$$f(\bm{x}|\theta) = g(T(\bm{x})|\theta)h(\bm{x})$$
+\end{theorem}
+\begin{proof}
+	(1) Assume $T(\bm{X})$ is sufficient, then we have $f(x|T(x),\theta) = f(x|T(x))$. Then we have
+	\begin{align*}
+	f(x|\theta) = f(x|\theta) f(T(x)|x,\theta) &= f(x,T(x)|\theta) = f(T(x)|\theta) f(x|T(x),\theta)\\
+	&= f(T(x)|\theta)f(x|T(x)) (\text{use sufficiency})\\
+	&=h(x) g(T(x)|\theta)
+	\end{align*}
+	(2)	
+	
+	
+\end{proof}
+
+\cite[451]{moon2000mathematical} for sufficient statistic examples
+
+
+
+
+
+
+
+\begin{definition}[minimal sufficient]\index{minimal sufficient}\cite[48]{keener2010theoretical}
+	A sufficient statistic is minimal sufficient if it can be represented as a function of any other sufficient statistic. That is, if $S(X)$ is minimal sufficient, then there exists a function $f$ such that $S(X) = f(T(X))$, where $T(X)$ is another sufficient statistic.
+\end{definition}
+
+
+
+
+\begin{remark}\hfill
+	\begin{itemize}
+		\item The minimal sufficient statistic represents \textbf{the smallest amount of information yet still sufficient for estimation of the parameter.} Therefore, a minimal sufficient statistic can be represented by any other sufficient statistic, which always contains more information.
+		\item A minimal sufficient statistic represents the maximal (and hence optimal) lossless compression of data.
+	\end{itemize}
+\end{remark}
+
+\begin{definition}[complete statistic]\cite[48]{keener2010theoretical}
+\end{definition}
+
+\begin{theorem}\cite[49]{keener2010theoretical}
+	If statistic $T$ is complete and sufficient, then $T$ is minimal sufficient. 
+\end{theorem}
+
+
+\section{Asympotic properties of estimators}
 
 
 \section{Interval estimation}
