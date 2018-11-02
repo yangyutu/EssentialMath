@@ -1,34 +1,10 @@
 # Essential Mathematical Methods
 This repo contains the sources of my book "Essential Mathematical Methods". 
 
-**Latest PDF download [PDF](https://dl.dropboxusercontent.com/u/39798499/mathbook.pdf)**
-
-## Release history
-2016/09/22 version1.0 release. Currently about 485 pages (expected to be ~800 pages when completed). Checkout the release1.0 branch to download.
-
-2016/10/23 version1.1 release. Added mathematical finance theory. Currently about 600 pages (expected to be ~800 pages when completed). Checkout the release1.1 branch to download.
-
-2016/11/25 version1.2 release. Currently about 690 pages (expected to be ~900 pages when completed). Checkout the release1.2 branch to download.
-
-2017/1/19 version1.3 release. Added multiscale analysis and perturbation methods. Currently about 800 pages (expected to be ~1000 pages when completed). Checkout the release1.3 branch to download.
-
-
-
 ## Why this book
 This is an online evolving book that collects and organizes various fundamental results in applied mathematics, with emphasized applications in **stochastic system modeling, optimal decision making, statistical learning, and mathematical finance**. The content stems from various courses I have taken in Johns Hopkins University, and my self-study notes during my PhD research on optimal control of stochastic systems. This book is intended for readers in applied math and engineering that are already familiar with the topic and want to have an in-depth refreshment and summary such that  various dots in commonly used applied math methods can be connected. 
 
-## Numerical Facts
-|         | Count           | 
-| ------------- |:-------------:| 
-| **Definition**    | ~1050 |
-| **Theorem**    | ~1000 | 
-| **Lemma**      | ~700      | 
-| **Corollary** | ~200      |  
-| **Words** | ~200,000 |
-
-
-
-   
+  
 
 ## Features
 This book is aimed to strike a balance between math-type books and enginnering-type books. It has following features:
