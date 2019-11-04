@@ -25,7 +25,7 @@ matplotlib==1.5.3
 mistune==0.7.3
 nbconvert==5.0.0
 nbformat==4.2.0
-notebook==4.3.1
+notebook==5.7.8
 numpy==1.11.3
 pandocfilters==1.4.1
 pathlib2==2.1.0
