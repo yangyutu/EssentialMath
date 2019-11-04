@@ -45,7 +45,7 @@
 %\newcommand{\listofalgorithmes}{\tocfile{\listalgorithmcfname}{loa}}
 % http://tex.stackexchange.com/questions/45538/list-of-algorithms-using-algorithm2e
 
-\title{\huge \textbf{Essential Mathematical Modeling Methods}}
+\title{\huge \textbf{Essential Mathematical Modeling Methods: Principles and Algorithms}}
 \author{Yuguang Yang \\
 Johns Hopkins University \\yangyutu123@gmail.com }
 \date{September 2015}
@@ -127,6 +127,11 @@ Johns Hopkins University \\yangyutu123@gmail.com }
 \usepackage{minitoc}      
 \setcounter{tocdepth}{5}
 \setcounter{minitocdepth}{4}   
+
+% resize fonts in the verbatim
+\usepackage{fancyvrb}
+
+\usepackage{tabto}
 %\newcommand\cpart[1]{\part[\\sffamily\bfserieshfill#1\hfill]{#1}}
 % this is to change fonts in table of contents
 \renewcommand\cftpartfont{\sffamily\bfseries\large\color{red}}
@@ -310,11 +315,15 @@ backgroundcolor=gray!5,%
 innertopmargin=4pt,%
 ntheorem]{note}{Note}[section]
 
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
 \newcommand{\lemmaautorefname}{Lemma}
 \newcommand{\corollaryautorefname}{Corollary}
 \newcommand{\definitionautorefname}{Definition}
 \newcommand{\remarkautorefname}{Remark}
-
+\newcommand{\assumptionautorefname}{Assumption}
+\newcommand{\exampleautorefname}{Example}
 \DeclareMathOperator*{\plim}{plim}
 
 % for header and footer https://www.sharelatex.com/learn/Headers_and_footers
@@ -322,7 +331,7 @@ ntheorem]{note}{Note}[section]
  \fancypagestyle{plain}{%
  \fancyhf{}
 \fancyfoot[LO, RE]{\slshape Yuguang Yang  }
-\fancyfoot[RO, LE]{\slshape Essential Mathematical Modeling Methods}}
+\fancyfoot[RO, LE]{\slshape Essential Mathematical Methods}}
 \pagestyle{fancy}
 \fancyhf{}
 %\fancyhead[LE,RO]{Essential Mathematical Methods}
@@ -338,13 +347,13 @@ ntheorem]{note}{Note}[section]
 \def\layersep{2.5cm}%neural network http://www.texample.net/tikz/examples/neural-network/
 
 % create a background image
-\usepackage[pages=some]{background}
-\backgroundsetup{
-	scale=1,
-	angle=0,
-	opacity=.4,  %% adjust
-	contents={\includegraphics[width=\paperwidth,height=\paperheight]{coverImg}}
-}
+%\usepackage[pages=some]{background}
+%\backgroundsetup{
+%	scale=1,
+%	angle=0,
+%	opacity=.4,  %% adjust
+%	contents={\includegraphics[width=\paperwidth,height=\paperheight]{coverImg}}
+%}
 
 
 \newcommand{\sectionbreak}{\clearpage}% start a new page for each section
@@ -365,30 +374,26 @@ ntheorem]{note}{Note}[section]
 
 \begin{titlepage}
 %\maketitle
-	\BgThispage
+%	\BgThispage
     \begin{center}
         \vspace*{1cm}
         
-        {\huge \textbf{Essential Mathematical Modeling Methods}}
+        {\huge \textbf{Essential Mathematical Modeling Methods: Principles and Algorithms}}
         
-        \vspace{0.5cm}
-       
-       version 2.0 \\
+        
 %        \textbf{An evolving online book at}\\
 %        \href{      https://github.com/yangyutu/NotesOnMathMethods
 %        }{https://github.com/yangyutu/NotesOnMathMethods}\\
         \vspace{1.8cm}
+       {\Large\textbf{Yuguang Yang}}\\
+       \vspace{0.5cm}
        
+       version 2.0 \\
+\vspace{2.8cm}
+        	\includegraphics[width=0.7\linewidth]{800px-e8_graph-svg}
         
-        \vspace{1.5cm}
-         \vspace{2.8cm}
-        {\Large\textbf{Yuguang Yang}}\\
-
-
-        
+         
     
-        \vspace{3cm}
-   
         
     \end{center}
 
@@ -412,16 +417,6 @@ ntheorem]{note}{Note}[section]
 	\vspace{0.4cm}
 \end{center}
 
-
-\begin{center}
-	\Large
-	\textbf{Mathematical notation}
-	
-	\vspace{0.4cm}
-	\large
-	
-	\vspace{0.4cm}
-\end{center}
 
 \begin{itemize}
 	\item $\R$: real numbers.
@@ -481,49 +476,47 @@ ntheorem]{note}{Note}[section]
 
 
 \part{Mathematical Foundations}
-%\input{../chapers/realAnalysis}
+\input{../chapters/realAnalysis}
 \input{../chapters/linearAlgebra}
-%\input{chapters/functionalAnalysis}
+\input{../chapters/functionalAnalysis}
 %\input{chapters/DifferentialGeometry}
 %\input{chapters/Groups}
 
 
 %\input{../chapters/optimization}
 
-\part{Classic Modeling Methods}
+\part{Classical Statistical Methods}
+\input{../chapters/probabilityTheory}
+\input{../chapters/statistics}
+%\input{../chapters/statisticalModeling}
+\input{../chapters/RegressionAnalysis}
+%\input{../chapters/analysisofVariance}
+
+%\input{../chapters/MonteCarlo}
+
+\part{Dynamic Modeling Methods}
 
 
 %\input{../chapters/dynamicalSystem}
 %\input{../chapters/numericalDifferentialEquations}
-%\input{../chapters/optimalControl}
-%\input{../chapters/calculusofVariations}
-%\input{../chapters/gameTheory}
-
-
-
-
-
-\part{Stochastic Modeling Methods}
-
-
 %\input{../chapters/stochasticProcess}
 %\input{../chapters/MarkovChains}
-%\input{../chapters/MonteCarlo}
+%\input{../chapters/timeseries}
 
-\part{Classical Statistical Methods}
-\input{../chapters/probabilityTheory}
-\input{../chapters/statistics}
+\part{Optimal Control}
+%\input{../chapters/calculusofVariations}
+\input{../chapters/optimalControl}
 
-\input{../chapters/statisticalModeling}
-\input{../chapters/RegressionAnalysis}
-\input{../chapters/timeseries}
+%\input{../chapters/gameTheory}
 
 
 
 \part{Statistical Learning}
 \input{../chapters/statisticalLearning}
-%\input{../chapters/neutralNetwork}
-%\input{../chapters/naturalLanguageProcessing}
+
+\part{Neural Network and Deep Learning}
+\input{../chapters/neuralNetwork}
+\input{../chapters/naturalLanguageProcessing}
 
 
 

@@ -1744,7 +1744,7 @@ where $\theta$ is the true value. If $Bias(\hat{\theta}) = 0$, then estimator $\
 \end{definition}
 
 \begin{definition}[mean squared error of an estimator]
-The mean squared error(MSE) of an estimator is $$E[(\hat{\theta}-\theta)^2].$$
+The mean squared error(MSE) of an estimator is $$MSE(\hat{\theta}) = E[(\hat{\theta}-\theta)^2].$$
 \end{definition}
 
 
@@ -1757,20 +1757,74 @@ The MSE of an estimator is related to its variance and bias via
 \begin{equation}
  MSE(\hat{\theta}) = E[(\hat{\theta}-\theta)^2]=Var[\hat{\theta}] + (Bias(\hat{\theta}))^2
 \end{equation}
-where $Var[\hat{\theta}] = E[(\hat{\theta} - E[\hat{\theta}])^2]$. Particularly, if the estimator is unbiased(i.e. $Bias(\hat{\theta}) = 0$), we have
+where $Var[\hat{\theta}] = E[(\hat{\theta} - E[\hat{\theta}])^2]$. Particularly, if the estimator is unbiased (i.e. $Bias(\hat{\theta}) = 0$), we have
 $$MSE(\hat{\theta}) =Var[\hat{\theta}]$$
 \end{theorem}
 \begin{proof}
-make $(\hat{\theta}-\theta) = (\hat{\theta}-E[\hat{\theta}] + E[\hat{\theta}] - \theta)$ and note that $\hat{\theta}$ is a random variable.	
+Make $(\hat{\theta}-\theta) = (\hat{\theta}-E[\hat{\theta}] + E[\hat{\theta}] - \theta)$ and note that $\hat{\theta}$ is a random variable.
+Specifically,
+\begin{align*}
+MSE(\hat{\theta}) & = E[(\hat{\theta}-\theta)^2] \\
+				  & = E[((\hat{\theta}-E[\hat{\theta}] + E[\hat{\theta}] - \theta))^2] \\
+				  & = E[((\hat{\theta}-E[\hat{\theta}])^2] + 2E[((\hat{\theta}-E[\hat{\theta}])(E[\hat{\theta}] - \theta))] + E[(E[\hat{\theta}] - \theta))^2]\\
+				  & = Var[\hat{\theta}] + 2E[((\hat{\theta}-E[\hat{\theta}])](E[\hat{\theta}] - \theta)) + Bias[\hat{\theta}]^2 \\
+				  & = Var[\hat{\theta}] + 0 + Bias[\hat{\theta}]^2
+\end{align*}	
 \end{proof}
- 
+
+\begin{remark}[biasedness can be useful]
+At first glance, it may seem that biasedness is always undesired. However, biased estimator might have smaller variance (Figure \autoref{ch:theory-of-statistics:fig:unbiasedbiasedestimatorComparison}). As a consequence, biased estimator can have smaller MSE than unbiased estimator. Also consider the following example. 	
+\end{remark}
+
+
+
+
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.6\linewidth]{../figures/statisticalModeling/estimationTheory/unbiasedBiasedEstimatorModified}
+	\caption{An example of biased estimator with smaller variance than unbiased estimator}
+	\label{ch:theory-of-statistics:fig:unbiasedbiasedestimatorComparison}
+\end{figure}
+
+\begin{example}
+	Consider a sample $X_1,X_2,...,X_n$ of iid normal random variable with unknown mean and variance. 
+	Consider two variance estimator $$S_1^2 = \frac{\sum_{i=1}^{n} (X_i - \mean{X})}{n-1}, S_2^2 = \frac{\sum_{i=1}^{n} (X_i - \mean{X})}{n}.$$
+	Then
+	\begin{itemize}
+		\item The MSE for $S_1^2$ is
+		\begin{align*}
+		MSE[S_1^2] &= Var[S_1^2] + [Bias]^2 \\
+		&= \frac{2\sigma^4}{n-1} + 0 = \frac{2\sigma^4}{n-1}
+		\end{align*}
+		where we use the fact that 
+		$$\frac{(n-1)S^2}{\sigma^2}\sim \chi^2({n-1}),$$
+		from \autoref{ch:theory-of-statistics:th:studentTheorem} and
+		$$Var[\frac{(n-1)S^2}{\sigma^2}] = \frac{(n-1)^2}{\sigma^4}Var[S^2] = 2(n-1),$$
+		where use $Var[\chi^2(n)] = 2n$ in \autoref{ch:theory-of-statistics:th:propertychisquare}.
+		\item The MSE for $S_2^2$ is
+		\begin{align*}
+		MSE[S_2^2] &= (Var[S_2^2] + [Bias])^2 \\
+		&= \frac{2(n-1)\sigma^4}{n} + (E[S_2^2] - \sigma^2)^2 \\
+		&= \frac{2(n-1)\sigma^4}{n} + (\frac{(n-1)\sigma^2}{n} - \sigma^2)^2 \\
+		&= \frac{2n-1}{n^2}\sigma^4
+		\end{align*}
+		\item $MSE[S_2^2] < MSE[S_1^2]$. That is, the maximum-likelihood estimator has smaller MSE than the unbiased estimator.
+		
+	\end{itemize}
+	
+\end{example}
+
+
+
+\subsubsection{Consistence} 
 
 \begin{definition}[consistent estimator]
 We say $\hat{\theta}$ is a consistent estimator of $\theta$ if $\hat{\theta}$ converges to $\theta$ in probability, i.e., 
 $$\lim_{n\to \infty} P(\abs{\hat{\theta}(X_1,X_2,...,X_n)-\theta} < \epsilon) = 1,\forall \epsilon > 0.$$
 \end{definition}
 
-\begin{theorem}
+\begin{theorem}[MSE criterion for consistent estimator]
 An \textbf{unbiased} estimator $\hat{\theta}$ is consistent if $$\lim_{n\to \infty} Var(\hat{\theta}(X_1,X_2,...,X_n)) = 0$$
 
 More generally, an estimator $\hat{\theta}$ is consistent if $$\lim_{n\to \infty} MSE(\hat{\theta}(X_1,X_2,...,X_n)) = 0$$
@@ -1781,15 +1835,27 @@ Overall, we can use \autoref{ch:theory-of-probability:th:convergenceMSimpliescon
 
 \end{proof}
  
-\begin{remark}[consistence vs. unbiasedness]\hfill
+\begin{remark}[consistence vs. unbiasedness]\label{ch:theory-of-statistics:remark:consistentVsUnbiasedEstimator}\hfill
 	\begin{itemize}
-		\item A consistent estimator is at least \textbf{asymptotically unbiased}.
+		\item A consistent estimator is at least \textbf{asymptotically unbiased}.However, some unbiased estimators can be inconsistent(i.e. the variance does not converge to 0).
+		\item If the sample size is larger, consistent estimators are consider better than unbiased estimator because consistent estimator ensure that estimator variance is sufficiently smaller. 
 		\item Inconsistent estimator usually should be avoided, since increasing the number of samples will not necessarily reduce the variance.
-		\item Some unbiased estimators can be inconsistent(i.e. the variance does not converge to 0)
 	\end{itemize}
 \end{remark}
 
-
+\begin{theorem}[sample mean estimator is consistent]\cite[1160]{greene2017econometric}
+Let $X_1,...,X_n$ be a random sample from any population with finite mean $\mu$ and finite variance $\sigma^2$. 
+Let $\mean{X}_n$ be the sample mean. It follows that
+\begin{itemize}
+	\item $\mean{X}_n$ is the consistent estimator of $\mu$.
+	\item For any function $g(x)$, if $E[g(x)]$ and $Var[g(x)]$ are finite, then the quantity
+	$$\frac{1}{n}\sum_{i=1}^n g(X_i)$$
+	is the consistent estimator of $E[g(X)]$.
+\end{itemize}
+\end{theorem}
+\begin{proof}
+Because $E[\mean{X}_n] = \mu$ and $Var[\mean{X}_n]\to 0$, then $\mean{X}_n$ converges to $\mu$ in mean square and thus in probability (\autoref{ch:theory-of-probability:th:MeanSquareConvergenceToAConstant} and \autoref{ch:theory-of-probability:th:convergenceMSimpliesconvergeninProb}).	
+\end{proof}
 
 
 
@@ -1848,6 +1914,16 @@ Overall, we can use \autoref{ch:theory-of-probability:th:convergenceMSimpliescon
 \end{proof}
 
 
+\subsection{Generalized moment methods}
+
+\begin{remark}[GMM vs. MLE]\hfill
+\begin{itemize}
+	\item MLE use assumption about the specific families of distribution for the random variables to derive an objective function. 
+	\item GMM estimators use assumptions about moments of the random variable to derive the objective function.  Moment conditions are assumed for the population, but we use the data to compute the analogous sample moment conditions.
+
+\end{itemize}	
+	
+\end{remark}
 
 
 \section{Maximum likelihood estimation}
@@ -1858,129 +1934,74 @@ Overall, we can use \autoref{ch:theory-of-probability:th:convergenceMSimpliescon
 
 \begin{definition}[likelihood function]\index{likelihood function}
 	\cite[22]{pawitan2001all}
-	Assuming a statistical model parametrized by a fixed and unknown $\theta$, the likelihood $L(\bm{x}|\theta)$ is the probability of the observations $\bm{x}=(x_1,x_2,...,x_n)$ of iid random samples as a function of $\theta$. It can be written as
+	Assuming a statistical model parametrized by a fixed and unknown $\theta$, the likelihood $L(\bm{x}|\theta)$ is the probability of the observations $\bm{x}=(x_1,x_2,...,x_n)$ of iid random samples $X_1,X_2,...,X_n$ as a function of $\theta$. It can be written as
 	$$L(\bm{x}|\theta) = \prod_{i=1}^n f(X=x_i|\theta)$$
 	And the corresponding log-likelihood function is defined as
 	$$\log L(\bm{x}|\theta) = \sum_{i=1}^n f(X=x_i|\theta)$$
 	
 \end{definition}
 
-\begin{definition}[maximum likelihood estimator]\index{maximum likelihood estimator}
-	\cite[316]{casella2002statistical} A maximum likelihood estimator(MLE) of the parameter $\theta$ given observations is
-	$$\hat{\theta} = \max_{\theta} L(\bm{x}|\theta)$$
+\begin{definition}[maximum likelihood estimator and score function]\index{maximum likelihood estimator}
+	\cite[316]{casella2002statistical} A maximum likelihood estimator(MLE) of the parameter $\theta$ based on given observations $\bm{x}$ is 
+	$$\hat{\theta} = \max_{\theta} \log L(\bm{x}|\theta),$$
+Or alternatively,
+$\hat{\theta}$ satisfies
+ 	$$s(\theta,\bm{x}) = \frac{\Pa \log L}{\Pa \theta} = 0,$$
+ where $s(\theta,\bm{x})$ is called \textbf{score function}.
 \end{definition}
 
 
 
 
-
-\begin{definition}[score function]\cite[548]{moon2000mathematical}
-	
-	$$s(\theta,\bm{X}) = \frac{\Pa \log L}{\Pa \theta}$$
-\end{definition}
-
-\begin{lemma}
-	$$Es(\theta,\bm{X}) = 0$$
-\end{lemma}
-\begin{proof}
-	This is a restatement of \autoref{ch:theory-of-statistics:th:BasicPropertiesFisherInformation}
-\end{proof}
-
-\begin{lemma}[useful properties of score function]\cite[550]{moon2000mathematical}
-	Let $t$ be any vector-valued function $\bm{X}$ and $\theta$, then
-	$$E[s(\theta,\bm{X})t^T(\theta,\bm{X})] = \frac{\Pa}{\Pa \theta} E[t^T] - E[\frac{\Pa}{\Pa \theta} t^T]$$ 
-	And particularly, if $t = s$, we have
-		$$E[s(\theta,\bm{X})s^T(\theta,\bm{X})] =  - E[\frac{\Pa}{\Pa \theta} t^T]$$ 	
-\end{lemma}
-\begin{proof}
-(1)	Use the fact that
-	$$E[t^T] = \int t^T f(x,\theta) dx$$
-	and differentiate with respect to $\theta$ on both sides.
-	(2) use the fact $Es(\theta,\bm{X}) = 0$ in above lemma.
-\end{proof}
-
-
-\begin{example}
+\begin{example}[Bernoulli trial MLE]
 Consider a series of independent Bernoulli trials with success probability $\theta$ such that we have probability mass function given by	
-$$Pr(Y_i = y) = (1-\theta)^y \theta, y\in \{0,1 \}.$$
+$$Pr(Y_i = y) = (1-\theta)^{1-y} \theta^y, y\in \{0,1 \}.$$
 
 \begin{itemize}
 	\item 
 	The log-likelihood function based on $n$ observations $Y=\{Y_1,...,Y_N\}$ can be written by
-	$$\log L(\theta; Y) = \sum_{i=1}^n (y_i \log(1-\theta) + \log \theta) = n(\mean{y}\log(1-\theta) + \log(\theta)),$$
+	$$\log L(\theta; Y) = \sum_{i=1}^n ((1-y_i) \log(1-\theta) + y_i \log \theta) = n((1-\mean{y})\log(1-\theta) + \mean{y}\log(\theta)),$$
 	where $\mean{y}$ is the sample mean.
 	\item 
-	The score function for $n$ observations from a geometric distribution is
-	$$s(\theta) = \frac{d \log L}{d \theta} = n(\frac{1}{\theta} - \frac{\mean{y}}{1-\theta}).$$
+	The MLE is given by
+	$$\hat{\theta} = \mean{y}.$$
 \end{itemize}
 \end{example}
 
+\begin{example}[Normal distribution MLE]
 
-\subsection{Fisher information characterization}
-\begin{definition}[Fisher information]
-The covariance matrix of the score function is called \textbf{Fisher information matrix}, denoted as $J(\theta)$, given as
-$$J(\theta) = E[s(\theta,\bm{X})s^T(\theta,\bm{X})]$$
-\end{definition}
-
-
-\begin{theorem}\cite[552]{moon2000mathematical}
-	An unbiased estimator $\hat{\theta}$ is efficient if and only if 
-	$$J(\theta)(\hat{\theta}-\theta) = s(\theta,\bm{X})$$
-	where $J$ is the Fisher information matrix.
-	Furthermore, \textbf{any unbiased efficient estimator is a maximum-likelihood estimator.}
-\end{theorem}
-\begin{proof}
-(1) Suppose $J(\theta)(\hat{\theta}-\theta) = s(\theta,\bm{X})$, then $$J = Ess^T = JE(\hat{\theta}-\theta)(\hat{\theta}-\theta)^T J$$
-by the definition of $J$. Multiply both sides by $J^{-1}$, we get $E(\hat{\theta}-\theta)(\hat{\theta}-\theta)^T J = I$, that is
-$$E(\hat{\theta}-\theta)(\hat{\theta}-\theta)^T = J^{-1}$$
-(2)
-
-\end{proof}
-
-\begin{example}
-	Let the pmf of Bernoulli distribution parameterized by $f(x;\theta) = \theta^x(1-\theta)^{1-x},x\in\{0,1\}$. Then
+The log-likelihood function for $n$ iid observations $x_1,...,x_n$ drawn from normal distribution is given by
 \begin{align*}
-I(\theta) &= -E[\frac{\Pa^2 \log(f(x;\theta))}{\Pa \theta^2}] \\
-&= E[\frac{x}{\theta^2} + \frac{1-x}{(1-\theta)^2}]\\
-&= \theta (1/\theta^2) + (1-\theta)(1/(1-\theta)^2) \\
-&= \frac{1}{\theta(1-\theta)}
+\log L(\theta_1,\theta_2) &= \prod_{i=1}^n f(x_i\theta_1,\theta_2) \\
+						  &= \theta_2^{-n/2}(2\pi)^{-n/2}\exp(-\frac{1}{2\theta_2}\sum_{i=1}^n(x_i - \theta_1)^2) \\
+						  &=-\frac{n}{2}\log \theta_2 - \frac{n}{2}\log(2\pi) - \frac{\sum_{i=1}^n (x_i - \theta_1)^2}{2\theta_2}
 \end{align*}
-\end{example}
-
-
-
-\subsection{Asymptotic properties}
-
-\begin{definition}[asymptotic efficiency]\cite[542]{greene2017econometric}
-An estimator is asymptotically efficient if it is consistent, asymptotically normally distributed, and has an asymptotic covariance matrix that is not larger than the asymptotic covariance matrix of any other consistent, asymptotically normally distributed estimators.	
-\end{definition}
-
-
-\begin{example}[information matrix for normal distributions]\cite[548]{greene2017econometric}
-
+where $\theta_1 = \mu, \theta_2 = \sigma^2$. 
+Setting derivatives to zeros, we have
 \begin{align*}
-\frac{\Pa^2 \ln L}{\Pa \mu^2} &= -\frac{n}{\sigma^2} \\
-\frac{\Pa^2 \ln L}{\Pa (\sigma^2)^2} &= \frac{n}{2\sigma^4} - \frac{1}{\sigma^6}\sum_{i=1}^n (x_i - \mu)^2 \\
-\frac{\Pa^2 \ln L}{\Pa \mu \Pa \sigma^2} &= -\frac{1}{\sigma^4}\sum_{i=1}^n (x_i - \mu)
-\end{align*}	
+\frac{\Pa \log L(\theta_1,\theta_2)}{\Pa \theta_1} = \frac{\sum_{i=1}^n (x_i - \theta_1)}{\theta_2} &= 0 \\
+\frac{\Pa \log L(\theta_1,\theta_2)}{\Pa \theta_2} = -\frac{n}{2\theta_2} + \frac{\sum_{i=1}^n (x_i - \theta_1)^2}{\theta_2^2} &= 0 \\
+\end{align*}
+which produces
+$$\hat{\mu} = \hat{\theta}_1 =\frac{\sum_{i=1}^n x_i}{n} = \mean{x}, \hat{\sigma}^2 = \hat{\theta}_2 =\frac{\sum_{i=1}^n (x_i-\mean{x}}{n}.$$
 
-For the asymptotic variance of the maximum likelihood estimator, we need the expectations of these derivatives. Using $E[X_i] = \mu$, we have
-$$[-E_0[\frac{\Pa^2 \ln L(\theta_0)}{\Pa \theta_0 \Pa \theta_0^T}]]^{-1} = \begin{bmatrix}
-\sigma^2/n & 0 \\
-0 & 2\sigma^4/n
-\end{bmatrix}.$$
+
+
+
 \end{example}
 
 
-
-Let $\hat{\theta}$ be the maximum-likelihood estimator, then the gradient of the log-likelihood function equals zero at $\hat{\theta}$; that is,
-$$g(\hat{\theta}) = 0.$$
-
-Expand this equation in a second-order Taylor series around $\theta_0$, we have
-$$ 0 = g(\hat{\theta}) = g(\theta_0) + H(\mean{\theta})(\hat{\theta} - \theta_0),$$
-where $\theta_0$ is the true value, and $\mean{\theta} = w\hat{\theta} + (1-w)\theta_0$ for some $0<w<1$. Rearranging this function and multiply it by $n$ and we get
-$$\sqrt{n}(\hat{\theta} - \theta_0) = [-H(\mean{\theta})]^{-1}(\sqrt{n}g(\theta_0))$$
-
+\begin{example}[exponential distribution MLE]
+	Consider an exponential distribution with parameter $\alpha$ such that its pdf is given by
+	$$f(x;\alpha) = \alpha e^{-\alpha x}, x\geq 0.$$
+	
+ The MLE for $\alpha$ from an iid random sample $X_1,...,X_n$ is given by $\hat{\alpha} = 1/\mean{X}$ since
+		\begin{align*}
+		\log L(\alpha) &= n\log \alpha - \alpha \sum_{i=1}^n X_i \\
+		\Pa \log L(\alpha) /\Pa \alpha &= \frac{n}{\alpha} - \sum_{i=1}^n X_i \\
+		\Pa \log L(\alpha) /\Pa \alpha = 0 &\implies \hat{\alpha} = 1/\mean{X}.
+		\end{align*}
+\end{example}
 \section{Information and efficiency}
 
 \subsection{Fish information}\index{Fisher information}
@@ -1999,7 +2020,7 @@ $$\sqrt{n}(\hat{\theta} - \theta_0) = [-H(\mean{\theta})]^{-1}(\sqrt{n}g(\theta_
 \begin{definition}[Fisher information]
 	For one dimensional parametric family of pdf or pmf $f(x;\theta)$, we define the Fisher information for $\theta\in \R$ as
 	$$I(\theta) = E[(\frac{d}{d\theta}\log f(x;\theta))^2],$$
-	where the expectation is taken with respect to $x$.
+	where the expectation is\textbf{ taken with respect to $x$.}
 	In particular, if $\theta \in \R^N$, we have Fisher information matrix defined as
 	$$I(\theta)_{ij} =-E[\frac{\Pa^2 \log(f(x;\theta))}{\Pa \theta_i\theta_j}].$$
 \end{definition}
@@ -2055,33 +2076,6 @@ $$
 \end{proof}
 
 
-\begin{example}
-	Consider a sample $X_1,X_2,...,X_n$ of iid normal random variable with unknown mean and variance. 
-	Consider two variance estimator $$S_1^2 = \frac{\sum_{i=1}^{n} (X_i - \mean{X})}{n-1}, S_2^2 = \frac{\sum_{i=1}^{n} (X_i - \mean{X})}{n}.$$
-	Then
-	\begin{itemize}
-		\item The MSE for $S_1^2$ is
-		\begin{align*}
-		MSE[S_1^2] &= Var[S_1^2] + [Bias]^2 \\
-		&= \frac{2\sigma^4}{n-1} + 0 = \frac{2\sigma^4}{n-1}
-		\end{align*}
-		where we use the fact that 
-		$$\frac{(n-1)S^2}{\sigma^2}\sim \chi^2({n-1}),$$
-		from \autoref{ch:theory-of-statistics:th:studentTheorem} and
-		$$Var[\frac{(n-1)S^2}{\sigma^2}] = \frac{(n-1)^2}{\sigma^4}Var[S^2] = 2(n-1),$$
-		where use $Var[\chi^2(n)] = 2n$ in \autoref{ch:theory-of-statistics:th:propertychisquare}.
-		\item The MSE for $S_2^2$ is
-		\begin{align*}
-		MSE[S_2^2] &= (Var[S_2^2] + [Bias])^2 \\
-		&= \frac{2(n-1)\sigma^4}{n} + (E[S_2^2] - \sigma^2)^2 \\
-		&= \frac{2(n-1)\sigma^4}{n} + (\frac{(n-1)\sigma^2}{n} - \sigma^2)^2 \\
-		&= \frac{2n-1}{n^2}\sigma^4
-		\end{align*}
-		\item $MSE[S_2^2] < MSE[S_1^2]$. That is, the maximum-likelihood estimator has smaller MSE than the unbiased estimator.
-		
-	\end{itemize}
-	
-\end{example}
 
 \subsection{Information matrix for common distributions}
 
@@ -2099,25 +2093,47 @@ I(\theta) &= -E[\frac{\Pa^2 \log(f(x;\theta))}{\Pa \theta^2}] \\
 \end{align*}
 \end{proof}
 
+
+
+
+
 \subsubsection{Normal distribution}
+\begin{lemma}[Fish information matrix for univariate normal distribution]\cite[548]{greene2017econometric}\label{ch:theory-of-statistics:th:FishInformationMatrixForUnivariateNormalDistribution}
+Let the pdf of normal distribution parameterized by $$f(x;\theta) = (2\pi\theta_2)^{-1/2}\exp(-\frac{1}{2\theta_2}\sum_{i=1}^n(x - \theta_1)^2).$$ 
+	\begin{align*}
+	\frac{\Pa^2 \log f}{\Pa \theta_1^2} &= -\frac{1}{\theta_2} = -\frac{1}{\sigma^2} \\
+	\frac{\Pa^2 \log f}{\Pa \theta_2^2} &= \frac{1}{2\theta_2^2} - \frac{1}{\theta_2^3}(x - \theta_1)^2 \\
+	\frac{\Pa^2 \ln f}{\Pa \theta_1\Pa \theta_2} &= -\frac{1}{\theta^2_2}(x_i - \theta_1)
+	\end{align*}	
+	
+Finally, take expectation with respect to $x$ and we have
+$$I(\theta_1,\theta_2) = \begin{bmatrix}
+1/\sigma^2 & 0 \\
+0 & 1/(2\sigma^4)
+\end{bmatrix} $$	
+
+	
+\end{lemma}
+
+
+
+\subsubsection{Multivariate Gaussian distribution}
 
 \begin{lemma}
 	
 \end{lemma}
 
 
-\subsubsection{Multivariate Gaussian distribution}
-
 \subsection{Cramer-Rao lower bound}
 \subsubsection{Information inequality}
 
-\begin{theorem}[information inequality]
+\begin{theorem}[information inequality for statistic]\label{ch:theory-of-statistics:th:InformationInequalityForStatistic}
 Let $T(X)$ be any statistic such that $Var[T(X)] < \infty$ for all $\theta$. Denote $E[T(X)]$ by $\phi(\theta)$. Suppose \autoref{ch:theory-of-statistics:assumption:FisherInformationRegularityAssumption} holds and $0 < I(\theta) < \infty$. Then \textbf{for all} $\theta$
 $$Var[T(X)] \geq \frac{[\phi'(\theta)]^2}{I(\theta)}.$$	
 \end{theorem}
 \begin{proof}
 Based on the \autoref{ch:theory-of-statistics:assumption:FisherInformationRegularityAssumption}, ,we have
-$$\phi'(\theta) = \int T(x)\frac{\Pa }{\Pa \theta} f(x;\theta) dx = \int T(x)\frac{\Pa \log f(x;\theta) }{\Pa \theta}  dx.$$
+$$\phi'(\theta) = \int T(x)\frac{\Pa }{\Pa \theta} f(x;\theta) dx = \int T(x)\frac{\Pa \log f(x;\theta) }{\Pa \theta} f(x;\theta) dx.$$
 Therefore, we can view
 $$\phi'(\theta) = E[T(X)\frac{\Pa \log f(x;\theta) }{\Pa \theta}] = Cov[T(X),\frac{\Pa \log f(x;\theta) }{\Pa \theta}],$$
 since $E[\frac{\Pa \log f(x;\theta) }{\Pa \theta}] = 0 \implies E[T(X)]E[\frac{\Pa \log f(x;\theta) }{\Pa \theta}] = 0$.
@@ -2142,24 +2158,131 @@ Then
 \end{corollary}
 
 
+\subsubsection{Cramer-Rao lower bound: univariate case}
 
-
-\begin{theorem}[Cramer-Rao lower bound]\index{Cramer-Rao lower bound}
-	For an arbitrary estimator for $\theta\in \R$, 
-	$$Var(\hat{\theta}) \geq \frac{(\frac{d}{d\theta}E[\hat{\theta}])^2}{nI(\theta)}$$
+\begin{theorem}[Cramer-Rao lower bound in univariate estimation]\index{Cramer-Rao lower bound}
+Let $\hat{\theta}$ be an arbitrary univariate estimator as a function of iid random samples $X_1,...,X_n$, whose distribution is parameterized by single parameter $\theta$. Let $\theta_0$ be the true value.
+Then the variance of the estimator $\hat{\theta}$ is bounded by
+	$$Var(\hat{\theta}) \geq \frac{(\frac{d}{d\theta}E[\hat{\theta}])^2}{nI_1(\theta^0)},$$
+where $I_1(\theta)$ is the Fish information associated with distribution $f(x;\theta)$ and the expectation is taken with respect to $x$.	
 	Particularly, if the estimator $\hat{\theta}$ is unbiased (that is $E[\hat{\theta}] = \theta$), we have
-	$$Var(\hat{\theta}) \geq \frac{1}{nI(\theta)}.$$
+	$$Var(\hat{\theta}) \geq \frac{1}{nI_1(\theta^0)}.$$
 \end{theorem}
+\begin{proof}
+Note that the Fisher information $I(\theta)$ associated with the joint distribution of $(X_1,...,X_n)$ can be expressed by $I(\theta) = nI_1(\theta)$, where $I_1(\theta)$ is the Fisher information associated with $f(x;\theta)$. This is because under iid assumption, 
+$$E[\log f(x_1,...,x_n;\theta)] = n E[\log f(x;\theta)].$$
+Then use the information inequality (\autoref{ch:theory-of-statistics:th:InformationInequalityForStatistic}), we have
+$$Var(\hat{\theta}) \geq \frac{(\frac{d}{d\theta}E[\hat{\theta}])^2}{nI_1(\theta)}.$$
+\end{proof}
 
+\begin{example}[univariate estimation for normal distributions]\hfill
+	\begin{itemize}
+		\item Consider an unbiased mean estimator $\hat{\mu}$ and an unbiased variance estimator $\hat{\sigma}^2$  for normal distribution with unknown mean $\mu$ and variance $\sigma^2$. 
+		Because the information matrix is given by (\autoref{ch:theory-of-statistics:th:FishInformationMatrixForUnivariateNormalDistribution})
+		
+		
+		
+		The mean estimator has bounded variance given by (using information matrix from 
+		$$Var[\hat{\mu}] \geq \frac{1}{nI_1(\theta)} = \sigma^2/n.$$
+		
+		
+		\item Consider anfor normal distribution with known mean $\mu$. The mean estimator has bounded variance given by
+		$$Var[\hat{\sigma}^2] \geq \frac{1}{nI_1(\theta)} = 2\sigma^4/n.$$
+		
+		\item 	It is clear that
+		\begin{itemize}
+			\item Increasing sample size $n$ will reduce the estimator variance.
+			\item Mean/variance estimators of random samples drawn from small-variance distributions have inherent smaller variances.
+		\end{itemize}
+	\end{itemize}	
+\end{example}
 
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.5\linewidth]{../figures/statisticalModeling/estimationTheory/fisherInformationDemo}
 	\caption{}
-	\label{fig:fisherinformationdemo}
+	\label{ch:theory-of-statistics:fig:fisherinformationdemo}
 \end{figure}
 
+
+
+
+\begin{theorem}[sufficient and necessary condition to achieve Cramer-Rao lower bound]
+Under the regularity \autoref{ch:theory-of-statistics:assumption:FisherInformationRegularityAssumption}, there exists an unbiased estimator $\hat{\theta}$ of $\phi(\theta)$ whose variance attains Cramer-Rao lower bound (i.e., there exists a most efficent unbiased estimator $\hat{\theta}$ of $\phi(\theta)$) if and only if the score statistic $S(X)$ can be expressed in the form
+$$S(X) = \alpha(\theta)[\hat{\phi(X)} - \phi(\theta)],$$
+where $$\alpha(\theta) = \frac{I(\theta)}{\phi'(\theta)};$$
+or equivalently if and only if the function 
+$$S(X)\frac{\phi'(\theta)}{I(\theta)} + \phi(\theta)$$
+is independent of $\theta$ and is only dependent on $X$.	
+\end{theorem}
+
+
+
+\subsubsection{Cramer-Rao lower bound： multivariate case}
+
+\begin{theorem}[information inequality for statistic: multivariate case]\label{ch:theory-of-statistics:th:InformationInequalityForStatisticMultivariate}
+	Let $T(X)$ be any statistic such that $Var[T(X)] < \infty$ for all $\theta$. Denote $E[T(X)]$ by $\phi(\theta)$. Suppose \autoref{ch:theory-of-statistics:assumption:FisherInformationRegularityAssumption} holds and $0 < I(\theta) < \infty$. Then \textbf{for all} $\theta$
+	$$Var[T(X)] \geq [\nabla_{\theta}\phi]^T [I(\theta)]^{-1}[\nabla_{\theta}\phi].$$	
+\end{theorem}
+\begin{proof}
+	Based on the \autoref{ch:theory-of-statistics:assumption:FisherInformationRegularityAssumption}, ,we have
+	$$\phi'(\theta) = \int T(x)\frac{\Pa }{\Pa \theta} f(x;\theta) dx = \int T(x)\frac{\Pa \log f(x;\theta) }{\Pa \theta}  dx.$$
+	Therefore, we can view
+	$$\phi'(\theta) = E[T(X)\frac{\Pa \log f(x;\theta) }{\Pa \theta}] = Cov[T(X),\frac{\Pa \log f(x;\theta) }{\Pa \theta}],$$
+	since $E[\frac{\Pa \log f(x;\theta) }{\Pa \theta}] = 0 \implies E[T(X)]E[\frac{\Pa \log f(x;\theta) }{\Pa \theta}] = 0$.
+	
+	Using Cauchy-Schwartz inequality (\autoref{ch:theory-of-probability:th:Cauchy-SchwarzInequality}), we have
+	$$\abs{\phi'(\theta)}^2 = Cov[T(X),\frac{\Pa \log f(x;\theta) }{\Pa \theta}]^2 \leq Var[T(X)]Var[\frac{\Pa \log f(x;\theta) }{\Pa \theta}].$$
+	At last, use the fact (\autoref{ch:theory-of-statistics:th:BasicPropertiesFisherInformation}) that $I(\theta) = Var[\frac{\Pa \log f(x;\theta) }{\Pa \theta}]$, we can get the final result. 	
+\end{proof}
+\begin{proof}
+Similar to \autoref{ch:theory-of-statistics:th:InformationInequalityForStatisticMultivariate}, we can show that
+$$\frac{\Pa \phi(\theta)}{\Pa \theta_j} = Cov(T(X), \frac{\Pa \log f(x;\theta) }{\Pa \theta_j}).$$
+
+For constants $c_1,c_2,...,c_p$, note that
+\begin{align*}
+Var[T(X) - \sum_{j=1}^p c_j \frac{\Pa \log f(x;\theta) }{\Pa \theta_j}] &= Var[T(X)] + c^TI(\theta)c - 2c^T [\nabla_{\theta}\phi] \\
+&\geq 0
+\end{align*}
+Particularly, the minimum is achieved at $c* = [I(\theta)]^{-1}\delta$. Then
+$$Var[T(X) - \sum_{j=1}^p c_j \frac{\Pa \log f(x;\theta) }{\Pa \theta_j}] = Var[T(X)] -  [\nabla_{\theta}\phi]^T [I(\theta)]^{-1}[\nabla_{\theta}\phi] \geq 0. $$
+\end{proof}
+
+\begin{theorem}[Cramer-Rao lower bound in multivariate estimation]\index{Cramer-Rao lower bound}\label{ch:theory-of-statistics:th:CramerRaoLowerBoundMultivariateEstimation}
+	Let $\hat{\theta}$ be a $p$-dimension \textbf{unbiased} estimator as a function of iid random samples $X_1,...,X_n$, whose distribution is parameterized by parameter vector $\theta\in \R^p, \theta = (\theta_1,...,\theta_p)$. Let $\theta^0$ be the true value.
+	
+		Then the variance matrix of the estimator $\hat{\theta}_i$ is bounded by
+	$$Var(\hat{\theta}) \geq [n[I_1(\theta)]^{-1},$$
+	where $I_1(\theta^0)$ is the Fish information maxtrix associated with distribution $f(x;\theta)$ and the expectation is taken with respect to $x$.	
+\end{theorem}
+\begin{proof}
+	Note that the Fisher information $I(\theta)$ associated with the joint distribution of $(X_1,...,X_n)$ can be expressed by $I(\theta) = nI_1(\theta)$, where $I_1(\theta)$ is the Fisher information associated with $f(x,\theta)$. This is because under iid assumption, 
+	$$E[\log f(x_1,...,x_n;\theta)] = n E[\log f(x;\theta)].$$
+	Then use the information inequality (\autoref{ch:theory-of-statistics:th:InformationInequalityForStatisticMultivariate}), we have
+	$$Var(\alpha^T \hat{\theta}) = \alpha^TVar[\hat{\theta}]\alpha \geq [\nabla_{\theta}\alpha^T\hat{\theta}]^T [nI_1(\theta)]^{-1}[\nabla_{\theta}\alpha^T\hat{\theta}] = \alpha^T [nI_1(\theta)]^{-1} \alpha,$$
+	where $\alpha\in\R^p$ is an arbitrary vector.
+\end{proof}
+
+\begin{example}[multivariate estimation for normal distributions]\hfill
+	\begin{itemize}
+		\item Consider an unbiased mean estimator $\hat{\mu}$ for normal distribution with known variance $\sigma^2$. The information matrix is given by ( \autoref{ch:theory-of-statistics:th:FishInformationMatrixForUnivariateNormalDistribution})
+		$$I(\theta_1,\theta_2) = \begin{bmatrix}
+		1/\sigma^2 & 0 \\
+		0 & 1/(2\sigma^4)
+		\end{bmatrix}. $$
+		
+		Therefore, 
+		
+		$$Var[\hat{\mu}] \geq \sigma^2/n, Var[\hat{\sigma}^2] \geq 2\sigma^4/n, $$
+			
+		\item 	It is clear that
+		\begin{itemize}
+			\item Increasing sample size $n$ will reduce the estimator variance.
+			\item Mean/variance estimators of random samples drawn from small-variance distributions have inherent smaller variances.
+		\end{itemize}
+	\end{itemize}	
+\end{example}
 
 \subsubsection{Uniformly minimum-variance unbiased estimator}
 \begin{definition}\index{minimum-variance unbiased estimator}
@@ -2287,7 +2410,12 @@ Then
 
 
 
+
 \subsection{Efficiency}
+
+
+
+
 
 \begin{definition}[relative efficiency]
 	The relative efficiency of two \textbf{unbiased} estimators $\hat{\theta}_1$ and $\hat{\theta}_2$ is the ratio of their variance $$\frac{Var(\hat{\theta}_1)}{Var(\hat{\theta}_2)}$$.
@@ -2297,6 +2425,112 @@ Then
 	The more efficient estimator is that: \textbf{given fixed number of samples}, it has a lower MSE/variance. 
 \end{remark}
 
+
+
+
+
+
+\subsection{Fisher information characterization of MLE}
+
+\subsubsection{Properties of score function}
+
+\begin{lemma}
+	$$Es(\theta,\bm{X}) = 0$$
+\end{lemma}
+\begin{proof}
+	This is a restatement of \autoref{ch:theory-of-statistics:th:BasicPropertiesFisherInformation}
+\end{proof}
+
+\begin{lemma}[useful properties of score function]\cite[550]{moon2000mathematical}
+	Let $t$ be any vector-valued function $\bm{X}$ and $\theta$, then
+	$$E[s(\theta,\bm{X})t^T(\theta,\bm{X})] = \frac{\Pa}{\Pa \theta} E[t^T] - E[\frac{\Pa}{\Pa \theta} t^T]$$ 
+	And particularly, if $t = s$, we have
+	$$E[s(\theta,\bm{X})s^T(\theta,\bm{X})] =  - E[\frac{\Pa}{\Pa \theta} t^T]$$ 	
+\end{lemma}
+\begin{proof}
+	(1)	Use the fact that
+	$$E[t^T] = \int t^T f(x,\theta) dx$$
+	and differentiate with respect to $\theta$ on both sides.
+	(2) use the fact $Es(\theta,\bm{X}) = 0$ in above lemma.
+\end{proof}
+
+
+\subsubsection{Fisher information and MLE}
+
+\begin{definition}[Fisher information]
+	The covariance matrix of the score function is called \textbf{Fisher information matrix}, denoted by $I(\theta)$, and is given by
+	$$I(\theta) = E[s(\theta,\bm{X})s^T(\theta,\bm{X})],$$
+where 	
+$$s(\theta,\bm{X}) = \nabla_{\theta}\log L(\bm{x}|\theta) , 
+\log L(\bm{x}|\theta) = \sum_{i=1}^n f(X=x_i|\theta).$$
+\end{definition}
+
+
+\subsubsection{MLE efficiency}
+
+\begin{definition}[efficient estimator]
+	An estimator $\hat{\theta}$ is said to be \textbf{efficient} if it is \textbf{unbiased} and the covariance of $\hat{\theta}$ achieves the Cramer-Rao lower bound; i.e., it satisfies
+	$$E[\hat{\theta}] = \theta, E[(\hat{\theta}-\theta)(\hat{\theta}-\theta)^T] = I^{-1}(\theta).$$	
+\end{definition}
+
+\begin{theorem}[sufficient and necessary condition for MLE be efficient]\cite[552]{moon2000mathematical}\label{ch:theory-of-statistics:th:MLEEfficiency}
+	An unbiased estimator $\hat{\theta}$ is efficient (i.e., achieving the Cramer-Rao lower bound) if and only if 
+	$$I(\theta)(\hat{\theta}-\theta) = s(\theta,\bm{X})$$
+	where $J$ is the Fisher information matrix.
+	Furthermore, \textbf{any unbiased maximum-likelihood estimator is an efficient estimator.}
+\end{theorem}
+\begin{proof}
+(forward) Suppose $I(\theta)(\hat{\theta}-\theta) = s(\theta,\bm{X})$, then $$I = E[ss^T] = IE[(\hat{\theta}-\theta)(\hat{\theta}-\theta)^T]I$$
+	by the definition of $I$. Multiply both sides by $I^{-1}$, and rearrange we get
+	$$E[(\hat{\theta}-\theta)(\hat{\theta}-\theta)^T] = I^{-1}.$$
+	(converse) Assume $\hat{\theta}$ is efficient (also unbiased).  First we can show
+$$E[s(\theta,X)(\hat{\theta} - \theta)^T] = \cI,$$
+where $\cI$ is identity matrix and the expectation is taken with respect to $X$. 
+ This is because $E[s(\theta,X)\theta^T] = E[s(\theta,X)] \theta = 0,$
+ where we use \autoref{ch:theory-of-statistics:th:BasicPropertiesFisherInformation}.
+ In addition, 
+ \begin{align*}
+ E[s(\theta,X)\hat{\theta}^T] &= \int \frac{\Pa \log f(x|\theta)}{\Pa \theta} \hat{\theta}^T f(x|\theta) dx \\
+ &=\int \frac{\Pa f(x|\theta)}{\Pa \theta} \hat{\theta}^T  dx \\
+ &=\frac{\Pa}{\Pa \theta} E[\hat{\theta}^T] \\
+ &=\frac{\Pa}{\Pa \theta} \theta^T \\
+ &= \cI. 
+ \end{align*}
+
+Now use Cauchy-Schwartz inequality (\autoref{ch:theory-of-probability:th:Cauchy-SchwarzInequality})
+\begin{align*}
+\cI &= (E[s(\theta,X)(\hat{\theta} - \theta))^T])^2 \\
+    &= E[ss^T]E[(\hat{\theta} - \theta)(\hat{\theta} - \theta)^T] \\
+    &= IE[(\hat{\theta} - \theta)(\hat{\theta} - \theta)^T] \\
+    &= II^{-1} \\
+    &= \cI
+\end{align*}
+Because the equality in Cauchy-Schwartz inequality hold if and only if
+$$s(\theta, X) = K(\theta) (\hat{\theta} - \theta),$$
+for some $K(\theta)$, which can be $I(\theta)$.	
+\end{proof}
+
+\begin{remark}[a maximum-likelihood estimator is not necessary efficient]\hfill
+\begin{itemize}
+	\item Consider a biased MLE, then
+	$$s(\theta,X) = 0 \neq I(\theta) (\hat{\theta} - \theta).$$
+	Therefore, the variance of $\hat{\theta}$ does not achieve the Cramer-Rao lower bound (\autoref{ch:theory-of-statistics:th:MLEEfficiency}).	
+	\item However, as the sample size becomes sufficiently large, MLE is consistent and asymptotic efficient (\autoref{ch:theory-of-statistics:th:asymptoticPropertiesMLE}) no matter it is unbiased or not.  
+\end{itemize}	
+
+\end{remark}
+
+
+
+\begin{example}
+	Let the pmf of Bernoulli distribution parameterized by $f(x;\theta) = \theta^x(1-\theta)^{1-x},x\in\{0,1\}$. Then
+	\begin{align*}
+	I(\theta) &= -E[\frac{\Pa^2 \log(f(x;\theta))}{\Pa \theta^2}] \\
+	&= E[\frac{x}{\theta^2} + \frac{1-x}{(1-\theta)^2}]\\
+	&= \theta (1/\theta^2) + (1-\theta)(1/(1-\theta)^2) \\
+	&= \frac{1}{\theta(1-\theta)}
+	\end{align*}
+\end{example}
 
 
 
@@ -2323,6 +2557,35 @@ Then
 	The information matrix is given by
 	$$I_1()$$
 \end{proof}
+
+
+\begin{example}
+	Consider a sample $X_1,X_2,...,X_n$ of iid normal random variable with unknown mean and variance. 
+	Consider two variance estimator $$S_1^2 = \frac{\sum_{i=1}^{n} (X_i - \mean{X})}{n-1}, S_2^2 = \frac{\sum_{i=1}^{n} (X_i - \mean{X})}{n}.$$
+	Then
+	\begin{itemize}
+		\item The MSE for $S_1^2$ is
+		\begin{align*}
+		MSE[S_1^2] &= Var[S_1^2] + [Bias]^2 \\
+		&= \frac{2\sigma^4}{n-1} + 0 = \frac{2\sigma^4}{n-1}
+		\end{align*}
+		where we use the fact that 
+		$$\frac{(n-1)S^2}{\sigma^2}\sim \chi^2({n-1}),$$
+		from \autoref{ch:theory-of-statistics:th:studentTheorem} and
+		$$Var[\frac{(n-1)S^2}{\sigma^2}] = \frac{(n-1)^2}{\sigma^4}Var[S^2] = 2(n-1),$$
+		where use $Var[\chi^2(n)] = 2n$ in \autoref{ch:theory-of-statistics:th:propertychisquare}.
+		\item The MSE for $S_2^2$ is
+		\begin{align*}
+		MSE[S_2^2] &= (Var[S_2^2] + [Bias])^2 \\
+		&= \frac{2(n-1)\sigma^4}{n} + (E[S_2^2] - \sigma^2)^2 \\
+		&= \frac{2(n-1)\sigma^4}{n} + (\frac{(n-1)\sigma^2}{n} - \sigma^2)^2 \\
+		&= \frac{2n-1}{n^2}\sigma^4
+		\end{align*}
+		\item $MSE[S_2^2] < MSE[S_1^2]$. That is, the maximum-likelihood estimator has smaller MSE than the unbiased estimator.
+		
+	\end{itemize}
+	
+\end{example}
 
 \section{Sufficiency and data reduction}
 
@@ -2407,6 +2670,107 @@ Then
 
 
 \section{Asympotic properties of estimators}
+
+
+
+
+
+\subsection{Asymptotic properties of MLE}
+
+\begin{definition}[asymptotic efficiency]\cite[542]{greene2017econometric}
+	An estimator is asymptotically efficient if it is consistent, asymptotically normally distributed, and has an asymptotic covariance matrix that is not larger than the asymptotic covariance matrix of any other consistent, asymptotically normally distributed estimators.	
+\end{definition}
+
+\begin{theorem}[asymptotic properties of MLE]\cite[553]{moon2000mathematical}\cite[478]{greene2017econometric}\label{ch:theory-of-statistics:th:asymptoticPropertiesMLE} Let $\hat{\theta}$ be the MLE of coefficient associated with distribution $f(x;\theta)$. Let $\theta_0$ be the true value of the parameter. Let $I_1(\theta)$ be the Fisher information matrix associated with distribution $f(x;\theta)$. It follows that
+\begin{itemize}
+	\item Maximum-likelihood estimators are consistent; that is
+	$$\plim_{n\to \infty} \hat{\theta} = \theta_0.$$
+	\item Maximum-likelihood estimators are asymptotic normal; that is,
+	$$\sqrt{n}(\hat{\theta} - \theta_0) \to MN(0, [I_1(\theta_0)]^{-1})$$
+	\item Maximum-likelihood estimators are asymptotic efficient.
+\end{itemize}
+\end{theorem}
+\begin{proof}
+(sketch) 
+(1) Define a scaled log-likelihood function 
+$$L_n(\theta) = \frac{1}{n}\sum_{i=1}^n \log f(X_i|\theta).$$
+
+
+Consider the function $L(\theta) = \int (\log f(x;\theta) f(x;\theta_0)dx$, we can show that the true parameter $\theta_0$ is the maximizer of $L(\theta)$; that is, for any $\theta$, we have $$L(\theta)\leq L(\theta_0).$$
+
+\begin{align*}
+L(\theta) - L(\theta_0) &= E_{\theta_0}[\log f(X;\theta) - \log f(X;\theta_0)] \\
+&= E_{\theta_0}[\log \frac{f(X;\theta)}{f(X;\theta_0)}] \\
+&\leq E_{\theta_0}[ \frac{f(X;\theta)}{f(X;\theta_0)} - 1] \\
+&=  \int (\frac{f(X;\theta)}{f(X;\theta_0)} - 1) f(x;\theta_0) dx \\
+&= \int f(x;\theta)dx - \int f(x;\theta_0) dx \\
+& = 1 - 1 =0
+\end{align*}
+where we use inequality $\log x \leq x - 1$. 
+From the law of large numbers, $L_n(\theta)$ converge to $L(\theta)$ in probability. 
+Since MLE $\hat{\theta}$ is the maximizer for $L_n(\theta)$, $\hat{\theta}$ converges to $\theta_0$ in probability.	
+(2) Since as $n\to \infty$, $\hat{\theta} \to \theta_0$ (becomes unbiased), we use \autoref{} to show that $\hat{\theta} - \theta_0$ has the variance reaching the Cramer-Rao lower bound. Further, use central limit theorem can arrive at the conclusion.
+(3) It is asymptotic efficient because its variance reaches Cramer-Rao lower bound. 
+\end{proof}
+
+
+\begin{remark}[interpretation and implications]\hfill
+For finite-sample MLE, only unbiased MLE is efficient(\autoref{ch:theory-of-statistics:th:MLEEfficiency}). At the large sample limit, MLE is always consistent (asymptotic unbiased) therefore efficient. 	
+\end{remark}
+
+\begin{example}
+Consider an exponential distribution with parameter $\alpha$ such that its pdf is given by
+$$f(x;\alpha) = \alpha e^{-\alpha x}, x\geq 0.$$
+
+\begin{itemize}
+	\item The MLE for $\alpha$ from an iid random sample $X_1,...,X_n$ is given by $\hat{\alpha} = 1/\mean{X}$ since
+	\begin{align*}
+	\log L(\alpha) &= n\log \alpha - \alpha \sum_{i=1}^n X_i \\
+	\Pa \log L(\alpha) /\Pa \alpha &= \frac{n}{\alpha} - \sum_{i=1}^n X_i \\
+	\Pa \log L(\alpha) /\Pa \alpha = 0 &\implies \hat{\alpha} = 1/\mean{X}.
+	\end{align*}
+	\item The Fisher information is given by $I(\alpha) = \frac{1}{\alpha^2}$ since 
+	\begin{align*}
+	\log f(x;\alpha) &= \log \alpha - \alpha x \\
+	\Pa^2 \log L(\alpha) /\Pa \alpha^2 &= -\frac{1}{\alpha^2} \\
+	I(\alpha) = -E[\Pa^2 \log L(\alpha) /\Pa \alpha^2] = \frac{1}{\alpha^2}.
+	\end{align*}
+	 \item The MLE $\hat{\alpha} = 1/\mean{X}$ is asymptotic normal and
+	 $$\sqrt{n}(\hat{\alpha} - \alpha_0) \to N(0, \alpha_0^2).$$
+\end{itemize}	
+	
+\end{example}
+
+\begin{example}[Fish information matrix for normal distributions]\cite[548]{greene2017econometric}
+	
+	\begin{align*}
+	\frac{\Pa^2 \ln L}{\Pa \mu^2} &= -\frac{n}{\sigma^2} \\
+	\frac{\Pa^2 \ln L}{\Pa (\sigma^2)^2} &= \frac{n}{2\sigma^4} - \frac{1}{\sigma^6}\sum_{i=1}^n (x_i - \mu)^2 \\
+	\frac{\Pa^2 \ln L}{\Pa \mu \Pa \sigma^2} &= -\frac{1}{\sigma^4}\sum_{i=1}^n (x_i - \mu)
+	\end{align*}	
+	
+	For the asymptotic variance of the maximum likelihood estimator, we need the expectations of these derivatives. Using $E[X_i] = \mu$, we have
+	$$[-E_0[\frac{\Pa^2 \ln L(\theta_0)}{\Pa \theta_0 \Pa \theta_0^T}]]^{-1} = \begin{bmatrix}
+	\sigma^2/n & 0 \\
+	0 & 2\sigma^4/n
+	\end{bmatrix}.$$
+\end{example}
+
+
+
+
+Let $\hat{\theta}$ be the maximum-likelihood estimator, then the gradient of the log-likelihood function equals zero at $\hat{\theta}$; that is,
+$$g(\hat{\theta}) = 0.$$
+
+Expand this equation in a second-order Taylor series around $\theta_0$, we have
+$$ 0 = g(\hat{\theta}) = g(\theta_0) + H(\mean{\theta})(\hat{\theta} - \theta_0),$$
+where $\theta_0$ is the true value, and $\mean{\theta} = w\hat{\theta} + (1-w)\theta_0$ for some $0<w<1$. Rearranging this function and multiply it by $n$ and we get
+$$\sqrt{n}(\hat{\theta} - \theta_0) = [-H(\mean{\theta})]^{-1}(\sqrt{n}g(\theta_0))$$
+
+
+
+
+
 
 
 \section{Interval estimation}
@@ -3004,8 +3368,8 @@ where $k$ is a critical number.
 \end{definition}
 
 
-\subsection{Hypothesis testing on normal distributions}
-\subsubsection{t Test}
+\section{Hypothesis testing on normal distributions}
+\subsection{t Test}
 \begin{definition}
 	The general form of a test statistic is
 	$$test-stat = \frac{observed(or estimated) value - hypothesized value}{standard error of observed}$$
@@ -3018,8 +3382,20 @@ where $k$ is a critical number.
 \end{definition}
 
 
+\subsection{Normality test}
 
-\subsubsection{Hypothesis test for normal distribution}
+
+\subsubsection{Graphical method}
+
+\subsubsection{Jarque–Bera test}
+
+\subsubsection{Shapiro–Wilk test}
+
+\subsubsection{Pearson's chi-squared test}
+
+\subsubsection{D'Agostino's K-squared test}
+
+\subsection{Hypothesis test for normal distribution}
 
 \begin{mdframed}
 	Common notations in this sections:
@@ -3030,7 +3406,7 @@ where $k$ is a critical number.
 \end{mdframed}
 
 
-\subsubsection{Hypothesis testing on sample mean with known variance}
+\subsection{Hypothesis testing on sample mean with known variance}
 Consider we have $n$ samples $X_1,...,X_n$ for a random variable with $N(\mu,\sigma^2)$ with $\sigma^2$ known. The hypothesis testing involving the mean can be obtained by using the fact that $$Z = \frac{\mean{X} - \mu}{\sigma/n}$$ is $N(0,1)$. We can summarize the test as:
 \begin{table}[H]
 	\centering
@@ -3048,7 +3424,7 @@ Consider we have $n$ samples $X_1,...,X_n$ for a random variable with $N(\mu,\si
 \end{table}
 
 
-\subsubsection{Hypothesis testing on sample mean with unknown variance}
+\subsection{Hypothesis testing on sample mean with unknown variance}
 Consider we have $n$ samples $X_1,...,X_n$ for a random variable with $N(\mu,\sigma^2)$ with $\sigma^2$ being unknown. The hypothesis testing involving the mean can be obtained by using the fact that $$T = \frac{\mean{X} - \mu}{\sigma/n}$$ is $t(n-1)$.(\autoref{ch:theory-of-statistics:th:studentTheorem}) We can summarize the test as:
 \begin{table}[H]
 	\centering
@@ -3065,7 +3441,7 @@ Consider we have $n$ samples $X_1,...,X_n$ for a random variable with $N(\mu,\si
 	\end{tabular}
 \end{table}
 
-\subsubsection{Hypothesis testing on the variance}
+\subsection{Hypothesis testing on the variance}
 Consider we have $n$ samples $X_1,...,X_n$ for a random variable with $N(\mu,\sigma^2)$ with $\sigma^2$ being unknown. The hypothesis testing involving the mean can be obtained by using the fact that $$T = \frac{\mean{X} - \mu}{\sigma/n}$$ is $t(n-1)$.(\autoref{ch:theory-of-statistics:th:studentTheorem}) We can summarize the test as:
 \begin{table}[H]
 	\centering
@@ -3083,7 +3459,7 @@ Consider we have $n$ samples $X_1,...,X_n$ for a random variable with $N(\mu,\si
 \end{table}
 
 
-\subsubsection{Hypothesis testing on variance comparison}
+\subsection{Hypothesis testing on variance comparison}
 Consider we have $n$ samples $X_1,...,X_n$ for a random variable with $N(\mu,\sigma^2)$ with $\sigma^2$ being unknown. The hypothesis testing involving the mean can be obtained by using the fact that $$T = \frac{\mean{X} - \mu}{\sigma/n}$$ is $t(n-1)$.(\autoref{ch:theory-of-statistics:th:studentTheorem}) We can summarize the test as:
 \begin{table}[H]
 	\centering
@@ -3100,6 +3476,17 @@ Consider we have $n$ samples $X_1,...,X_n$ for a random variable with $N(\mu,\si
 	\end{tabular}
 \end{table}
 
+\subsection{Person correlation t test}
+
+
+
+\begin{lemma}
+	
+	$$t = \frac{\hat{\rho}}{\sqrt{1-\hat{\rho}^2}}\sqrt{n-2}$$
+follows $t$ distribution with degree of freedom $n-2$.	
+	
+	
+\end{lemma}
 
 \subsection{Two sample tests}
 

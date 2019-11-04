@@ -1,9 +1,53 @@
 \begin{refsection}
 	\startcontents[chapters]	
-\chapter{Natural Language Processing}
+\chapter{Natural Language Analysis}
 %\minitoc
 	\printcontents[chapters]{}{1}{}
-	
+
+
+\section{Word representation}
+
+\subsection{Language prepossessing}
+
+\begin{definition}[one-hot encoding, one-hot vector]
+In one-hot encoding, every word is represented as an $\R^{|V|}$ vector with all 0s and one 1 at the location corresponding to the index of word.	
+\end{definition}
+
+In the one-hot encoding, words are represented as completely independent entities. 
+
+
+
+
+
+
+\section{Topic modeling}
+
+\begin{definition}[TF-IDF]
+Term frequency $tf(t,d)$ is the count of a term $t$ in a document $d$. Inverse document frequency $idf(t, \cD)$ is defined as the logarithmically scaled inverse fraction of the documents that contain the terms $t$, given by
+$$idf(t,\cD)\triangleq \log {|\cD|}{|\{d\in \cD: t\in d|},$$
+where $\cD$ is the set of all documents.	
+\end{definition}
+
+\begin{remark}[interpretation]\hfill
+\begin{itemize}
+	\item a word appears frequently in one document but not the other documents will have a large $tf$ value and large $idf$ value. Then the $tf\times idf$ value will indicates that this word is an import feature of the document. 
+	\item a word appears frequently in all documents, like stop words 'the', 'a', 'is', etc, will have a large $tf$ value but small $idf$ value. Then $tf\times idf$ value will be a small value indicating that this word is not an import feature of the document. 
+\end{itemize}	
+\end{remark}
+
+
+\section{Sentiment Analysis}
+
+
+
+
+\section{Semantic analysis}	
+
+
+
+
+
+
 
 
 

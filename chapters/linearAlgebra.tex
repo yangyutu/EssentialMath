@@ -2177,6 +2177,14 @@ A symmetric matrix might contain zero eigenvalues, in this case, there are diago
 \end{proof}
 
 
+\begin{corollary}
+Let $A$ be an $m\times m$ symmetric matrix with eigenvalues $\lambda_1\geq \lambda \geq \cdots \geq \lambda_m$, and denote the corresponding normalized eigenvectors as $P_1,P_2, ...,P_m$. Then the supremum of $$\sum_{i=1}^r x_i^TAx_i = Tr(X^TAX),$$
+with $X= [x_1,...,x_r],$ over all sets of $r\leq m$ mutually orthonormal vectors $x_1,...,x_r$, is equal to $\sum_{i=1}^r \lambda_i$ and is attained when $x_i = P_i, i=1,2,..., r$. 	
+\end{corollary}
+\begin{proof}
+Use the inequality technique similar in \autoref{ch:linearalgebra:th:Raylleighquotient}.
+\end{proof}
+
 \begin{corollary}[maximization lemma]
 	Given symmetric positive definite matrix $A\in \R^{n\times n}$ and a vector $d\in \R^p$. It follows that
 	$$\max_{x\in\R^p} \frac{(d^T x)^2 }{x^TAx}, ~st~ x^TAx = 1$$
@@ -2570,37 +2578,72 @@ $$cond = \frac{\norm{A}_2}{\norm{A^{-1}}_2} = \frac{\sigma_{max}}{\sigma_{min}}$
 
 
 
+\subsection{SVD  vs. eigendecomposition}
+
+
+
+\begin{lemma}
+	If $A \in \R^{n\times n}$ and is symmetric positive semi-definite, then $\lambda_i = \sigma_i$ in sorted order. Moreover, if $A = U\Sigma V^T$ via SVD and $A = W\Lambda W^T$ via eigen-decomposition, then $U=V=W$. (If $A$ is real-symmetric, then $U=V=W$ up to the $\pm$ sign.)
+\end{lemma}
+\begin{proof}
+	From SVD, then $U,V$ are both the eigenvectors of $AA$; From eigen-decomposition, we have $A = W\Lambda W^T$, and therefore $AA = W\Lambda^2W^T$, and therefore $W = U = V$.
+\end{proof}
+
+
+\begin{itemize}
+	\item From the derivation of singular value, we know that $\sigma_i^2 = \lambda_i(A^TA) = \lambda_i (A^2) = \lambda_i^2(A)$.
+\end{itemize}
+
+
+
+\begin{corollary}
+	If $A \in \R^{n\times n}$ and is symmetric, then $\abs{\lambda_i} = \sigma_i$ in sorted order.
+\end{corollary}
+
+
+\begin{mdframed}
+	\textbf{Caution!}\\
+	For general square matrix $A$, the eigenvalue of $A$ might not have simple relations to singular values. 
+\end{mdframed}
+
+
 \subsection{SVD low rank approximation}\index{low rank approximation}
+
+
+\subsubsection{Frobenius norm low rank approximation}
 \begin{lemma}[Unitary invariance of Frobenius norm]\index{Frobenius norm}
 For all $A\in \R^{m\times n}$, $\norm{A}_F = \norm{QAR}_F$ for $Q,R$ are orthonormal matrices. 
 \end{lemma}
-
 \begin{proof}
 Use the fact that $\norm{A}_F^2 = Tr(AA^T) = Tr(A^TA)$, then $\norm{QAR}_F^2 = \norm{QARR^TA^TQ^T} = \norm{Q^TQAA^T} = \norm{A^TA} = \norm{A}$.
 \end{proof}
-
-
-\begin{lemma}[Unitary invariance of 2-norm]
-For all $A\in \R^{m\times n}$, $\norm{A}_2 = \norm{QAR}_2$ for $Q,R$ are orthonormal matrices. 
-\end{lemma}
-\begin{proof}
-Use the fact that $\norm{Ax}_2^2 = xAA^Tx$ , then $\norm{QARx}_2^2 = x^tR^TA^TQ^TQARx = x^tR^TA^TARx $, and $\norm{x} = \norm{Rx}$, therefore
-$$\frac{\norm{Ax}}{\norm{x}} = \frac{\norm{ARx}}{\norm{Rx}} = \frac{\norm{Ay}}{\norm{y}}$$
-\end{proof}
-
-
 
 \begin{theorem}[Frobenius norm low rank approximation]\label{ch:linearalgebra:th:SVDFrobeniusnormlowrankapproximation}
 \cite[153]{calafiore2014optimization}Let $A \in \R^{m\times n}$, with $rank(A)=r$, then minimization problem
 $$\min_{A_k \in \R^{m\times n},rank(A_k)=k} \norm{A-A_k}^2_F$$
 with $1\leq k\leq r$ has the solution
-$$A_k^* = \sum_{i=1}^k \sigma_k u_i v_i^T$$
+$$A_k^* = \sum_{i=1}^k \sigma_i u_i v_i^T$$
 with the optimal value of $\sum_{i=k+1}^r \sigma^2_i$
 \end{theorem}
-
 \begin{proof}
 Use orthonormal invariance of Frobnius norm, we have $$\norm{\Sigma - U^TA_kV}_F^2$$
 Let $Z = U^TA_kV$, $Z$ is better to be diagonal(since off-diagonal terms only make things worst). Then best diagonal matrix $Z$ of rank $k$ can be is first $k$ entries equal $\sigma_i$.
+\end{proof}
+
+\begin{corollary}[rank approximation alternative formulation]
+Let $S$ be a matrix of size $m\times n$. Let $S$ have SVD given by
+$$S = U\Sigma V^T.$$
+
+It follows that
+\begin{itemize}
+	\item the value of 
+	$$\norm{S-P}_F^2 = Tr((S-P)(S-P)^T)$$
+	is minimum among matrices $P$ of the same size but of rank $r \leq rank(S)$, when $P = U_rU^T_rS$, where $U_r$ is $m\times r$ and the columns of $U_r$ are the $r$ normalized eigenvectors of $SS^T$ with the $r$ largest eigenvalues (or the first $r$ columns of $U$).  
+	\item Alternatively,  $P = SV_rV_r^T$, where $V_r$ is $r\times n$ and the columns of $V_r$ are the $r$ normalized eigenvectors of $S^TS$ with the $r$ largest eigenvalues (or the first $r$ columns of $V$).
+\end{itemize}
+\end{corollary}
+\begin{proof}
+Note that 	$$P = \sum_{i=1}^r \sigma_i u_i v_i^T$$
 \end{proof}
 
 
@@ -2617,6 +2660,18 @@ In order to maximize the above, $x$ should lie in the subspace spanned by $v_{k+
 then we have
 $$\norm{(A-A_k)x}^2_2 = \sum_{i=1+k}^r a_i^2 \sigma_i^2 \leq \sigma^2_{k+1}\sum_{i=k+1}^r a_i^2 =\sigma^2_{k+1} $$
 and the maximum is attained at $x=v_{k+1}$
+\end{proof}
+
+
+
+
+\subsubsection{Two-norm low rank approximation}
+\begin{lemma}[Unitary invariance of 2-norm]
+	For all $A\in \R^{m\times n}$, $\norm{A}_2 = \norm{QAR}_2$ for $Q,R$ are orthonormal matrices. 
+\end{lemma}
+\begin{proof}
+	Use the fact that $\norm{Ax}_2^2 = xAA^Tx$ , then $\norm{QARx}_2^2 = x^tR^TA^TQ^TQARx = x^tR^TA^TARx $, and $\norm{x} = \norm{Rx}$, therefore
+	$$\frac{\norm{Ax}}{\norm{x}} = \frac{\norm{ARx}}{\norm{Rx}} = \frac{\norm{Ay}}{\norm{y}}$$
 \end{proof}
 
 
@@ -2641,34 +2696,6 @@ where the minimum is attained when $x = v_{k+1}, B=A_k^*$. And therefore $$\norm
 \end{proof}
 
 
-
-\subsection{SVD  vs. eigendecomposition}
-
-
-
-\begin{lemma}
-If $A \in \R^{n\times n}$ and is symmetric positive semi-definite, then $\lambda_i = \sigma_i$ in sorted order. Moreover, if $A = U\Sigma V^T$ via SVD and $A = W\Lambda W^T$ via eigen-decomposition, then $U=V=W$. (If $A$ is real-symmetric, then $U=V=W$ up to the $\pm$ sign.)
-\end{lemma}
-\begin{proof}
-From SVD, then $U,V$ are both the eigenvectors of $AA$; From eigen-decomposition, we have $A = W\Lambda W^T$, and therefore $AA = W\Lambda^2W^T$, and therefore $W = U = V$.
-\end{proof}
-
-
-\begin{itemize}
-\item From the derivation of singular value, we know that $\sigma_i^2 = \lambda_i(A^TA) = \lambda_i (A^2) = \lambda_i^2(A)$.
-\end{itemize}
-
-
-
-\begin{corollary}
-If $A \in \R^{n\times n}$ and is symmetric, then $\abs{\lambda_i} = \sigma_i$ in sorted order.
-\end{corollary}
-
-
-\begin{mdframed}
-\textbf{Caution!}\\
-For general square matrix $A$, the eigenvalue of $A$ might not have simple relations to singular values. 
-\end{mdframed}
 
 
 \section{Generalized eigenvectors and Jordan normal forms}

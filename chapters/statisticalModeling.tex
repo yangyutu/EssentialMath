@@ -163,7 +163,15 @@ to eliminate the cross terms.
 Then, for the exponent in $L$, we have
 $$Tr(\Sigma^{-1}(\sum_{i=1}^n (X_i - \mu)(X_i-\mu)^T)) = Tr(\Sigma^{-1}(\sum_{i=1}^n (X_i - \bar{X})(X_i-\bar{X})^T))+ n (\bar{X} - \mu)\Sigma^{-1}(\bar{X} - \mu).$$
 It is easy to see that when $\mu = \bar{X}$, $L$ is maximized \textbf{given any positive definite matrix $\Sigma$}.
-(2) See reference.
+(2) Note that after replacing $\mu$ with $\bar{X}$, we have
+$$
+- \ln L \approx \frac{n}{2}\ln \abs{\Sigma} + \frac{1}{2} Tr(\Sigma^{-1}(\sum_{i=1}^n (x_i - \bar{X})(x_i-\bar{X})^T)) 
+$$
+Taking the derivative w.r.t. $\Sigma^{-1}$, using
+$$\frac{\Pa}{\Pa A} \ln \abs{A} = A^{-T}, \frac{\Pa}{\Pa A}Tr(AB) = \frac{\Pa}{\Pa A}Tr(BA) = B^T, $$
+we obtain
+$$\frac{\Pa}{\Pa \Sigma^{-1}} \ln L = \frac{N}{2}\Sigma - \frac{1}{2}\sum_{i=1}^n (x_i - \bar{X})(x_i-\bar{X})^T).$$
+Set the derivative to zero and we will get the results. 
 \end{proof}
 
 
@@ -535,6 +543,57 @@ $$\hat{f}_i = (L^T\psi^{-1}L)^{-1}L^T\psi^{-1}(x_i-\mu).$$
 \begin{proof}
 See the results in the generalized least square(\autoref{ch:statistical-models:th:GeneralizedLeastSquareSolution}).	
 \end{proof}
+
+\section{Canonical correlation analysis}
+
+\begin{definition}[canonical correlation analysis]
+Given two column vector of random variables $X = (X_1,X_2,...,X_n)$ and $Y = (Y_1,Y_2,...,Y_n)$ with finite second moments. Canonical correlation analysis seeks vector $a\in \R^m$ and $b\in \R^n$ such that the random variable $a^TX$ and $b^TY$ has the maximum correlation. More formally, we want to solve
+$$\max_{a\in \R^m, b\in \R^n} corr(a^TX, b^TY) = \max_{a\in \R^m, b\in \R^n} \frac{a^T\Sigma_{XY}b}{\sqrt{a^T\Sigma_{XX}a}\sqrt{b^T\Sigma_{XX}b}}.$$	
+\end{definition}
+
+
+\begin{theorem}[solution to canonical correlation problem]\hfill
+\begin{itemize}
+	\item Let $c = \Sigma_{XX}^{1/2}a, d = \Sigma_{YY}^{1/2}b,$ then the original optimization problem can be written by
+	$$\max_{c\in \R^m, d\in \R^n}  \frac{c^T\Sigma_{XX}^{-1/2}\Sigma_{XY}\sigma_{YY}^{-1/2}d}{\sqrt{c^Tc}\sqrt{d^Td}}.$$
+	\item The optimizer of the transformed optimization problem is given by
+	\begin{itemize}
+		\item $c$ is eigenvector of $\Sigma_{XX}^{-1/2}\Sigma_{XY}\Sigma_{YY}^{-1}\Sigma_{YX}\Sigma_{XX}^{-1/2}$ associated with the largest eigenvalue.
+		\item $d$ is proportional to $\Sigma_{YY}^{-1/2}\Sigma_{YX}\Sigma_{XX}^{-1/2}c$
+	\end{itemize}
+	Or reciprocally, 
+	\begin{itemize}
+		\item $d$ is eigenvector of $\Sigma_{YY}^{-1/2}\Sigma_{YX}\Sigma_{XX}^{-1}\Sigma_{XY}\Sigma_{YY}^{-1/2}$ associated with the largest eigenvalue.
+		\item $c$ is proportional to $\Sigma_{XX}^{-1/2}\Sigma_{XY}\Sigma_{YY}^{-1/2}d$
+	\end{itemize}
+	\item The optimizer of the original optimizer problem is
+	\begin{itemize}
+		\item $a$ is eigenvector of $\Sigma_{XX}^{-1}\Sigma_{XY}\Sigma_{YY}^{-1}\Sigma_{YX}$ associated with the largest eigenvalue.
+		\item $b$ is proportional to $\Sigma_{YY}^{-1}\Sigma_{YX}c$
+	\end{itemize}
+	Or reciprocally, 
+	\begin{itemize}
+		\item $b$ is eigenvector of $\Sigma_{YY}^{-1}\Sigma_{YX}\Sigma_{XX}^{-1}\Sigma_{XY}$ associated with the largest eigenvalue.
+		\item $a$ is proportional to $\Sigma_{XX}^{-1}\Sigma_{XY}b$
+	\end{itemize}
+\end{itemize}	
+\end{theorem}
+\begin{proof}
+(1) straight forward. 
+(2) Using Cauchy inequality(\autoref{ch:theory-of-probability:th:Cauchy-SchwarzInequality}), 
+\begin{align*}
+& (c^T\Sigma_{XX}^{-1/2}\Sigma_{XY}\Sigma_{YY}^{-1/2})d \\
+\leq & (c^T\Sigma_{XX}^{-1/2}\Sigma_{XY}\Sigma_{YY}^{-1}\Sigma_{YX})^{1/2}(d^Td)^{1/2} 
+\end{align*}
+Therefore, 
+$$ \rho \leq  \frac{(c^T\Sigma_{XX}^{-1/2}\Sigma_{XY}\Sigma_{YY}^{-1}\Sigma_{YX})^{1/2}}{(c^Tc)^{1/2}} $$
+Base on Rayleigh quotient (\autoref{ch:linearalgebra:th:Raylleighquotient}), $\rho$ will take the maximum value when $c$ is eigenvector of $\Sigma_{XX}^{-1/2}\Sigma_{XY}\Sigma_{YY}^{-1}\Sigma_{YX}\Sigma_{XX}^{-1/2}$ associated with the largest eigenvalue.
+(3) use (1). 
+\end{proof}
+
+
+
+
 
 \section{Copulas and dependence modeling}
 \subsection{Definitions and properties}
