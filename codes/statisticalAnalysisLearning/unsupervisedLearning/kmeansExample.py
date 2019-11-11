@@ -18,21 +18,28 @@ from sklearn.cluster import KMeans
 from sklearn.datasets import make_blobs
 
 plt.close('all')
-plt.figure(1)
+plt.figure(1, figsize=(6,6))
 
 n_samples = 1500
 random_state = 170
 X, y = make_blobs(n_samples=n_samples, random_state=random_state, centers=2)
 
 # Incorrect number of clusters
-y_pred = KMeans(n_clusters=2, random_state=random_state).fit_predict(X)
+clusterMethod = KMeans(n_clusters=2, random_state=random_state)
+y_pred = clusterMethod.fit_predict(X)
 
 
 colors = ['red','green']
 
 plt.scatter(X[:, 0], X[:, 1], c=y_pred,cmap=matplotlib.colors.ListedColormap(colors))
-plt.title("kmeans for two clusters",fontweight='bold')
+
+centers = clusterMethod.cluster_centers_
+plt.plot(centers[:,0], centers[:, 1], 'x', color='black', markersize=12)
 
 
+plt.title("kmeans for two clusters")
+
+plt.xticks([])
+plt.yticks([])
 
 plt.show()

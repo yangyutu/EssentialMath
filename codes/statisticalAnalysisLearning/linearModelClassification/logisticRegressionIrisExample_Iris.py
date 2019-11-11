@@ -15,9 +15,9 @@ print(__doc__)
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn import linear_model, datasets
-import plotFormat
+#import plotFormat
 
-plotFormat.set_pubAll()
+#plotFormat.set_pubAll()
 
 
 plt.close('all')
