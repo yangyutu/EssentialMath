@@ -22,3 +22,7 @@ main.synctex.gz
 *.git*
 *.csv
 *.tex
+*.gz
+*.pt
+*.ckpt
+

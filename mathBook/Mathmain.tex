@@ -4,6 +4,8 @@
 \usepackage[T1]{fontenc}                
 \usepackage{lipsum}
 %\usepackage[utf8x]{inputenc} 
+\usepackage[greek,english]{babel}
+\usepackage{CJKutf8}
 \usepackage[makeindex]{imakeidx}
 \usepackage{titletoc}
 
@@ -36,6 +38,10 @@
 %%savesym – Redefine symbols where names conflict
 %% http://tex.stackexchange.com/questions/18541/two-conflicting-packages-in-one-document-doable
 
+%% turn the figure side ways https://tex.stackexchange.com/questions/159988/sidewaysfigure-and-landscape
+\usepackage{rotating}
+\usepackage{pdflscape}
+
 \savesymbol{cfoot}
 \savesymbol{chead}
 % this is solve the name conflict problem in fancyhr
@@ -63,7 +69,7 @@ Johns Hopkins University \\yangyutu123@gmail.com }
 \def\axisdefaultheight{6cm}
 \pgfplotsset{every axis/.append style={
 		label style={font=\Large},
-		tick label style={font=\large} ,
+		tick label style={font=\small} ,
 		axis line style = thick,
 		minor x tick num=4,
 		minor y tick num=4,
@@ -83,7 +89,7 @@ Johns Hopkins University \\yangyutu123@gmail.com }
 \usepackage{mathrsfs}
 \usepackage{multirow}
 %\usepackage{biblatex}
-\usepackage[backend=biber,style=nature,sorting=none,refsection=chapter]{biblatex}
+\usepackage[backend=bibtex,style=nature,sorting=none,refsection=chapter]{biblatex}
 \usepackage{hyperref}
 \hypersetup{
 	colorlinks = true,
@@ -92,7 +98,7 @@ Johns Hopkins University \\yangyutu123@gmail.com }
 }
 \makeindex[columns=2, title=Alphabetical Index, intoc]
 \usepackage{marginnote}
-\addbibresource{../references.bib}
+\addbibresource{references.bib}
 %\bibliography{references.bib}
 %\bibliographystyle{apalike}
 
@@ -331,7 +337,7 @@ ntheorem]{note}{Note}[section]
  \fancypagestyle{plain}{%
  \fancyhf{}
 \fancyfoot[LO, RE]{\slshape Yuguang Yang  }
-\fancyfoot[RO, LE]{\slshape Essential Mathematical Methods}}
+\fancyfoot[RO, LE]{\slshape Essentials of Mathematical Methods, v.3.0}}
 \pagestyle{fancy}
 \fancyhf{}
 %\fancyhead[LE,RO]{Essential Mathematical Methods}
@@ -378,22 +384,26 @@ ntheorem]{note}{Note}[section]
     \begin{center}
         \vspace*{1cm}
         
-        {\huge \textbf{Essential Mathematical Modeling Methods: Principles and Algorithms}}
+        {\huge \textbf{Essentials of Mathematical Methods:}} 
+        
+        \vspace{0.8cm}
+        
+        {\Large \textbf{\textit{Foundations, Principles and Algorithms}}}
         
         
 %        \textbf{An evolving online book at}\\
 %        \href{      https://github.com/yangyutu/NotesOnMathMethods
 %        }{https://github.com/yangyutu/NotesOnMathMethods}\\
-        \vspace{1.8cm}
-       {\Large\textbf{Yuguang Yang}}\\
+        \vspace{1.5cm}
+       {\large\textbf{Yuguang Yang}}\\
        \vspace{0.5cm}
        
-       version 2.0 \\
-\vspace{2.8cm}
-        	\includegraphics[width=0.7\linewidth]{800px-e8_graph-svg}
-        
+       version 3.0 \\
+\vspace{0.4cm}
+        	\includegraphics[width=0.7\linewidth]{hopf_fibration}
+       \vspace{0.4cm} 
          
-    
+    {\textit{God used beautiful mathematics in creating the world. --Paul Dirac}}\\
         
     \end{center}
 
@@ -443,6 +453,9 @@ ntheorem]{note}{Note}[section]
 		\item $N(0,1)$: standard Gaussian distribution.
 		\item $N(\mu,\sigma^2)$: Gaussian distribution with mean $\mu$ and variance $\sigma^2$.
 		\item $MN(\mu,\Sigma)$: multivariate Gaussian distribution with mean vector $\mu$ and covariance matrix $\Sigma$.
+		\item $\bm{1}(x), I(x)$ indicator function.
+		\item $E[X]$ expectation of random variable $X$.
+		\item $Var[X]$ variance of random variable $X$.
 \end{itemize}
 
 
@@ -478,16 +491,18 @@ ntheorem]{note}{Note}[section]
 \part{Mathematical Foundations}
 \input{../chapters/realAnalysis}
 \input{../chapters/linearAlgebra}
-\input{../chapters/functionalAnalysis}
-%\input{chapters/DifferentialGeometry}
-%\input{chapters/Groups}
+%\input{../chapters/functionalAnalysis}
+%\input{../chapters/DifferentialGeometry}
+%\input{../chapters/Groups}
 
+
+\part{Mathematical Optimization Methods}
 
 %\input{../chapters/optimization}
-
+%\input{../chapters/gameTheory}
 \part{Classical Statistical Methods}
-\input{../chapters/probabilityTheory}
-\input{../chapters/statistics}
+%\input{../chapters/probabilityTheory}
+%\input{../chapters/statistics}
 %\input{../chapters/statisticalModeling}
 \input{../chapters/RegressionAnalysis}
 %\input{../chapters/analysisofVariance}
@@ -497,32 +512,34 @@ ntheorem]{note}{Note}[section]
 \part{Dynamic Modeling Methods}
 
 
-%\input{../chapters/dynamicalSystem}
+\input{../chapters/dynamicalSystem}
 %\input{../chapters/numericalDifferentialEquations}
 %\input{../chapters/stochasticProcess}
 %\input{../chapters/MarkovChains}
 %\input{../chapters/timeseries}
 
-\part{Optimal Control}
-%\input{../chapters/calculusofVariations}
-\input{../chapters/optimalControl}
-
-%\input{../chapters/gameTheory}
 
 
 
-\part{Statistical Learning}
+
+
+\part{Statistical Learning Methods}
 \input{../chapters/statisticalLearning}
-
-\part{Neural Network and Deep Learning}
 \input{../chapters/neuralNetwork}
-\input{../chapters/naturalLanguageProcessing}
+
+%\part{Deep Learning Methods}
+%\input{../chapters/naturalLanguageProcessing}
+
+\part{Optimal Control and Reinforcement Learning}
+%\input{../chapters/calculusofVariations}
+%\input{../chapters/optimalControl}
+
 
 
 
 
 \appendix
-\input{../chapters/appendixContent}
+%\input{../chapters/appendixContent}
 
 
 
