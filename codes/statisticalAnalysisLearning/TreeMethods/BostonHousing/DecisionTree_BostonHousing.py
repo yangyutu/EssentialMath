@@ -14,6 +14,20 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib as mpl
 from sklearn.tree import DecisionTreeRegressor
+import sklearn.tree
+import seaborn as sns
+
+sns.set()
+SMALL_SIZE = 18
+MEDIUM_SIZE = 20
+BIGGER_SIZE = 20
+plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 
 plt.close('all')
 
@@ -41,26 +55,22 @@ y_pred = treeModel.predict(X_test)
 
 print("RMSE: {0}".format(np.sqrt(mean_squared_error(y_test, y_pred))))
 
+plt.figure(1, figsize=(10,10))
+sklearn.tree.plot_tree(treeModel,max_depth=2)
+#fig = plt.gcf()
+#fig.set_size_inches(150, 100)
+#fig.savefig('tree.png', dpi=300)
 
-xgb.plot_tree(xg_reg,num_trees=0)
-fig = plt.gcf()
-fig.set_size_inches(150, 100)
-fig.savefig('XGBtree_1.png', dpi=300)
+# Plot feature importance
+feature_importance = treeModel.feature_importances_
+# make importances relative to max importance
+feature_importance = 100.0 * (feature_importance / feature_importance.max())
+sorted_idx = np.argsort(feature_importance)
+pos = np.arange(sorted_idx.shape[0]) + .5
+plt.figure(2, figsize=(10,10))
+plt.barh(pos, feature_importance[sorted_idx], align='center')
+plt.yticks(pos, boston.feature_names[sorted_idx])
+plt.xlabel('Relative Importance')
+plt.title('Variable Importance')
+plt.savefig('decisionTree_variableImportance.png',dvi=300)
 
-
-xgb.plot_tree(xg_reg,num_trees=1)
-fig = plt.gcf()
-fig.set_size_inches(150, 100)
-fig.savefig('XGBtree_2.png', dpi=300)
-print('done')
-
-plt.rcParams['figure.figsize'] = [10, 10]
-mpl.rc('xtick', labelsize=20) 
-mpl.rc('ytick', labelsize=20) 
-plt.rcParams['xtick.labelsize']=28
-plt.rcParams['ytick.labelsize']=28
-mpl.rcParams.update({'font.size': 36})
-xgb.plot_importance(xg_reg)
-
-plt.show()
-plt.savefig('XGB_importance.png', dpi=300)

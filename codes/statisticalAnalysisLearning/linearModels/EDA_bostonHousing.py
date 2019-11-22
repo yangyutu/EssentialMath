@@ -65,7 +65,7 @@ sns.distplot(data['medv'])
 corr = data.corr()
 # plot the heatmap
 plt.figure(3)
-sns.heatmap(corr, xticklabels=corr.columns, yticklabels=corr.columns)
+sns.heatmap(corr, xticklabels=corr.columns, yticklabels=corr.columns, annot=True)
 
 # visualize pair plot
 plt.figure(4)

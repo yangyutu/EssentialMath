@@ -134,6 +134,9 @@ Johns Hopkins University \\yangyutu123@gmail.com }
 \setcounter{tocdepth}{5}
 \setcounter{minitocdepth}{4}   
 
+%https://tex.stackexchange.com/questions/769/how-can-i-create-documents-in-latex-using-a-calligraphic-first-letter-for-chapte/10260
+\usepackage{lettrine}
+
 % resize fonts in the verbatim
 \usepackage{fancyvrb}
 
@@ -362,7 +365,22 @@ ntheorem]{note}{Note}[section]
 %}
 
 
+
+% Here allows how we controls the space when we start a new section
+%https://tex.stackexchange.com/questions/9497/start-new-page-with-each-section
 \newcommand{\sectionbreak}{\clearpage}% start a new page for each section
+% new sections and subsection not at the end of the page
+%\usepackage{needspace}
+%\makeatletter
+%\renewcommand{\section}{\needspace{.25\textheight} \@startsection{section}{1}{0mm}
+%	{\baselineskip}
+%	{\baselineskip}{\Large\bfseries\scshape}}
+%\renewcommand{\subsection}{\needspace{.15\textheight} \@startsection{subsection}{1}{0mm}
+%	{\baselineskip}
+%	{\baselineskip}{\large\bfseries\scshape}}
+%\makeatother
+
+
 \titleformat{\section}
 {\normalfont\large\bfseries}{\thesection}{1em}{}
 \titleformat{\subsection}
@@ -491,38 +509,41 @@ ntheorem]{note}{Note}[section]
 \part{Mathematical Foundations}
 \input{../chapters/realAnalysis}
 \input{../chapters/linearAlgebra}
-%\input{../chapters/functionalAnalysis}
-%\input{../chapters/DifferentialGeometry}
-%\input{../chapters/Groups}
+\input{../chapters/functionalAnalysis}
+\input{../chapters/DifferentialGeometry}
+\input{../chapters/Groups}
 
-
+\startcontents[chapters]
 \part{Mathematical Optimization Methods}
 
-%\input{../chapters/optimization}
-%\input{../chapters/gameTheory}
+\input{../chapters/optimization}
+\input{../chapters/gameTheory}
+
+
+\startcontents[chapters]
 \part{Classical Statistical Methods}
-%\input{../chapters/probabilityTheory}
-%\input{../chapters/statistics}
-%\input{../chapters/statisticalModeling}
+\input{../chapters/probabilityTheory}
+\input{../chapters/statistics}
+\input{../chapters/statisticalModeling}
 \input{../chapters/RegressionAnalysis}
-%\input{../chapters/analysisofVariance}
+\input{../chapters/analysisofVariance}
 
-%\input{../chapters/MonteCarlo}
-
+\input{../chapters/MonteCarlo}
+\startcontents[chapters]
 \part{Dynamic Modeling Methods}
 
 
 \input{../chapters/dynamicalSystem}
-%\input{../chapters/numericalDifferentialEquations}
-%\input{../chapters/stochasticProcess}
-%\input{../chapters/MarkovChains}
-%\input{../chapters/timeseries}
+\input{../chapters/numericalDifferentialEquations}
+\input{../chapters/stochasticProcess}
+\input{../chapters/MarkovChains}
+\input{../chapters/timeseries}
 
 
 
 
 
-
+\startcontents[chapters]
 \part{Statistical Learning Methods}
 \input{../chapters/statisticalLearning}
 \input{../chapters/neuralNetwork}
@@ -530,16 +551,17 @@ ntheorem]{note}{Note}[section]
 %\part{Deep Learning Methods}
 %\input{../chapters/naturalLanguageProcessing}
 
+\startcontents[chapters]	
 \part{Optimal Control and Reinforcement Learning}
-%\input{../chapters/calculusofVariations}
-%\input{../chapters/optimalControl}
+\input{../chapters/calculusofVariations}
+\input{../chapters/optimalControl}
 
 
 
 
-
+\startcontents[chapters]
 \appendix
-%\input{../chapters/appendixContent}
+\input{../chapters/appendixContent}
 
 
 
