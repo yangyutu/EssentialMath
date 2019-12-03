@@ -66,6 +66,6 @@ for i in range(10):
     l1_plot.set_xticks(())
     l1_plot.set_yticks(())
     l1_plot.set_xlabel('Digit %i' % i)
-plt.suptitle('Classification coefficient')
+#plt.suptitle('Classification coefficient')
 plt.savefig('Mnist_logisticRegressionCoefficient.png', format='png', dpi=300)
 plt.show()

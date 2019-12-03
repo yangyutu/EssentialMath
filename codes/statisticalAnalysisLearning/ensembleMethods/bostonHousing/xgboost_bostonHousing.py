@@ -66,6 +66,7 @@ fig.set_size_inches(150, 100)
 fig.savefig('XGBtree_2.png', dpi=300)
 print('done')
 
+
 plt.rcParams['figure.figsize'] = [10, 10]
 mpl.rc('xtick', labelsize=20) 
 mpl.rc('ytick', labelsize=20) 
@@ -74,5 +75,5 @@ plt.rcParams['ytick.labelsize']=28
 mpl.rcParams.update({'font.size': 36})
 xgb.plot_importance(xg_reg)
 
-plt.show()
-plt.savefig('XGB_importance.png', dpi=300)
+#plt.show()
+#plt.savefig('XGB_importance.png', dpi=300)

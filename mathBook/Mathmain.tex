@@ -6,7 +6,9 @@
 %\usepackage[utf8x]{inputenc} 
 \usepackage[greek,english]{babel}
 \usepackage{CJKutf8}
+
 \usepackage[makeindex]{imakeidx}
+
 \usepackage{titletoc}
 
 \usepackage[linedheaders,parts,pdfspacing,manychapters]{classicthesis}
@@ -27,6 +29,8 @@
 
 \usepackage{sgame, tikz} % Game theory packages http://people.tamu.edu/~nsthiago/GameTheory(TNSilva).tex
 \usepackage{caption}
+\definecolor{ocre}{RGB}{243,102,25}
+\usepackage[font={color=ocre},figurename=Figure,labelfont={bf}]{caption}
 \captionsetup[figure]{position=top} 
 
 \usepackage{subcaption}%https://tex.stackexchange.com/questions/37581/latex-figures-side-by-side
@@ -89,14 +93,16 @@ Johns Hopkins University \\yangyutu123@gmail.com }
 \usepackage{mathrsfs}
 \usepackage{multirow}
 %\usepackage{biblatex}
-\usepackage[backend=bibtex,style=nature,sorting=none,refsection=chapter]{biblatex}
+\usepackage[backend=bibtex,style=nature,sorting=none,refsection=chapter, url=false]{biblatex}
 \usepackage{hyperref}
 \hypersetup{
 	colorlinks = true,
 	citecolor=blue,
 	urlcolor=blue
 }
+
 \makeindex[columns=2, title=Alphabetical Index, intoc]
+
 \usepackage{marginnote}
 \addbibresource{references.bib}
 %\bibliography{references.bib}
@@ -197,6 +203,18 @@ Johns Hopkins University \\yangyutu123@gmail.com }
 
 \newcommand{\Pa}{\partial}
 \newcommand{\ip}[1]             {{\left< \, #1 \, \right>}}
+
+\makeatletter
+\newcommand{\ostar}{\mathbin{\mathpalette\make@circled\star}}
+\newcommand{\make@circled}[2]{%
+	\ooalign{$\m@th#1\smallbigcirc{#1}$\cr\hidewidth$\m@th#1#2$\hidewidth\cr}%
+}
+\newcommand{\smallbigcirc}[1]{%
+	\vcenter{\hbox{\scalebox{0.77778}{$\m@th#1\bigcirc$}}}%
+}
+\makeatother
+
+
 %\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
 \usepackage{amsthm}
 
@@ -507,37 +525,37 @@ ntheorem]{note}{Note}[section]
 
 
 \part{Mathematical Foundations}
-\input{../chapters/realAnalysis}
+%\input{../chapters/realAnalysis}
 \input{../chapters/linearAlgebra}
-\input{../chapters/functionalAnalysis}
-\input{../chapters/DifferentialGeometry}
-\input{../chapters/Groups}
+%\input{../chapters/functionalAnalysis}
+%\input{../chapters/DifferentialGeometry}
+%\input{../chapters/Groups}
 
 \startcontents[chapters]
 \part{Mathematical Optimization Methods}
 
 \input{../chapters/optimization}
-\input{../chapters/gameTheory}
+%\input{../chapters/gameTheory}
 
 
 \startcontents[chapters]
 \part{Classical Statistical Methods}
-\input{../chapters/probabilityTheory}
-\input{../chapters/statistics}
-\input{../chapters/statisticalModeling}
-\input{../chapters/RegressionAnalysis}
-\input{../chapters/analysisofVariance}
+%\input{../chapters/probabilityTheory}
+%\input{../chapters/statistics}
+%\input{../chapters/statisticalModeling}
+%\input{../chapters/RegressionAnalysis}
+%\input{../chapters/analysisofVariance}
 
-\input{../chapters/MonteCarlo}
+%\input{../chapters/MonteCarlo}
 \startcontents[chapters]
 \part{Dynamic Modeling Methods}
 
 
-\input{../chapters/dynamicalSystem}
-\input{../chapters/numericalDifferentialEquations}
-\input{../chapters/stochasticProcess}
-\input{../chapters/MarkovChains}
-\input{../chapters/timeseries}
+%\input{../chapters/dynamicalSystem}
+%\input{../chapters/numericalDifferentialEquations}
+%\input{../chapters/stochasticProcess}
+%\input{../chapters/MarkovChains}
+%\input{../chapters/timeseries}
 
 
 
@@ -553,18 +571,22 @@ ntheorem]{note}{Note}[section]
 
 \startcontents[chapters]	
 \part{Optimal Control and Reinforcement Learning}
-\input{../chapters/calculusofVariations}
-\input{../chapters/optimalControl}
+%\input{../chapters/calculusofVariations}
+%\input{../chapters/optimalControl}
 
 
 
 
 \startcontents[chapters]
+\part{Appendix}
 \appendix
-\input{../chapters/appendixContent}
+%\input{../chapters/appendixContent}
 
 
 
 %\printbibliography[title={Whole bibliography}]
+
+% print out index
 \printindex
+
 \end{document}

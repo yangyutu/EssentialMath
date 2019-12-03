@@ -11,10 +11,20 @@ from sklearn.datasets.samples_generator import make_blobs
 # use seaborn plotting defaults
 #import seaborn as sns; sns.set()
 from sklearn.svm import SVC # "Support vector classifier"
-import plotFormat
+
+import seaborn as sns
+import matplotlib as mpl
 
 plt.close('all')
-plotFormat.set_pubAll()
+sns.set()
+mpl.rcParams.update({'font.size': 36})
+mpl.rc('xtick', labelsize=20) 
+mpl.rc('ytick', labelsize=20) 
+plt.rcParams['xtick.labelsize']=20
+plt.rcParams['ytick.labelsize']=20
+plt.rcParams['axes.titlesize']=25
+
+
 
 def plot_svc_decision_function(model, ax=None, plot_support=True):
     """Plot the decision function for a 2D SVC"""
@@ -58,4 +68,5 @@ for axi, C in zip(ax, [10.0, 0.1]):
                 model.support_vectors_[:, 1],
                 s=300, lw=1, facecolors='none');
    
-    axi.set_title('C = {0:.1f}'.format(C), size=14)
+    axi.set_title('C = {0:.1f}'.format(C))
+plt.savefig('SVMSoftClassifierExample.png', dpi=300)
