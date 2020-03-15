@@ -1,50 +1,43 @@
 # Essential Mathematical Methods
 This repo contains my online evolving book **Essentials of Mathematical Methods: Foundations, Principles, and Algorithms**. It surveys fundamental results in major branches of applied mathematics, with emphasized applications in **stochastic system modeling, statistical learning, and optimal decision making**.
 
-## Table of contents
+## Table of Contents
 
 ### I Mathematical Foundations
-* Sets
-* Sequences & Series
-* Metric Space & Topological Space
-* Calculus
-* Linear Algebra & Matrix Analysis 
-* Function Sequences, Series & Approximation 
+* Sets, Sequences and Series
+* Metric Space and Topological Space
+* Advanced Calculus
+* Linear Algebra and Matrix Analysis 
+* Function Sequences, Series and Approximation 
 * Functional Analysis 
-* Differential Geometry & Riemannian Manifolds
-* Basic Abstract Algebra
 
 ### II Mathematical Optimization Methods
-* Convex Analysis
-* Convex Optimization
-* Linear Optimization
+ 
 * Unconstrained Nonlinear Optimization
 * Constrained Nonlinear Optimization
-* Game Theory & Multi-objective Optimization 
+* Linear Optimization
+* Convex Analysis and Convex Optimization
+* Basic Game Theory 
 
 
 ### III Classical Statistical Methods
 * Theory of Probability 
-* Theory of Statistical Distribution 
+* Statistical Distributions 
 * Statistical Estimation Theory 
-* Hypothesis Testing 
-* Statistical Methods and Analysis 
-* Regression Analysis 
-* Monte Carlo Methods & Optimization
+* Multivariate Statistical Methods
+* Linear Regression Analysis 
+* Monte Carlo Methods
 
-### IV Dynamic Modeling Methods
-* Differential Equations I & Dynamical Systems 
-* Optimal Estimation in Dynamical Systems 
-* Differential Equations II & Numerical Methods 
+### IV Dynamics Modeling Methods
+* Models and estimation in dynamical systems 
+* Numerical Differential Equations 
 * Stochastic Process
-* Wiener Process and Stochastic Calculus
+* Stochastic Calculus
 * Fokker-Planck Equation
-* Markov Chains
-* Continuous-Time Markov Chain
-* Time Series Analysis: Univariate Analysis 
-* Time Series Analysis: Multivariate Analysis 
+* Markov Chain and Random Walk
+* Time Series Analysis
 
-### V Statistical Learning
+### V Statistical Learning Methods
 * Supervised Learning Principles and Methods 
 * Linear Models for Regression 
 * Linear Models for Classification 
@@ -55,11 +48,11 @@ This repo contains my online evolving book **Essentials of Mathematical Methods:
 * Unsupervised Statistical Learning 
 * Neural Network and Deep Learning
 
-### VI Optimal Control and Reinforcement Learning
-* Calculus of Variations
+### VI Optimal Control and Reinforcement Learning Methods
 * Classical Optimal Contrl Theory
 * Reinforcement Learning
 
+### Appendix: Supplemental Mathematical Facts 
 
 ## License statement
 
