@@ -9,7 +9,7 @@ This repo contains my online evolving book **Essentials of Mathematical Methods:
 * Advanced Calculus
 * Linear Algebra and Matrix Analysis 
 * Function Sequences, Series and Approximation 
-* Functional Analysis 
+* Basic Functional Analysis 
 
 ### II Mathematical Optimization Methods
  
