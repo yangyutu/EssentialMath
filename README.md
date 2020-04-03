@@ -2,7 +2,9 @@
 This repo contains my online evolving book **Essentials of Mathematical Methods: Foundations, Principles, and Algorithms**. It surveys fundamental results in major branches of applied mathematics, with emphasized applications in **stochastic system modeling, statistical learning, and optimal decision making**.
 
 You can support me by purchasing from LeanPub [https://leanpub.com/essentialmathematicalmethods].
-
+<p align="center">
+<img src="./bookCoverLeanpub.PNG" width="360" height="500">
+</p>
 ## Table of Contents
 
 ### I Mathematical Foundations
@@ -50,7 +52,7 @@ You can support me by purchasing from LeanPub [https://leanpub.com/essentialmath
 * Neural Network and Deep Learning
 
 ### VI Optimal Control and Reinforcement Learning Methods
-* Classical Optimal Contrl Theory
+* Classical Optimal Control Theory
 * Reinforcement Learning
 
 ### Appendix: Supplemental Mathematical Facts 
