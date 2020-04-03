@@ -1,6 +1,8 @@
 # Essential Mathematical Methods
 This repo contains my online evolving book **Essentials of Mathematical Methods: Foundations, Principles, and Algorithms**. It surveys fundamental results in major branches of applied mathematics, with emphasized applications in **stochastic system modeling, statistical learning, and optimal decision making**.
 
+You can support me by purchasing from LeanPub [https://leanpub.com/essentialmathematicalmethods].
+
 ## Table of Contents
 
 ### I Mathematical Foundations
@@ -8,7 +10,6 @@ This repo contains my online evolving book **Essentials of Mathematical Methods:
 * Metric Space and Topological Space
 * Advanced Calculus
 * Linear Algebra and Matrix Analysis 
-* Function Sequences, Series and Approximation 
 * Basic Functional Analysis 
 
 ### II Mathematical Optimization Methods
