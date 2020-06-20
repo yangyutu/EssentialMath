@@ -17,14 +17,26 @@ from sklearn.ensemble import BaggingRegressor
 from sklearn.tree import DecisionTreeRegressor
 
 # http://scikit-learn.org/stable/auto_examples/ensemble/plot_bias_variance.html#id2
+import seaborn as sns
 
+sns.set()
+SMALL_SIZE = 18
+MEDIUM_SIZE = 20
+BIGGER_SIZE = 20
+plt.rc('font', size=SMALL_SIZE)          # controls default text sizes
+plt.rc('axes', titlesize=SMALL_SIZE)     # fontsize of the axes title
+plt.rc('axes', labelsize=MEDIUM_SIZE)    # fontsize of the x and y labels
+plt.rc('xtick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('ytick', labelsize=SMALL_SIZE)    # fontsize of the tick labels
+plt.rc('legend', fontsize=SMALL_SIZE)    # legend fontsize
+plt.rc('figure', titlesize=BIGGER_SIZE)  # fontsize of the figure title
 plt.close('all')
 
 # Settings
 n_repeat = 50       # Number of iterations for computing expectations
-n_train = 50        # Size of the training set
+n_train = 100        # Size of the training set
 n_test = 1000       # Size of the test set
-noise = 0.1         # Standard deviation of the noise
+noise = 0.2         # Standard deviation of the noise
 np.random.seed(0)
 
 # Change this for exploring the bias-variance decomposition of other

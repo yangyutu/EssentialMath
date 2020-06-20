@@ -100,7 +100,7 @@ for c in C:
     
 coeff = np.array(coeff)
 color=cm.rainbow(np.linspace(0,1,coeff.shape[1]))
-fig = plt.figure(6, figsize=(5, 10))
+fig = plt.figure(6, figsize=(7, 10))
 ax = plt.gca()
 for coef, c in zip(coeff.T, color):
     ax.plot(np.log10(C), coef, c=c)

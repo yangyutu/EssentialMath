@@ -8,7 +8,7 @@
 \usepackage{CJKutf8}
 
 \usepackage[makeindex]{imakeidx}
-
+\usepackage{booktabs}
 \usepackage{titletoc}
 
 \usepackage[linedheaders,parts,pdfspacing,manychapters]{classicthesis}
@@ -34,7 +34,7 @@
 \captionsetup[figure]{position=top} 
 
 \usepackage{subcaption}%https://tex.stackexchange.com/questions/37581/latex-figures-side-by-side
-
+\usepackage{enumitem}
 \setlength{\parindent}{1cm}
 \setlength{\parskip}{0.5em}
 
@@ -217,7 +217,7 @@ Johns Hopkins University \\yangyutu123@gmail.com }
 
 %\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
 \usepackage{amsthm}
-
+%\usepackage{thmtools}
 %\usepackage{amsthm}
 \makeatletter
 \def\th@plain{%
@@ -322,6 +322,14 @@ ntheorem]{example}{Example}[section]
 \theoremstyle{coloredRemark}
 \newtheorem{remark}{Remark}[section]
 
+
+%\declaretheoremstyle[ spaceabove=\topsep, spacebelow=\topsep, headfont=\normalfont\scshape, notefont=\mdseries, notebraces={(}{)}, bodyfont=\normalfont, postheadspace=1em, qed=\qedsymbol ]{mythmstyle}
+%\declaretheorem[style=mythmstyle]{remark2}
+
+
+
+
+
 \newtheoremstyle{coloredNote}%
 {3pt}% Space above
 {3pt}% Space below 
@@ -351,6 +359,7 @@ ntheorem]{note}{Note}[section]
 \newcommand{\remarkautorefname}{Remark}
 \newcommand{\assumptionautorefname}{Assumption}
 \newcommand{\exampleautorefname}{Example}
+\newcommand{\methodautorefname}{Methodology}
 \DeclareMathOperator*{\plim}{plim}
 
 % for header and footer https://www.sharelatex.com/learn/Headers_and_footers
@@ -358,7 +367,7 @@ ntheorem]{note}{Note}[section]
  \fancypagestyle{plain}{%
  \fancyhf{}
 \fancyfoot[LO, RE]{\slshape Yuguang Yang  }
-\fancyfoot[RO, LE]{\slshape Essentials of Mathematical Methods, v.3.0}}
+\fancyfoot[RO, LE]{\slshape Essentials of Mathematical Methods, v3.0}}
 \pagestyle{fancy}
 \fancyhf{}
 %\fancyhead[LE,RO]{Essential Mathematical Methods}
@@ -424,7 +433,7 @@ ntheorem]{note}{Note}[section]
         
         \vspace{0.8cm}
         
-        {\Large \textbf{\textit{Foundations, Principles and Algorithms}}}
+        {\Large \textbf{\textit{Foundations, Principles, and Algorithms}}}
         
         
 %        \textbf{An evolving online book at}\\
@@ -450,6 +459,14 @@ ntheorem]{note}{Note}[section]
 \end{titlepage}
 
 
+\newpage
+
+\input{../license}
+
+\newpage
+
+\input{../preface}
+
 
 \newpage
 
@@ -470,27 +487,28 @@ ntheorem]{note}{Note}[section]
 	\item $\R_{++}$: positive real numbers.
 	\item $\RE$: extended real numbers.
 	\item $\C$: complex numbers.
-	\item $\F$:real or complex numbers.
+	\item $\F$: real or complex numbers.
 	\item $\Q$: rational numbers.
-	\item $\Z$:integer numbers.
-	\item $\PP$:positive numbers.
-	\item $\cP(\PP)$:positive numbers.
+	\item $\Z$: integer numbers.
+	\item $\PP$: positive numbers.
 	\item $\cP_n$: polynomial of degree of n.
-	\item $\N$:natural numbers.
+	\item $\N$: natural numbers.
 	\item $\cR(A)$: the range of matrix $A$.
 	\item $\cN(A)$: the null space of matrix $A$. 
 		\item $V$: vector space.
-		\item $det(A)$:the determinant of matrix $A$.
-		\item $rank(A)$:the rank of matrix $A$.
-		\item $\rho(A)$:the spectral radius of matrix $A$.
-		\item $Tr(A)$:the trace of matrix $A$.	
-		\item $L^2[a,b]$:Lebesgue integrable function on $[a,b]$.
-		\item $L^1[a,b]$:Lebesgue integrable function on $[a,b]$.
+		\item $det(A)$: the determinant of matrix $A$.
+		\item $rank(A)$: the rank of matrix $A$.
+		\item $\norm{\cdot}_2$: Euclidean 2 norm of a vector of a matrix.
+		\item $\norm{\cdot}_F$: Frobenius norm of a matrix.
+		\item $\rho(A)$: the spectral radius of matrix $A$.
+		\item $Tr(A)$: the trace of matrix $A$.	
+		\item $L^2[a,b]$: Lebesgue integrable function on $[a,b]$.
+		\item $L^1[a,b]$: Lebesgue integrable function on $[a,b]$.
 		\item $N(0,1)$: standard Gaussian distribution.
 		\item $N(\mu,\sigma^2)$: Gaussian distribution with mean $\mu$ and variance $\sigma^2$.
 		\item $MN(\mu,\Sigma)$: multivariate Gaussian distribution with mean vector $\mu$ and covariance matrix $\Sigma$.
 		\item $\bm{1}(x), I(x)$ indicator function.
-		\item $E[X]$ expectation of random variable $X$.
+		\item $E[X], \mathbf{E}[X], \mathbb{E}[X]$ expectation of random variable $X$.
 		\item $Var[X]$ variance of random variable $X$.
 \end{itemize}
 
@@ -525,37 +543,37 @@ ntheorem]{note}{Note}[section]
 
 
 \part{Mathematical Foundations}
-%\input{../chapters/realAnalysis}
+\input{../chapters/realAnalysis}
+\input{../chapters/Groups}
 \input{../chapters/linearAlgebra}
-%\input{../chapters/functionalAnalysis}
-%\input{../chapters/DifferentialGeometry}
-%\input{../chapters/Groups}
-
+\input{../chapters/functionalAnalysis}
 \startcontents[chapters]
+
 \part{Mathematical Optimization Methods}
 
 \input{../chapters/optimization}
-%\input{../chapters/gameTheory}
+%%\input{../chapters/calculusofVariations}
+\input{../chapters/gameTheory}
+%%\input{../chapters/finance-portfolio}
 
 
 \startcontents[chapters]
 \part{Classical Statistical Methods}
-%\input{../chapters/probabilityTheory}
-%\input{../chapters/statistics}
-%\input{../chapters/statisticalModeling}
-%\input{../chapters/RegressionAnalysis}
-%\input{../chapters/analysisofVariance}
-
-%\input{../chapters/MonteCarlo}
+\input{../chapters/probabilityTheory}
+\input{../chapters/statistics}
+\input{../chapters/statisticalModeling}
+\input{../chapters/RegressionAnalysis}
+%%\input{../chapters/analysisofVariance}
+\input{../chapters/MonteCarlo}
 \startcontents[chapters]
-\part{Dynamic Modeling Methods}
+\part{Dynamics Modeling Methods}
 
 
-%\input{../chapters/dynamicalSystem}
-%\input{../chapters/numericalDifferentialEquations}
-%\input{../chapters/stochasticProcess}
-%\input{../chapters/MarkovChains}
-%\input{../chapters/timeseries}
+\input{../chapters/dynamicalSystem}
+%%\input{../chapters/numericalDifferentialEquations}
+\input{../chapters/stochasticProcess}
+\input{../chapters/MarkovChains}
+\input{../chapters/timeseries}
 
 
 
@@ -563,16 +581,18 @@ ntheorem]{note}{Note}[section]
 
 \startcontents[chapters]
 \part{Statistical Learning Methods}
-\input{../chapters/statisticalLearning}
+\input{../chapters/statisticalLearningLinearMethods}
+\input{../chapters/statisticalLearningNonlinearMethods}
+\input{../chapters/unsupervisedStatisticalLearning}
 \input{../chapters/neuralNetwork}
 
 %\part{Deep Learning Methods}
 %\input{../chapters/naturalLanguageProcessing}
 
 \startcontents[chapters]	
-\part{Optimal Control and Reinforcement Learning}
-%\input{../chapters/calculusofVariations}
-%\input{../chapters/optimalControl}
+\part{Optimal Control and Reinforcement Learning Methods}
+
+\input{../chapters/optimalControl}
 
 
 
@@ -580,7 +600,7 @@ ntheorem]{note}{Note}[section]
 \startcontents[chapters]
 \part{Appendix}
 \appendix
-%\input{../chapters/appendixContent}
+\input{../chapters/appendixContent}
 
 
 
