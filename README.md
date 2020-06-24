@@ -1,12 +1,27 @@
 # Essential Mathematical Methods
-This repo contains my online evolving book **Essentials of Mathematical Methods: Foundations, Principles, and Algorithms**. It surveys fundamental results in major branches of applied mathematics, with emphasized applications in **stochastic system modeling, statistical learning, and optimal decision making**.
+This repo contains my online evolving book **Essentials of Mathematical Methods: Foundations, Principles, and Algorithms**. It surveys fundamental results in major branches of applied mathematics, with emphasized applications in **stochastic system modeling, statistical learning, and optimal decision-making**.
 
 You can support me by purchasing from LeanPub [https://leanpub.com/essentialmathematicalmethods].
 <p align="center">
 <img src="./bookCoverLeanpub.PNG" width="360" height="500">
 </p>
-## Table of Contents
 
+## Download the whole book
+[Front Matter](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/frontMatter.pdf) \
+[All-in-One](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/Mathmain%20JUNE.pdf)
+
+## Download chapters of selective topics
+[Linear Algebra and Matrix Analysis](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/linearAlgebra.pdf) \
+[Mathematical Optimization](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/optimization.pdf) \
+[Probability and Statistical Estimation](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/probStatistical.pdf) \
+[Stochastic Process](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/stochasticProcess.pdf) \
+[Markov Chain and Random Walk](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/MarkovChain.pdf) \
+[Linear Regression Analysis](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/linearRegression.pdf) \
+[Statistical Learning](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/statisticalLearning.pdf) \
+[Neural Network and Deep Learning](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/deepLearning.pdf) \
+[(Deep) Reinforcement Learning](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/reinforcementLearning.pdf) 
+
+## Table of Contents
 ### I Mathematical Foundations
 * Sets, Sequences and Series
 * Metric Space and Topological Space
@@ -32,8 +47,7 @@ You can support me by purchasing from LeanPub [https://leanpub.com/essentialmath
 * Monte Carlo Methods
 
 ### IV Dynamics Modeling Methods
-* Models and estimation in dynamical systems 
-* Numerical Differential Equations 
+* Models and estimation in linear dynamical systems 
 * Stochastic Process
 * Stochastic Calculus
 * Fokker-Planck Equation
@@ -61,18 +75,13 @@ You can support me by purchasing from LeanPub [https://leanpub.com/essentialmath
 
 You are free to:
 
-    -Share:copy and redistribute the material in any medium or format 
-    -Adapt:remix, transform, and build upon the material.
-    
+    -You are free to redistribute the material in any medium or format under the following terms:
 under the following terms:
 
-    -Attribution:You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use. 
-    -NonCommercial: You may not use the material for commercial purposes. 
-    -ShareAlike: If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original.  
+    -Attribution: You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+    -NonCommercial: You may not use the material for commercial purposes.
     
-*The licensor cannot revoke these freedoms as long as you follow the license terms.
-*licence are created via creative commons (https://creativecommons.org)
-
+*The licensor cannot revoke these freedoms as long as you follow the license terms. This licence is created via creative commons (https://creativecommons.org). If you have any questions regarding the license, please contact the author.
 ## Contribution to the book
 
 If you have any questions or suggestions, you can create a pull request or send me an email at yangyutu123@gmail.com
