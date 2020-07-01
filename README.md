@@ -1,6 +1,6 @@
 # Essentials of Mathematical Methods
 ## About
-This repo contains my online evolving book **Essentials of Mathematical Methods: Foundations, Principles, and Algorithms**. It surveys fundamental results in major branches of applied mathematics, with emphasized applications in **stochastic system modeling, statistical learning, and optimal decision-making**.
+This repo contains my online evolving book **Essentials of Mathematical Methods: Foundations, Principles, and Algorithms**. This book surveys fundamental results in major branches of applied mathematics, with emphasized applications in **stochastic system modeling, statistical learning, and optimal decision-making**.
 
 [中文简介](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/introduction.pdf)
 
@@ -118,7 +118,7 @@ Then the book gives the application of this theorem to the sum of multivariate G
 </p>
 
 ### Machine learning
-In the linear classification model of machine learning, the three common models SVM, logistic regression and Perceptron learning can be unified under the same mathematical optimization framework, with each method corresponds to a different loss function. This book elaborates and shows how to transform these three models into this unified framework.
+SVM, logistic regression and Perceptron learning are commonly used linear classification model in machine learning.  The three models can be unified under the same mathematical optimization framework, with each method corresponds to a different loss function. This book elaborates and shows how to transform these three models into this unified framework.
 <p align="center">
 <img src="./Demo/machineLearningUnify.png" width="550" height="545"> 
 </p>
@@ -131,7 +131,7 @@ Value iteration is one of the cornerstone theorems in reinforcement learning. Ho
 <img src="./Demo/valueIterationTheory.png" width="550" height="440"> 
 </p>
 
-Then the book gives an algorithm based on value iteration theorem.
+Then the book gives an algorithm based on the value iteration theorem.
 
 <p align="center">
 <img src="./Demo/valueIterationAlg.png" width="550" height="275"> 
