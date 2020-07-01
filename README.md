@@ -79,7 +79,7 @@ If you have any questions or suggestions, you can create a pull request or send 
 
 You are free to:
 
-    -You are free to redistribute the material in any medium or format under the following terms:
+    -You are free to redistribute the material in any medium or format
 under the following terms:
 
     -Attribution: You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
@@ -98,7 +98,7 @@ The following diagram shows the shape of resulting matrices and captures the rel
 <img src="./Demo/SVDDiagram.png" width="550" height="453"> 
 </p>
 
-The common rookie mistake on the relationship between U and V is discussed as wells.
+A common mistake on the relationship between U and V is discussed as wells.
 
 <p align="center">
 <img src="./Demo/SVDRemark.png" width="550" height="137"> 
@@ -106,32 +106,33 @@ The common rookie mistake on the relationship between U and V is discussed as we
 
 ### Statistics
 
-The affine transformation of multivariate random variables is often used to prove a series of important properties of Gaussian random variables (such as addition, conditions, etc.). This book first gives a proof of this theorem with a moment function.
+In multivariate Gaussian statistics, the affine transformation theorem is used to prove a number of important properties of Gaussian random variables (such as addition, condition, etc.). This book first gives a proof of this theorem based on moment generating functions.
 
 <p align="center">
 <img src="./Demo/affineTheory.png" width="550" height="193"> 
 </p>
 
-Then the book gives the application of this theorem in the sum of multivariate Gaussian random variables. It is worth mentioning that the author emphasizes the important condition of jointly normal with footnotes.
+Then the book gives the application of this theorem to the sum of multivariate Gaussian random variables. It is worth mentioning that the author emphasizes in the footnote that these result only hold when the joint normality conditions holds. 
 <p align="center">
 <img src="./Demo/affineCorollary.png" width="550" height="618"> 
 </p>
 
 ### Machine learning
-In the linear classification model of machine learning, the three common models SVM, logistic regression and Perceptron learning can be unified under the same mathematical optimization framework, and each method corresponds to a different loss function. The author elaborated and proved how to transform these three models into the same framework.
+In the linear classification model of machine learning, the three common models SVM, logistic regression and Perceptron learning can be unified under the same mathematical optimization framework, with each method corresponds to a different loss function. This book elaborates and shows how to transform these three models into this unified framework.
 <p align="center">
 <img src="./Demo/machineLearningUnify.png" width="550" height="545"> 
 </p>
 
 ### Reinforcement learning
 
-Value iteration is one of the cornerstone theorems of reinforcement learning. However, at present, there is no proof in many textbooks. This book draws concise proof through contraction mapping and fixed point theorem. The knowledge points of contraction mapping and fixed point theorem are introduced in detail in Part I of this book.
+Value iteration is one of the cornerstone theorems in reinforcement learning. However, many textbooks and online resources simply skip the proof. This book puts together a concise proof through contraction mapping and fixed point theorem. The contraction mapping and fixed point theorem, which are important tools in applied math, are introduced in detail in Part I of this book.
 
 <p align="center">
 <img src="./Demo/valueIterationTheory.png" width="550" height="440"> 
 </p>
 
-Then the author gives an algorithm based on value iteration.
+Then the book gives an algorithm based on value iteration theorem.
+
 <p align="center">
 <img src="./Demo/valueIterationAlg.png" width="550" height="275"> 
 </p>
