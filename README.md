@@ -28,52 +28,52 @@ If you have any questions or suggestions, you can create a pull request or send 
 
 ## Table of Contents
 ### I Mathematical Foundations
-* Sets, Sequences and Series
-* Metric Space
-* Advanced Calculus
-* Linear Algebra and Matrix Analysis 
-* Basic Functional Analysis 
+* [Sets, Sequences and Series](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/63_bookMathmain.pdf)
+* [Metric Space](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/97_bookMathmain.pdf)
+* [Advanced Calculus](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/119_bookMathmain.pdf)
+* [Linear Algebra and Matrix Analysis](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/199_bookMathmain.pdf) 
+* [Basic Functional Analysis](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/328_bookMathmain.pdf)
 
 ### II Mathematical Optimization Methods
  
-* Unconstrained Nonlinear Optimization
-* Constrained Nonlinear Optimization
-* Linear Optimization
-* Convex Analysis and Convex Optimization
-* Basic Game Theory 
+* [Unconstrained Nonlinear Optimization](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/375_bookMathmain.pdf)
+* [Constrained Nonlinear Optimization](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/418_bookMathmain.pdf)
+* [Linear Optimization](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/464_bookMathmain.pdf)
+* [Convex Analysis and Convex Optimization](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/487_bookMathmain.pdf)
+* [Basic Game Theory](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/535_bookMathmain.pdf)
 
 
 ### III Classical Statistical Methods
-* Theory of Probability 
-* Statistical Distributions 
-* Statistical Estimation Theory 
-* Multivariate Statistical Methods
-* Linear Regression Analysis 
-* Monte Carlo Methods
+* [Probability Theory](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/557_bookMathmain.pdf) 
+* [Statistical Distributions](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/663_bookMathmain.pdf) 
+* [Statistical Estimation Theory](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/720_bookMathmain.pdf) 
+* [Multivariate Statistical Methods](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/780_bookMathmain.pdf)
+* [Linear Regression Analysis](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/874_bookMathmain.pdf) 
+* [Monte Carlo Methods](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/970_bookMathmain.pdf)
 
 ### IV Dynamics Modeling Methods
-* Models and estimation in linear systems 
-* Stochastic Process
-* Stochastic Calculus
-* Markov Chain and Random Walk
-* Time Series Analysis
+* [Models and estimation in linear systems](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/1008_bookMathmain.pdf) 
+* [Stochastic Process](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/1085_bookMathmain.pdf)
+* [Stochastic Calculus](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/1124_bookMathmain.pdf)
+* [Markov Chain and Random Walk](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/1174_bookMathmain.pdf)
+* [Time Series Analysis](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/1224_bookMathmain.pdf)
 
 ### V Statistical Learning Methods
-* Supervised Learning Principles and Methods 
-* Linear Models for Regression 
-* Linear Models for Classification 
-* Generative Models 
-* K Nearest Neighbors
-* Tree Methods
-* Ensemble and Boosting Methods 
-* Unsupervised Statistical Learning 
-* Neural Network and Deep Learning
+* [Supervised Learning Principles and Methods](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/1306_bookMathmain.pdf) 
+* [Linear Models for Regression](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/1353_bookMathmain.pdf) 
+* [Linear Models for Classification](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/1373_bookMathmain.pdf) 
+* [Generative Models](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/1426_bookMathmain.pdf) 
+* [K Nearest Neighbors](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/1446_bookMathmain.pdf)
+* [Tree Methods](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/1453_bookMathmain.pdf)
+* [Ensemble and Boosting Methods](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/1478_bookMathmain.pdf) 
+* [Unsupervised Statistical Learning](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/1507_bookMathmain.pdf) 
+* [Neural Network and Deep Learning](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/1573_bookMathmain.pdf)
 
 ### VI Optimal Control and Reinforcement Learning Methods
-* Classical Optimal Control Theory
-* Reinforcement Learning
+* [Classical Optimal Control Theory](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/1688_bookMathmain.pdf)
+* [Reinforcement Learning](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/1707_bookMathmain.pdf)
 
-### Appendix: Supplemental Mathematical Facts 
+### [Appendix: Supplemental Mathematical Facts](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/1793_bookMathmain.pdf) 
 
 ## License statement
 
