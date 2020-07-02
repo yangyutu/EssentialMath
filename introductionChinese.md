@@ -25,8 +25,9 @@ b.  本书凝聚了作者多年数学建模和机器学习研究和实战经验�
 a.  本书的算法和定理证明中常常引用相关的其他章节, 循序渐进，有助于读者建立树状知识脉络，一网打尽相关知识点。
 
 b.  本书例子详实并多伴有示意图，清晰易懂。作者基于多年实践，总结并对易混淆的概念进行比对，帮助读者更加扎实掌握相关内容。
-
-![img](file:///C:/Users/yangy/AppData/Local/Temp/msohtmlclip1/01/clip_image002.png)
+<p align="center">
+<img src="./bookCoverLeanpub.PNG" width="360" height="500">
+</p>
 
 全书GitHub 地址： https://github.com/yangyutu/EssentialMath
 
@@ -112,9 +113,13 @@ b.  本书例子详实并多伴有示意图，清晰易懂。作者基于多年�
 
 SVD (矩阵奇异值分解) 是线性代数中最重要工具之一， 经常在各类统计以及重要机器学习方法中出现。作者用如下图示和定理对SVD的性质进行总结和证明。该证明简洁扼要，且所用到的其它辅助定理与证明都在本书中 。作者使用一个图示来分别指出complete form SVD 和 compact form SVD 的结果和原矩阵的关系。 
 
-![img](Demo\SVDDiagram.png)
+<p align="center">
+<img src="./Demo/SVDDiagram.png" width="550" height="453"> 
+</p>
 
-![img](Demo\SVDTheory.png)
+<p align="center">
+<img src="./Demo/SVDTheory.png" width="550" height="574"> 
+</p>
 
 作者同时指出新手常混淆的一个知识点：
 
@@ -126,31 +131,36 @@ SVD (矩阵奇异值分解) 是线性代数中最重要工具之一， 经常在
 
 多元高斯随机变量( multivariate random variable) 的affine transformation 经常被用于证明高斯随机变量的一系列重要性质（比如加和， 条件等）。本书首先给出用矩函数对此定理的证明。
 
-![img](Demo\affineTheory.png)
+<p align="center">
+<img src="./Demo/affineTheory.png" width="550" height="193"> 
+</p>
 
 然后本书给出此定理在多元高斯随机变量加和中的应用。值得一提的是， 作者用脚注强调jointly normal这一重要条件。
-
-<img src="Demo\affineCorollary.png" alt="img" style="zoom:90%;" />
-
+<p align="center">
+<img src="./Demo/affineCorollary.png" width="550" height="618"> 
+</p>
  
 
 ### **机器学习篇**
 
 在机器学习的线性分类模型中，三种常见模型 SVM, logistic regression 和 Perceptron learning 可以统一在同一个数学优化框架下，每种方法对应不同的loss function。作者对如何把这三种模型转化成同一个框架进行了详细的阐述和证明。
 
-<img src="Demo\machineLearningUnify.png" alt="img" style="zoom: 75%;" />
-
+<p align="center">
+<img src="./Demo/machineLearningUnify.png" width="550" height="545"> 
+</p>
  
 
 ### **强化学习篇**
 
 Value iteration值迭代是强化学习的基石型定理之一，然而目前很多教材资料中并没有给出证明。 本书通过contraction mapping 和 fixed point theorem 得出简明的证明。contraction mapping 和 fixed point theorem 的知识点则在在本书Part I 有详细介绍。 
-
-<img src="Demo\valueIterationTheory.png" alt="img" style="zoom:80%;" />
-
+<p align="center">
+<img src="./Demo/valueIterationTheory.png" width="550" height="440"> 
+</p>
 之后作者给出基于value iteration的算法。
 
-![img](Demo\valueIterationAlg.png)
+<p align="center">
+<img src="./Demo/valueIterationAlg.png" width="550" height="275"> 
+</p>
 
 ## **作者心得体会**
 
