@@ -77,10 +77,7 @@ If you have any questions or suggestions, you can create a pull request or send 
 
 ## License statement
 
-You are free to:
-
-    -You are free to redistribute the material in any medium or format
-under the following terms:
+You are free to redistribute the material in any medium or format under the following terms:
 
     -Attribution: You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
     -NonCommercial: You may not use the material for commercial purposes.
