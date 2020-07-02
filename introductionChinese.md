@@ -123,7 +123,9 @@ SVD (矩阵奇异值分解) 是线性代数中最重要工具之一， 经常在
 
 作者同时指出新手常混淆的一个知识点：
 
-![img](Demo\SVDRemark.png)
+<p align="center">
+<img src="./Demo/SVDRemark.png" width="550" height="137"> 
+</p>
 
  
 
