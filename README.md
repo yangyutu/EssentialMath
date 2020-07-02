@@ -2,9 +2,9 @@
 ## About
 This repo contains my online evolving book **Essentials of Mathematical Methods: Foundations, Principles, and Algorithms**. This book surveys fundamental results in major branches of applied mathematics, with emphasized applications in **stochastic system modeling, statistical learning, and optimal decision-making**.
 
-[中文简介](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/introduction.pdf)
+[中文简介](https://github.com/yangyutu/EssentialMath/blob/master/introductionChinese.md)
 
-This book will be free of charge. You can support me by purchasing it from LeanPub [https://leanpub.com/essentialmathematicalmethods].
+This book will be free of charge. You can support me by purchasing it from [LeanPub](https://leanpub.com/essentialmathematicalmethods).
 If you have any questions or suggestions, you can create a pull request or send me an email at yangyutu123@gmail.com
 <p align="center">
 <img src="./bookCoverLeanpub.PNG" width="360" height="500">
