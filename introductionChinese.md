@@ -144,13 +144,17 @@ SVD (矩阵奇异值分解) 是线性代数中最重要工具之一， 经常在
 <img src="./Demo/contractionMappingCriterion.png" width="550" height="220"> 
 </p>
 
-最后，我们讨论了不动点定理并给出证明。
+在理解了压缩映射的基础上，我们讨论了不动点定理。
+
+<p align="center">
+<img src="./Demo/fixPointIntro.png" width="550" height="181"> 
+</p>
+
+最后， 我们给出简要证明。
 
 <p align="center">
 <img src="./Demo/contractionMappingProof.png" width="550" height="498"> 
 </p>
-
- 
 
 ### **统计篇**
 
