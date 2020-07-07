@@ -136,7 +136,13 @@ We also discuss how to identify a contraction mapping in practice.
 <img src="./Demo/contractionMappingCriterion.png" width="550" height="220"> 
 </p>
 
-Finally, we discuss the fixed point theorem and then prove it.
+Finally, with the understanding of contraction mapping, we introduce the fixed point theorem. 
+
+<p align="center">
+<img src="./Demo/fixPointIntro.png" width="550" height="181"> 
+</p>
+
+We give a detailed and concise proof.
 
 <p align="center">
 <img src="./Demo/contractionMappingProof.png" width="550" height="498"> 
