@@ -174,6 +174,11 @@ SVD (矩阵奇异值分解) 是线性代数中最重要工具之一， 经常在
 <img src="./Demo/machineLearningUnify.png" width="550" height="545"> 
 </p>
  
+下面比较并归纳了不同的分类损失函数。 
+
+<p align="center">
+<img src="./Demo/classificationLossFunc.png" width="450" height="332"> 
+</p>
 
 ### **强化学习篇**
 
