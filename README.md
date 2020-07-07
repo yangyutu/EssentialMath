@@ -118,6 +118,32 @@ A common mistake on the relationship between U and V is discussed as wells.
 <img src="./Demo/SVDRemark.png" width="550" height="137"> 
 </p>
 
+### Applied functional analysis
+
+Contraction mapping and its closely related fixed point theorem are essential results in applied functional analysis. We start with a diagram to  help understand contraction mapping. 
+<p align="center">
+<img src="./Demo/contractionMappingDiagram.png" width="550" height="264"> 
+</p>
+
+We then state its definition and a simple example. 
+<p align="center">
+<img src="./Demo/contractionMappingDefinition.png" width="550" height="254"> 
+</p>
+
+We also discuss how to identify a contraction mapping in practice.
+
+<p align="center">
+<img src="./Demo/contractionMappingCriterion.png" width="550" height="220"> 
+</p>
+
+Finally, we discuss the fixed point theorem and then prove it.
+
+<p align="center">
+<img src="./Demo/contractionMappingProof.png" width="550" height="498"> 
+</p>
+
+
+
 ### Statistics
 
 In multivariate Gaussian statistics, the affine transformation theorem is used to prove a number of important properties of Gaussian random variables (such as addition, condition, etc.). This book first gives a proof of this theorem based on moment generating functions.

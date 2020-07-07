@@ -1,6 +1,6 @@
  
 
-# 1800页33章数学方法精要笔记
+# 数学方法精要笔记
 
 # **——深入数学建模，** **机器学习和深度学习的数学基础**
 
@@ -125,6 +125,29 @@ SVD (矩阵奇异值分解) 是线性代数中最重要工具之一， 经常在
 
 <p align="center">
 <img src="./Demo/SVDRemark.png" width="550" height="137"> 
+</p>
+### **应用泛函篇**
+
+压缩映射和与其密切联系的不动点定理是应用泛函中十分重要的理论结果。 我们首先通用一个示意图来展示什么是压缩映射。
+<p align="center">
+<img src="./Demo/contractionMappingDiagram.png" width="550" height="264"> 
+</p>
+
+随后，我们对压缩映射进行定义并给出实例。
+<p align="center">
+<img src="./Demo/contractionMappingDefinition.png" width="550" height="254"> 
+</p>
+
+同时，我们也讨论了实践中如果确定一个映射是压缩映射。
+
+<p align="center">
+<img src="./Demo/contractionMappingCriterion.png" width="550" height="220"> 
+</p>
+
+最后，我们讨论了不动点定理并给出证明。
+
+<p align="center">
+<img src="./Demo/contractionMappingProof.png" width="550" height="498"> 
 </p>
 
  
