@@ -163,6 +163,12 @@ SVM, logistic regression and Perceptron learning are commonly used linear classi
 <img src="./Demo/machineLearningUnify.png" width="550" height="545"> 
 </p>
 
+Different loss functions for classfication are compared and summarized in the following figure. 
+
+<p align="center">
+<img src="./Demo/classificationLossFunc.png" width="450" height="332"> 
+</p>
+
 ### Reinforcement learning
 
 Value iteration is one of the cornerstone theorems in reinforcement learning. However, many textbooks and online resources simply skip the proof. This book puts together a concise proof through contraction mapping and fixed point theorem. The contraction mapping and fixed point theorem, which are important tools in applied math, are introduced in detail in Part I of this book.
