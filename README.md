@@ -1,14 +1,31 @@
 # Essentials of Mathematical Methods
 ## About
-This repo contains my online evolving book **Essentials of Mathematical Methods: Foundations, Principles, and Algorithms**. This book surveys fundamental results in major branches of applied mathematics, with emphasized applications in **stochastic system modeling, statistical learning, and optimal decision-making**.
+This repo contains my online evolving book **Essentials of Mathematical Methods: Foundations, Principles, and Algorithms**. This book surveys fundamental results in major branches of applied mathematics, with emphasized applications in **stochastic system modeling, statistical learning, and optimal decision-making**. \
+The book takes an approach that resembles many math and CS theory textbooks. Each section starts with basic concepts, motivations and definitions, then important properties in Lemma, Theorem, and Corollary (with proof), and then computational procedures summarized in Methods and Algorithms. I believe this approach can help distinguish different concepts and state important results in a clean and organized manner. \
+I am hoping this book can be beneficial to you, either you are preparing for interviews or you are doing machine learning applications and research.
 
 [中文简介](https://github.com/yangyutu/EssentialMath/blob/master/introductionChinese.md)
 
-This book will be free of charge. You can support me by purchasing it from [LeanPub](https://leanpub.com/essentialmathematicalmethods).
+This book is **free**. You can support me by purchasing it from [LeanPub](https://leanpub.com/essentialmathematicalmethods).
 If you have any questions or suggestions, you can create a pull request or send me an email at yangyutu123@gmail.com
 <p align="center">
 <img src="./bookCoverLeanpub.PNG" width="360" height="500">
 </p>
+
+## Middle/Long term plan
+The long term goal is to build a comprehensive, interactive electronic book that is handy to students, teachers, researchers, and practitioners who are passionate about mathematical modeling, artificial intelligence and machine learning. 
+
+Currently I am working on several **mid-term** items:
+* Add more diagrams, figures, and examples to demonstrate the intuition and application.
+* Organize implementations for core algorithms.
+* Create a new Part "Deep Learning Methods" (now it is a lengthy chapter under the Part Statistical Learning Methods), devoted to deep learning fundamentals and its applications in computer vision, time series, recommender, and NLP. 
+
+**Long term** detailed action items:
+* Create an interactive electronic book that can host dynamic visuals and short video tuturials for key parts.
+
+
+
+
 
 ## Downloads 
 ### Whole book
