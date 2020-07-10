@@ -150,7 +150,7 @@ SVD (矩阵奇异值分解) 是线性代数中最重要工具之一， 经常在
 <img src="./Demo/contractionMappingProof.png" width="550" height="498"> 
 </p>
 
- 
+
 
 ### **统计篇**
 
@@ -162,18 +162,59 @@ SVD (矩阵奇异值分解) 是线性代数中最重要工具之一， 经常在
 
 然后本书给出此定理在多元高斯随机变量加和中的应用。值得一提的是， 作者用脚注强调jointly normal这一重要条件。
 <p align="center">
-<img src="./Demo/affineCorollary.png" width="550" height="618"> 
+<img src="./Demo/affineCorollary.png" width="550" height="428"> 
 </p>
+
  
 
 ### **机器学习篇**
+
+#### Fisher 线性判别分析
+
+在介绍Fisher 线性判别分析时, 我们首先和PCA进行对比。
+
+<p align="center">
+<img src="./Demo/LDAIntro_PCA.png" width="550" height="496"> 
+</p>
+
+使用图示来了解背后的原理和建立直觉。
+
+<p align="center">
+<img src="./Demo/LDAIntro.png" width="550" height="428"> 
+</p>
+
+然后对我们对Fisher线性判别分析进行总结。
+
+<p align="center">
+<img src="./Demo/LDADefinition.png" width="550" height="415"> 
+</p>
+
+
+
+Fisher 优化目标的解及其性质可以总结成如下定理。
+
+<p align="center">
+<img src="./Demo/LDAResult.png" width="550" height="326"> 
+</p>
+
+#### 
+
+#### 线性模型统一构架
 
 在机器学习的线性分类模型中，三种常见模型 SVM, logistic regression 和 Perceptron learning 可以统一在同一个数学优化框架下，每种方法对应不同的loss function。作者对如何把这三种模型转化成同一个框架进行了详细的阐述和证明。
 
 <p align="center">
 <img src="./Demo/machineLearningUnify.png" width="550" height="545"> 
 </p>
- 
+####  SVD 与协同过滤
+
+SVD在机器学习领域的一项重要应用是推荐系统中的协作过滤。
+
+<p align="center">
+<img src="./Demo/RecommenderSystems.png" width="550" height="540"> 
+</p>
+
+### 
 
 ### **强化学习篇**
 

@@ -52,7 +52,7 @@ Currently I am working on several **mid-term** items:
 * [Basic Functional Analysis](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/328_bookMathmain.pdf)
 
 ### II Mathematical Optimization Methods
- 
+
 * [Unconstrained Nonlinear Optimization](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/375_bookMathmain.pdf)
 * [Constrained Nonlinear Optimization](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/418_bookMathmain.pdf)
 * [Linear Optimization](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/splits/464_bookMathmain.pdf)
@@ -98,7 +98,7 @@ You are free to redistribute the material in any medium or format under the foll
 
     -Attribution: You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
     -NonCommercial: You may not use the material for commercial purposes.
-    
+
 *The licensor cannot revoke these freedoms as long as you follow the license terms. This licence is created via creative commons (https://creativecommons.org). If you have any questions regarding the license, please contact the author.
 ## Demonstration
 ### Linear algebra
@@ -154,13 +154,51 @@ In multivariate Gaussian statistics, the affine transformation theorem is used t
 
 Then the book gives the application of this theorem to the sum of multivariate Gaussian random variables. It is worth mentioning that the author emphasizes in the footnote that these result only hold when the joint normality conditions holds. 
 <p align="center">
-<img src="./Demo/affineCorollary.png" width="550" height="618"> 
+<img src="./Demo/affineCorollary.png" width="550" height="428"> 
 </p>
 
 ### Machine learning
+
+#### Fisher linear discriminant analysis
+
+We start with Fisher linear discriminant analysis by contrasting with PCA.
+
+<p align="center">
+<img src="./Demo/LDAIntro_PCA.png" width="550" height="496"> 
+</p>
+
+We use diagrams to build the intuition of deriving Fisher linear discriminant.
+
+<p align="center">
+<img src="./Demo/LDAIntro.png" width="550" height="428"> 
+</p>
+
+The intuition of deriving Fisher linear discriminant can be summarized by following definition.
+
+<p align="center">
+<img src="./Demo/LDADefinition.png" width="550" height="415"> 
+</p>
+
+
+
+We summarize the solution to the optimization problem in the following Lemma.
+
+<p align="center">
+<img src="./Demo/LDAResult.png" width="550" height="326"> 
+</p>
+
+#### Unified linear models
+
 SVM, logistic regression and Perceptron learning are commonly used linear classification model in machine learning.  The three models can be unified under the same mathematical optimization framework, with each method corresponds to a different loss function. This book elaborates and shows how to transform these three models into this unified framework.
 <p align="center">
 <img src="./Demo/machineLearningUnify.png" width="550" height="545"> 
+</p>
+#### SVD for collaborative filtering
+
+One important application of SVD in machine learning area is collaborative filtering for recommenders. 
+
+<p align="center">
+<img src="./Demo/RecommenderSystems.png" width="550" height="540"> 
 </p>
 
 ### Reinforcement learning
