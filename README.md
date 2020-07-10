@@ -170,19 +170,19 @@ Then the book gives the application of this theorem to the sum of multivariate G
 We start with Fisher linear discriminant analysis by contrasting with PCA.
 
 <p align="center">
-<img src="./Demo/LDAIntro_PCA.png" width="550" height="496"> 
+<img src="./Demo/LDAIntro_PCA.PNG" width="550" height="496"> 
 </p>
 
 We use diagrams to build the intuition of deriving Fisher linear discriminant.
 
 <p align="center">
-<img src="./Demo/LDAIntro.png" width="550" height="428"> 
+<img src="./Demo/LDAIntro.PNG" width="550" height="428"> 
 </p>
 
 The intuition of deriving Fisher linear discriminant can be summarized by following definition.
 
 <p align="center">
-<img src="./Demo/LDADefinition.png" width="550" height="415"> 
+<img src="./Demo/LDADefinition.PNG" width="550" height="415"> 
 </p>
 
 
@@ -190,7 +190,7 @@ The intuition of deriving Fisher linear discriminant can be summarized by follow
 We summarize the solution to the optimization problem in the following Lemma.
 
 <p align="center">
-<img src="./Demo/LDAResult.png" width="550" height="326"> 
+<img src="./Demo/LDAResult.PNG" width="550" height="326"> 
 </p>
 
 #### Unified linear models
@@ -204,7 +204,7 @@ SVM, logistic regression and Perceptron learning are commonly used linear classi
 One important application of SVD in machine learning area is collaborative filtering for recommenders. 
 
 <p align="center">
-<img src="./Demo/RecommenderSystems.png" width="550" height="540"> 
+<img src="./Demo/RecommenderSystems.PNG" width="550" height="540"> 
 </p>
 
 Different loss functions for classfication are compared and summarized in the following figure. 
