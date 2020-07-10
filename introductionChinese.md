@@ -175,19 +175,19 @@ SVD (矩阵奇异值分解) 是线性代数中最重要工具之一， 经常在
 在介绍Fisher 线性判别分析时, 我们首先和PCA进行对比。
 
 <p align="center">
-<img src="./Demo/LDAIntro_PCA.png" width="550" height="496"> 
+<img src="./Demo/LDAIntro_PCA.PNG" width="550" height="496"> 
 </p>
 
 使用图示来了解背后的原理和建立直觉。
 
 <p align="center">
-<img src="./Demo/LDAIntro.png" width="550" height="428"> 
+<img src="./Demo/LDAIntro.PNG" width="550" height="428"> 
 </p>
 
 然后对我们对Fisher线性判别分析进行总结。
 
 <p align="center">
-<img src="./Demo/LDADefinition.png" width="550" height="415"> 
+<img src="./Demo/LDADefinition.PNG" width="550" height="415"> 
 </p>
 
 
@@ -195,7 +195,7 @@ SVD (矩阵奇异值分解) 是线性代数中最重要工具之一， 经常在
 Fisher 优化目标的解及其性质可以总结成如下定理。
 
 <p align="center">
-<img src="./Demo/LDAResult.png" width="550" height="326"> 
+<img src="./Demo/LDAResult.PNG" width="550" height="326"> 
 </p>
 #### 线性模型统一构架
 
@@ -217,7 +217,7 @@ Fisher 优化目标的解及其性质可以总结成如下定理。
 SVD在机器学习领域的一项重要应用是推荐系统中的协作过滤。
 
 <p align="center">
-<img src="./Demo/RecommenderSystems.png" width="550" height="540"> 
+<img src="./Demo/RecommenderSystems.PNG" width="550" height="540"> 
 </p>
 
 
