@@ -136,7 +136,13 @@ We also discuss how to identify a contraction mapping in practice.
 <img src="./Demo/contractionMappingCriterion.png" width="550" height="220"> 
 </p>
 
-Finally, we discuss the fixed point theorem and then prove it.
+Finally, with the understanding of contraction mapping, we introduce the fixed point theorem. 
+
+<p align="center">
+<img src="./Demo/fixPointIntro.png" width="550" height="181"> 
+</p>
+
+We give a detailed and concise proof.
 
 <p align="center">
 <img src="./Demo/contractionMappingProof.png" width="550" height="498"> 
@@ -199,6 +205,12 @@ One important application of SVD in machine learning area is collaborative filte
 
 <p align="center">
 <img src="./Demo/RecommenderSystems.png" width="550" height="540"> 
+</p>
+
+Different loss functions for classfication are compared and summarized in the following figure. 
+
+<p align="center">
+<img src="./Demo/classificationLossFunc.png" width="450" height="332"> 
 </p>
 
 ### Reinforcement learning
