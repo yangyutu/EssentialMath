@@ -221,13 +221,8 @@ SVD在机器学习领域的一项重要应用是推荐系统中的协作过滤�
 </p>
 
 
-=======
 
-下面比较并归纳了不同的分类损失函数。 
 
-<p align="center">
-<img src="./Demo/classificationLossFunc.png" width="450" height="332"> 
-</p>
 ### **强化学习篇**
 
 Value iteration值迭代是强化学习的基石型定理之一，然而目前很多教材资料中并没有给出证明。 本书通过contraction mapping 和 fixed point theorem 得出简明的证明。contraction mapping 和 fixed point theorem 的知识点则在在本书Part I 有详细介绍。 

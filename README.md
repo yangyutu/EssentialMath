@@ -199,18 +199,21 @@ SVM, logistic regression and Perceptron learning are commonly used linear classi
 <p align="center">
 <img src="./Demo/machineLearningUnify.png" width="550" height="545"> 
 </p>
+Different loss functions for classfication are compared and summarized in the following figure. 
+
+<p align="center">
+<img src="./Demo/classificationLossFunc.png" width="450" height="332"> 
+</p>
+
+
+### 
+
 #### SVD for collaborative filtering
 
 One important application of SVD in machine learning area is collaborative filtering for recommenders. 
 
 <p align="center">
 <img src="./Demo/RecommenderSystems.PNG" width="550" height="540"> 
-</p>
-
-Different loss functions for classfication are compared and summarized in the following figure. 
-
-<p align="center">
-<img src="./Demo/classificationLossFunc.png" width="450" height="332"> 
 </p>
 
 ### Reinforcement learning
