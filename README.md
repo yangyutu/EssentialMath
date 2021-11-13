@@ -16,8 +16,7 @@ If you have any questions or suggestions, you can create a pull request or send 
 
 ## Downloads 
 ### Whole book
-[comment]: [Front Matter](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/frontMatter.pdf) \
-[All-in-One](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/Mathmain%2021.pdf)
+[All-in-One](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/Mathmain2021.pdf)
 
 ## Table of Contents
 ### *Vol-1 Foundations and Principles*
