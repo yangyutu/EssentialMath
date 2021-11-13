@@ -68,11 +68,11 @@ If you have any questions or suggestions, you can create a pull request or send 
 * Convolutional Neural Network
 * Recurrent Neural Network
 
-### VI Optimal Control and Reinforcement Learning Methods
+### VII Optimal Control and Reinforcement Learning Methods
 * Classical Optimal Control Theory
 * Reinforcement Learning
 
-### VII Applications
+### VIII Applications
 * Natural Language Processing I: Foundations
 * Natural Language Processing II: Tasks
 * Deep Learning for Automatic Speech Recognition
