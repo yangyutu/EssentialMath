@@ -72,18 +72,19 @@ Johns Hopkins University \\yangyutu123@gmail.com }
 \def\axisdefaultwidth{6cm}
 \def\axisdefaultheight{6cm}
 \pgfplotsset{every axis/.append style={
-		label style={font=\Large},
-		tick label style={font=\small} ,
-		axis line style = thick,
-		minor x tick num=4,
-		minor y tick num=4,
-	}
-	%          every axis plot/.append style={very thick}
+	label style={font=\Large},
+	tick label style={font=\small} ,
+	axis line style = thick,
+	minor x tick num=4,
+	minor y tick num=4,
+}
+%          every axis plot/.append style={very thick}
 }
 \pgfplotsset{every axis plot/.append style={very thick}}
 \pgfplotsset{tick style={thick,black}} % modifies the style ‘every tick’
 \pgfplotsset{minor tick style={thin,black}}
-
+\usetikzlibrary{plotmarks}
+\usetikzlibrary{3d,decorations.text,shapes.arrows,positioning,fit,backgrounds,fit, arrows.meta, chains,calc}
 \usepackage{mathtools}
 \usepackage{graphicx}
 
@@ -96,15 +97,15 @@ Johns Hopkins University \\yangyutu123@gmail.com }
 \usepackage[backend=bibtex,style=nature,sorting=none,refsection=chapter, url=false]{biblatex}
 \usepackage{hyperref}
 \hypersetup{
-	colorlinks = true,
-	citecolor=blue,
-	urlcolor=blue
+colorlinks = true,
+citecolor=blue,
+urlcolor=blue
 }
 
 \makeindex[columns=2, title=Alphabetical Index, intoc]
 
 \usepackage{marginnote}
-\addbibresource{references.bib}
+\bibliography{../references.bib}
 %\bibliography{references.bib}
 %\bibliographystyle{apalike}
 
@@ -133,7 +134,11 @@ Johns Hopkins University \\yangyutu123@gmail.com }
 \usepackage{bm}  %this is bold and italic
 %\usepackage{lmodern,bm} % this is bold but not italic
 \usepackage{accents}
+%\usepackage{xcolor}
 \usepackage{xcolor}
+%\usepackage{colortbl}
+\usepackage{color, colortbl}
+\definecolor{Gray}{gray}{0.85}
 
 % this is for making mini table of contents for each chaper
 \usepackage{minitoc}      
@@ -182,6 +187,7 @@ Johns Hopkins University \\yangyutu123@gmail.com }
 \newcommand{\cN}{\mathcal{N}}
 \newcommand{\cM}{\mathcal{M}}
 \newcommand{\cD}{\mathcal{D}}
+\newcommand{\cO}{\mathcal{O}}
 \newcommand{\cX}{\mathcal{X}}
 \newcommand{\cQ}{\mathcal{Q}}
 \newcommand{\cY}{\mathcal{Y}}
@@ -197,8 +203,9 @@ Johns Hopkins University \\yangyutu123@gmail.com }
 \newcommand{\sL}{\mathscr{L}}
 \newcommand*\conj[1]{\overline{#1}}
 \newcommand*\mean[1]{\overline{#1}}
-
-
+\newcommand{\undertext}[2] {$\underbrace{\textrm{#1}}_{\textrm{#2}}$}
+\newcommand{\Var}{\operatorname{Var}}
+\newcommand{\blank}{\langle b\rangle}
 
 
 \newcommand{\Pa}{\partial}
@@ -207,10 +214,10 @@ Johns Hopkins University \\yangyutu123@gmail.com }
 \makeatletter
 \newcommand{\ostar}{\mathbin{\mathpalette\make@circled\star}}
 \newcommand{\make@circled}[2]{%
-	\ooalign{$\m@th#1\smallbigcirc{#1}$\cr\hidewidth$\m@th#1#2$\hidewidth\cr}%
+\ooalign{$\m@th#1\smallbigcirc{#1}$\cr\hidewidth$\m@th#1#2$\hidewidth\cr}%
 }
 \newcommand{\smallbigcirc}[1]{%
-	\vcenter{\hbox{\scalebox{0.77778}{$\m@th#1\bigcirc$}}}%
+\vcenter{\hbox{\scalebox{0.77778}{$\m@th#1\bigcirc$}}}%
 }
 \makeatother
 
@@ -221,12 +228,12 @@ Johns Hopkins University \\yangyutu123@gmail.com }
 %\usepackage{amsthm}
 \makeatletter
 \def\th@plain{%
-  \thm@notefont{}% same as heading font
-  \itshape % body font
+\thm@notefont{}% same as heading font
+\itshape % body font
 }
 \def\th@definition{%
-  \thm@notefont{}% same as heading font
-  \normalfont % body font
+\thm@notefont{}% same as heading font
+\normalfont % body font
 }
 \makeatother
 
@@ -273,6 +280,13 @@ rightmargin=3,
 backgroundcolor=gray!10,%
 innertopmargin=0pt,%
 ntheorem]{lemma}{Lemma}[section]
+
+\newmdtheoremenv[%
+linecolor=gray!20,leftmargin=3,%
+rightmargin=3,
+backgroundcolor=gray!10,%
+innertopmargin=0pt,%
+ntheorem]{proposition}{Proposition}[section]
 
 \newmdtheoremenv[%
 linecolor=gray!20,leftmargin=3,%
@@ -360,14 +374,16 @@ ntheorem]{note}{Note}[section]
 \newcommand{\assumptionautorefname}{Assumption}
 \newcommand{\exampleautorefname}{Example}
 \newcommand{\methodautorefname}{Methodology}
+\newcommand{\propositionautorefname}{Proposition}
 \DeclareMathOperator*{\plim}{plim}
-
+\DeclareMathOperator{\sinc}{sinc}
+\DeclareMathOperator{\rect}{rect}
 % for header and footer https://www.sharelatex.com/learn/Headers_and_footers
 \usepackage{fancyhdr}
- \fancypagestyle{plain}{%
- \fancyhf{}
+\fancypagestyle{plain}{%
+\fancyhf{}
 \fancyfoot[LO, RE]{\slshape Yuguang Yang  }
-\fancyfoot[RO, LE]{\slshape Essentials of Mathematical Methods, v3.0}}
+\fancyfoot[RO, LE]{\slshape Essentials of Mathematical Methods, v4.0}}
 \pagestyle{fancy}
 \fancyhf{}
 %\fancyhead[LE,RO]{Essential Mathematical Methods}
@@ -377,6 +393,10 @@ ntheorem]{note}{Note}[section]
 \renewcommand{\headrulewidth}{2pt}
 \renewcommand{\footrulewidth}{2pt}
 %\renewcommand{\sectionmark}[1]{\markright{#1}}
+
+%inline code
+\definecolor{light-gray}{gray}{0.95}
+\newcommand{\code}[1]{\colorbox{light-gray}{\color{Magenta}\texttt{#1}}}
 
 \fancyhead[RE,CO]{\fontsize{11}{12}\selectfont\nouppercase\rightmark}
 
@@ -423,99 +443,7 @@ ntheorem]{note}{Note}[section]
 
 % This declaration makes TeX less fussy about line breaking. This can prevent overfull boxes, but may leave too much space between words. Lasts until a \fussy command is issued. \fussy.
 
-\begin{titlepage}
-%\maketitle
-%	\BgThispage
-    \begin{center}
-        \vspace*{1cm}
-        
-        {\huge \textbf{Essentials of Mathematical Methods:}} 
-        
-        \vspace{0.8cm}
-        
-        {\Large \textbf{\textit{Foundations, Principles, and Algorithms}}}
-        
-        
-%        \textbf{An evolving online book at}\\
-%        \href{      https://github.com/yangyutu/NotesOnMathMethods
-%        }{https://github.com/yangyutu/NotesOnMathMethods}\\
-        \vspace{1.5cm}
-       {\large\textbf{Yuguang Yang}}\\
-       \vspace{0.5cm}
-       
-       version 3.0 \\
-\vspace{0.4cm}
-        	\includegraphics[width=0.7\linewidth]{hopf_fibration}
-       \vspace{0.4cm} 
-         
-    {\textit{God used beautiful mathematics in creating the world. --Paul Dirac}}\\
-        
-    \end{center}
-
-
-
-
-
-\end{titlepage}
-
-
-\newpage
-
-\input{../license}
-
-\newpage
-
-\input{../preface}
-
-
-\newpage
-
-\begin{center}
-	\Large
-	\textbf{\huge Notations}
-	
-	\vspace{0.4cm}
-	\large
-	
-	\vspace{0.4cm}
-\end{center}
-
-
-\begin{itemize}
-	\item $\R$: real numbers.
-	\item $\R_+$: nonnegative real numbers.
-	\item $\R_{++}$: positive real numbers.
-	\item $\RE$: extended real numbers.
-	\item $\C$: complex numbers.
-	\item $\F$: real or complex numbers.
-	\item $\Q$: rational numbers.
-	\item $\Z$: integer numbers.
-	\item $\PP$: positive numbers.
-	\item $\cP_n$: polynomial of degree of n.
-	\item $\N$: natural numbers.
-	\item $\cR(A)$: the range of matrix $A$.
-	\item $\cN(A)$: the null space of matrix $A$. 
-		\item $V$: vector space.
-		\item $det(A)$: the determinant of matrix $A$.
-		\item $rank(A)$: the rank of matrix $A$.
-		\item $\norm{\cdot}_2$: Euclidean 2 norm of a vector of a matrix.
-		\item $\norm{\cdot}_F$: Frobenius norm of a matrix.
-		\item $\rho(A)$: the spectral radius of matrix $A$.
-		\item $Tr(A)$: the trace of matrix $A$.	
-		\item $L^2[a,b]$: Lebesgue integrable function on $[a,b]$.
-		\item $L^1[a,b]$: Lebesgue integrable function on $[a,b]$.
-		\item $N(0,1)$: standard Gaussian distribution.
-		\item $N(\mu,\sigma^2)$: Gaussian distribution with mean $\mu$ and variance $\sigma^2$.
-		\item $MN(\mu,\Sigma)$: multivariate Gaussian distribution with mean vector $\mu$ and covariance matrix $\Sigma$.
-		\item $\bm{1}(x), I(x)$ indicator function.
-		\item $E[X], \mathbf{E}[X], \mathbb{E}[X]$ expectation of random variable $X$.
-		\item $Var[X]$ variance of random variable $X$.
-\end{itemize}
-
-
-
-\newpage
-
+\input{../frontpage}
 \hypersetup{colorlinks=false}
 \shorttoc{Contents}{0}
 
@@ -543,37 +471,37 @@ ntheorem]{note}{Note}[section]
 
 
 \part{Mathematical Foundations}
-%\input{../chapters/realAnalysis}
-%%\input{../chapters/Groups}
+\input{../chapters/realAnalysis}
+%%%%%%\input{../chapters/Groups}
 \input{../chapters/linearAlgebra}
-%\input{../chapters/functionalAnalysis}
+\input{../chapters/functionalAnalysis}
 \startcontents[chapters]
 
 \part{Mathematical Optimization Methods}
 
-%\input{../chapters/optimization}
-%%\input{../chapters/calculusofVariations}
-%\input{../chapters/gameTheory}
-%%\input{../chapters/finance-portfolio}
+\input{../chapters/optimization}
+%%%%%%\input{../chapters/calculusofVariations}
+%$%%%%\input{../chapters/gameTheory}
+%%%%%%\input{../chapters/finance-portfolio}
 
 
 \startcontents[chapters]
 \part{Classical Statistical Methods}
-%\input{../chapters/probabilityTheory}
+\input{../chapters/probabilityTheory}
 \input{../chapters/statistics}
-%\input{../chapters/statisticalModeling}
-%\input{../chapters/RegressionAnalysis}
-%%\input{../chapters/analysisofVariance}
-%\input{../chapters/MonteCarlo}
+\input{../chapters/statisticalModeling}
+\input{../chapters/RegressionAnalysis}
+%%%%%%\input{../chapters/analysisofVariance}
+\input{../chapters/MonteCarlo}
 \startcontents[chapters]
 \part{Dynamics Modeling Methods}
 
 
-%\input{../chapters/dynamicalSystem}
-%%\input{../chapters/numericalDifferentialEquations}
-%\input{../chapters/stochasticProcess}
-%\input{../chapters/MarkovChains}
-%\input{../chapters/timeseries}
+\input{../chapters/dynamicalSystem}
+%%%%%%\input{../chapters/numericalDifferentialEquations}
+\input{../chapters/stochasticProcess}
+\input{../chapters/MarkovChains}
+\input{../chapters/timeseries}
 
 
 
@@ -584,23 +512,32 @@ ntheorem]{note}{Note}[section]
 \input{../chapters/statisticalLearningLinearMethods}
 \input{../chapters/statisticalLearningNonlinearMethods}
 \input{../chapters/unsupervisedStatisticalLearning}
-\input{../chapters/neuralNetwork}
+\input{../chapters/PracticalStatisticalLearning}
+\startcontents[chapters]
+\part{Deep Learning methods}
+\input{../chapters/neuralNetworkFoundation}
+%%%%%\input{../chapters/neuralNetworkGenerativeLearning}
 
-%\part{Deep Learning Methods}
-%\input{../chapters/naturalLanguageProcessing}
+
+%%%%%\input{../chapters/neuralNetworkAdvanced}
+\startcontents[chapters]	
+\part{Optimal Control and Reinforcement Learning}
+
+\input{../chapters/optimalControl}
 
 \startcontents[chapters]	
-\part{Optimal Control and Reinforcement Learning Methods}
+\part{Applications}
 
-%\input{../chapters/optimalControl}
-
-
-
+\input{../chapters/neuralNetworkApplicationNLP}
+\input{../chapters/neuralNetworkApplicationASR}
+%%%%%\input{../chapters/neuralNetworkApplicationSpeech}
+\input{../chapters/neuralNetworkApplicationSpeakerRecognition}
+%%%%%\input{../chapters/naturalLanguageProcessing}
 
 \startcontents[chapters]
 \part{Appendix}
 \appendix
-%\input{../chapters/appendixContent}
+\input{../chapters/appendixContent}
 
 
 
