@@ -18,6 +18,15 @@ If you have any questions or suggestions, you can create a pull request or send 
 ### Whole book
 [All-in-One](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/Mathmain2021.pdf)
 
+### *Selected Topics*
+[Linear Algebra and Matrix Analysis](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/linearAlgebra2021.pdf) 
+
+[Statistical Learning](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/statisticalLearning2021.pdf)
+
+[Deep Learning](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/deepLearning2021.pdf) and its application in [NLP & Speech](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/deepLearningApps2021.pdf)
+
+[Reinforcement Learning](https://github.com/yangyutu/EssentialMath/blob/master/PDFRelease/reinforcementLearning2021.pdf)
+
 ## Table of Contents
 ### *Vol-1 Foundations and Principles*
 ### I Mathematical Foundations
